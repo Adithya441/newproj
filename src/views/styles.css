@@ -1,0 +1,33 @@
+.modal-dialog {
+  max-width: 1000px;
+}
+
+.form-label-custom {
+  font-size: 1.2rem;
+  font-weight: bold;
+}
+.text-center {
+  text-align: center;
+}
+.btn btn-primary btn btn-primary {
+  margin-top: 27px;
+}
+/* regisationform css */
+ #cl1{
+   padding-left:68%;
+ }
+ .profile-pic {
+  max-width: 69% !important;
+  margin-left: 159px;
+  display: block;
+  border-radius: 50%;
+  -webkit-border-radius: 50%;
+}
+.p-image {
+  margin-left: 159px;
+}
+.text-center thead th {
+background-color: #add8e6; 
+font-family: 'Roboto', sans-serif;  
+width:40px;
+}

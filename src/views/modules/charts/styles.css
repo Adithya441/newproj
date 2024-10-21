@@ -1,0 +1,17 @@
+.mdl{
+  left:125px;
+}
+/* .chart-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+} */
+
+.chart {
+  flex: 1; /* Ensures the charts take equal space */
+  max-width: 300px; /* You can define a max width */
+  height: 400px; /* Same height for all charts */
+  padding: 10px;
+  box-sizing: border-box; /* Ensure padding doesn’t affect overall width */
+}
