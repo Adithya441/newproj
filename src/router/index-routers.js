@@ -10,12 +10,13 @@ import { AppRouter } from './app-router';
 export const IndexRouters = [
     {
         path: '',
+        element : <LoginPage />,
+    },
+    {
+        path: '',
         element : <DefaultLayout />,
         children : [
-            {
-                path: '',
-                element : <LoginPage />,
-            },
+            
 
           ...AppRouter
         ],
