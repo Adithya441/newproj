@@ -179,7 +179,7 @@ console.log(psts);
                 <Col md='4'>
                   <FirstChart prods={prds} />
                 </Col>
-                <Col md='4' >
+                <Col md='4'>
                   <SecondChart allpsts={psts} />
                 </Col>
               </Row>

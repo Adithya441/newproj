@@ -1,27 +1,31 @@
 import React, { useState } from 'react';
 import ReactApexChart from 'react-apexcharts';
+import { Modal, Button } from 'react-bootstrap';
 
 const APIChart = () => {
   const [data, setData] = useState({
-    "xName": "Meter Communicated",
-    "yName": "Meter Not Communicated",
-    "xData": [
-        "COMMUNICATED",
-        "NEVER COMMUNICATED",
-        "NOT COMMUNICATED",
-        "TOTAL"
+    xName: "Meter Communicated",
+    yName: "Meter Not Communicated",
+    xData: [
+      "COMMUNICATED",
+      "NEVER COMMUNICATED",
+      "NOT COMMUNICATED",
+      "TOTAL"
     ],
-    "xAxisData": null,
-    "ydata1": [
-        52,
-        44,
-        165,
-        261
+    xAxisData: null,
+    ydata1: [
+      52,
+      44,
+      165,
+      261
     ],
-    "ydata2": null,
-    "yData": null,
-    "axisData": null
-});
+    ydata2: null,
+    yData: null,
+    axisData: null
+  });
+
+  const [showModal, setShowModal] = useState(false);
+  const [selectedData, setSelectedData] = useState(null);
 
   // Calculate total
   const total = data.ydata1.slice(0, 3).reduce((acc, curr) => acc + curr, 0);
@@ -32,6 +36,15 @@ const APIChart = () => {
   const options = {
     chart: {
       type: 'donut',
+      events: {
+        dataPointSelection: (event, chartContext, config) => {
+          const selectedLabel = labels[config.dataPointIndex];
+          const selectedValue = series[config.dataPointIndex];
+          const percentage = ((selectedValue / total) * 100).toFixed(2);
+          setSelectedData({ label: selectedLabel, value: selectedValue, percentage });
+          setShowModal(true);
+        }
+      }
     },
     labels: labels,
     colors: ['#4bc0c0', '#ff6384', '#ffce56'],
@@ -84,15 +97,34 @@ const APIChart = () => {
     }]
   };
 
+  const handleClose = () => setShowModal(false);
+
   return (
-    <div style={{height: '400px', width: '400px'}}>
-      <ReactApexChart
-        options={options}
-        series={series}
-        type="donut"
-        width="100%"
-        height={350}
-      />
+    <div className="container mx-auto p-4">
+      <div className="w-full max-w-md mx-auto mb-8">
+        <ReactApexChart
+          options={options}
+          series={series}
+          type="donut"
+          width="100%"
+          height={350}
+        />
+      </div>
+
+      <Modal show={showModal} onHide={handleClose} centered size="xl" style={{height:"550px"}} className='mdl'>
+        <Modal.Header closeButton>
+          <Modal.Title>{selectedData?.label}</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <p>Count: {selectedData?.value}</p>
+          <p>Percentage: {selectedData?.percentage}%</p>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={handleClose}>
+            Close
+          </Button>
+        </Modal.Footer>
+      </Modal>
     </div>
   );
 };

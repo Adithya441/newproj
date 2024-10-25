@@ -239,7 +239,7 @@ const FirstChart = ({prods}) => {
     };
     
     return (
-        <Modal show={showModal} onHide={onClose} size="xl" centered className='mdl'>
+        <Modal show={showModal} onHide={onClose} size="xl" centered className='mdl' style={{height:"550px"}}>
           <Modal.Header closeButton>
             <Col md='10'>
               <Row >
@@ -292,7 +292,7 @@ const FirstChart = ({prods}) => {
     <div className="mx-auto">
       <Row lg='12'>
         <Col column lg='8' className='d-flex '>
-          <Bar data={defChartData} options={options}  style={{ height: '400px', width: '300px' }}  ref={chartRef}/>
+          <Bar data={defChartData} options={options}  style={{ height: '350px', width: '300px' }}  ref={chartRef}/>
         </Col>
         <Col column lg='2' className='d-flex justify-content-end'>
           <Dropdown>

@@ -18,7 +18,7 @@ export default function ProgressiveFetcher() {
   });
 
   const columnDefs = [
-    { field: 'meterNumber', sortable: true },
+    { field: 'meterNumber', sortable: true, filter: true },
     { field: 'ipAddress' },
     { field: 'portNumber' },
     { field: 'meterManfacturer' },

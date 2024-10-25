@@ -55,7 +55,8 @@ const LoginPage = () => {
         if (Object.keys(newErrors).length === 0 ) {
             if(user){
             console.log('Form submitted successfully!');
-            navigator('/index',{state:user.username});
+            localStorage.setItem('username',user.username);
+            navigator('/index');
             }
             else{
                 if(!uname){
