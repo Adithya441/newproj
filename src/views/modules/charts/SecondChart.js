@@ -312,4 +312,4 @@ const SecondChart = ({allpsts}) => {
   
 }
 
-export default SecondChart;
+export default Secondchart;

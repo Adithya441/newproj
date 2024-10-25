@@ -2,36 +2,34 @@ import React, { useState } from 'react';
 import ReactApexChart from 'react-apexcharts';
 import { Modal, Button } from 'react-bootstrap';
 
-const APIChart = () => {
+const LoadSwitchStatus = () => {
   const [data, setData] = useState({
-    xName: "Meter Communicated",
-    yName: "Meter Not Communicated",
-    xData: [
-      "COMMUNICATED",
-      "NEVER COMMUNICATED",
-      "NOT COMMUNICATED",
-      "TOTAL"
+    "xName": "Meter Communicated",
+    "yName": "Meter Not Communicated",
+    "xData": [
+        "CONNECTED",
+        "DISCONNECTED",
+        "TOTAL"
     ],
-    xAxisData: null,
-    ydata1: [
-      52,
-      44,
-      165,
-      261
+    "xAxisData": null,
+    "ydata1": [
+        241,
+        20,
+        261
     ],
-    ydata2: null,
-    yData: null,
-    axisData: null
-  });
+    "ydata2": null,
+    "yData": null,
+    "axisData": null
+});
 
   const [showModal, setShowModal] = useState(false);
   const [selectedData, setSelectedData] = useState(null);
 
   // Calculate total
-  const total = data.ydata1.slice(0, 3).reduce((acc, curr) => acc + curr, 0);
+  const total = data.ydata1.slice(0, 2).reduce((acc, curr) => acc + curr, 0);
 
-  const series = data.ydata1.slice(0, 3);
-  const labels = data.xData.slice(0, 3);
+  const series = data.ydata1.slice(0, 2);
+  const labels = data.xData.slice(0, 2);
 
   const options = {
     chart: {
@@ -81,7 +79,7 @@ const APIChart = () => {
       position: 'bottom'
     },
     title: {
-      text: 'Meter Communication Status',
+      text: 'Load Switch Status',
       align: 'center'
     },
     responsive: [{
@@ -111,7 +109,7 @@ const APIChart = () => {
         />
       </div>
 
-      <Modal show={showModal} onHide={handleClose} centered size="xl" style={{height:"550px"}} className='mdl'>
+      <Modal show={showModal} onHide={handleClose} centered size="xl" style={{height:"550px", marginLeft:'120px'}}>
         <Modal.Header closeButton>
           <Modal.Title>{selectedData?.label}</Modal.Title>
         </Modal.Header>
@@ -129,4 +127,4 @@ const APIChart = () => {
   );
 };
 
-export default APIChart;
+export default LoadSwitchStatus;

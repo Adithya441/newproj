@@ -2,9 +2,9 @@ import React, { Fragment,useState ,useEffect, } from "react";
 import { Col, Container, Dropdown, Row, Table } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import axios from 'axios';
-import APIChart from "./modules/charts/APIChart";
-import FirstChart from './modules/charts/FirstChart';
-import SecondChart from './modules/charts/SecondChart';
+import CommunicationStatus from "./modules/charts/CommunicationStatus";
+import NonCommunicatedMeters from './modules/charts/NonCommunicatedMeters';
+import NeverCommunicatedMeters from './modules/charts/NeverCommunicatedMeters';
 // import '../../src/views/modules/charts/styles.css';
 import { RiBillLine } from 'react-icons/ri'; // Importing the meter icon
 // import myicon from '../assets/images/user/metericon';
@@ -32,6 +32,7 @@ import * as am4core from "@amcharts/amcharts4/core";
 import * as am4charts from "@amcharts/amcharts4/charts";
 // eslint-disable-next-line camelcase
 import am4themes_animated from "@amcharts/amcharts4/themes/animated";
+import LoadSwitchStatus from "./modules/charts/LoadSwitch";
 am4core.useTheme(am4themes_animated);
 
 
@@ -174,13 +175,20 @@ console.log(psts);
           <Col lg="12">
               <Row>
                 <Col md='4'>
-                  <APIChart allt={tods} />
+                  <CommunicationStatus/>
                 </Col>
                 <Col md='4'>
-                  <FirstChart prods={prds} />
+                  <NonCommunicatedMeters/>
                 </Col>
                 <Col md='4'>
-                  <SecondChart allpsts={psts} />
+                  <NeverCommunicatedMeters/>
+                </Col>
+              </Row>
+          </Col>
+          <Col lg="12">
+              <Row>
+                <Col md='4'>
+                  <LoadSwitchStatus/>
                 </Col>
               </Row>
           </Col>

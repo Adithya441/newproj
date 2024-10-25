@@ -86,7 +86,7 @@ const VerticalNav = memo(() => {
                   isTag="false"
                   staticIcon="true"
                   iconClass="ri-user-3-fill"
-                  pathname="/12333"
+                  pathname="/comm"
                   title="Communication Status"
                 ></SidebarMenu>
                 <SidebarMenu
