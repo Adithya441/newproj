@@ -14,6 +14,9 @@ import "flatpickr/dist/flatpickr.css";
 
 // Redux Selector / Action
 import { useDispatch } from 'react-redux';
+import { ThemeProvider } from './ThemeContext'
+import React from 'react'
+import './style.css'
 
 // import state selectors
 import { setSetting } from './store/setting/actions'
@@ -23,9 +26,11 @@ function App(props) {
   dispatch(setSetting())
   
   return (
-    <div className="App">
-      {props.children}  
-    </div>
+    <ThemeProvider>
+      <div className="App">
+        {props.children}  
+      </div>
+    </ThemeProvider>
   );
 }
 

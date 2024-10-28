@@ -2,6 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import reportWebVitals from './reportWebVitals';
 import '../node_modules/bootstrap/dist/css/bootstrap.css';
+import './style.css'
 
 // react-router
 import { RouterProvider,createBrowserRouter } from 'react-router-dom';
@@ -16,7 +17,7 @@ import {IndexRouters} from './router/index-routers'
 //store
 import { Provider } from 'react-redux';
 //reducer
-import { store } from './store'
+import { store } from './store';
 
 const router = createBrowserRouter([
     ...IndexRouters,

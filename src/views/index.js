@@ -94,10 +94,6 @@ useEffect(()=>{
   }
   getPosts();
 },[])
-
-console.log(tods);
-console.log(prds);
-console.log(psts);
   return (
     <Fragment>
      <Col lg="12">
@@ -175,7 +171,7 @@ console.log(psts);
           <Col lg="12">
               <Row>
                 <Col md='4'>
-                  <CommunicationStatus/>
+                <CommunicationStatus/>
                 </Col>
                 <Col md='4'>
                   <NonCommunicatedMeters/>

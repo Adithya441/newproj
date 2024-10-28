@@ -92,11 +92,11 @@ const LoginPage = () => {
 };
   return (
     <Fragment>
-<section className="sign-in-page">
-            <Container className="sign-in-page-bg mt-1 mb-md-5 mb-0 p-0">
-                <Row className="row no-gutters">
-                    <Col md='6' className="text-center">
-                        <div className="sign-in-detail text-white">
+<section className="sign-in-page" style={{height:"630px"}}>
+            <Container className="sign-in-page-bg mt-1 mb-md-5 mb-0 p-0" style={{height:"630px", width:"1200px"}}>
+                <Row className="row no-gutters" style={{height:"530px"}}>
+                    <Col md='6' className="text-center" style={{height:"630px"}}>
+                        <div className="sign-in-detail text-white" style={{height:"630px"}}>
                             <Link className="sign-in-logo mb-5" to="/"><img src={logo} className="img-fluid" alt="logo" /></Link>
                             <Swiper className="owl-carousel" autoplay={{delay:3000}} loop='true' modules={[Pagination,Autoplay]} spaceBetween={30}>
                                 <SwiperSlide className="item">
