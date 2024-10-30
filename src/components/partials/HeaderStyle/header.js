@@ -125,7 +125,7 @@ const Header = memo(() => {
               id="navbarSupportedContent"
             >
               <ul className="navbar-nav ml-auto navbar-list">
-                <Dropdown as="li" className="nav-item">
+                {/* <Dropdown as="li" className="nav-item">
                   <Dropdown.Toggle
                     as={CustomToggle}
                     className="search-toggle iq-waves-effect language-title"
@@ -181,12 +181,12 @@ const Header = memo(() => {
                       <span className="ms-2">Japanese</span>
                     </Dropdown.Item>
                   </Dropdown.Menu>
-                </Dropdown>
+                </Dropdown> */}
 
                 {/* RTL & LTR Mode start */}
-                <li className="nav-item">
+                {/* <li className="nav-item"> */}
                  {/* eslint-disable-next-line */}
-                  <a className="rtl-switch-toogle">
+                  {/* <a className="rtl-switch-toogle">
                     <span className="form-check form-switch">
                       <Form.Check.Input
                         className="form-check-input rtl-switch"
@@ -204,8 +204,8 @@ const Header = memo(() => {
                         Rtl
                       </span>
                     </span>
-                  </a>
-                </li>
+                  </a> */}
+                {/* </li> */}
                 {/* RTL & LTR Mode end */}
 
                 {/* <li className="nav-item iq-full-screen"> */}

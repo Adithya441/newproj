@@ -1,11 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import ReactApexChart from 'react-apexcharts';
 import { Modal, Button } from 'react-bootstrap';
+import Apicall from './GetCommunication';
 
 const CommunicationStatus = () => {
   const [showModal, setShowModal] = useState(false);
   const [selectedData, setSelectedData] = useState(null);
-  const [loading, setLoading] = useState(true); // Add loading state
+  const [selectlabel,setSelectLabel] = useState(null);
+  const [loading, setLoading] = useState(true); 
+  const length = 10;
 
   const tokenUrl = '/api/server3/UHES-0.0.1/oauth/token';
   const baseUrl = '/api/server3/UHES-0.0.1/WS/getcommunicationstatus?officeid=3459274e-f20f-4df8-a960-b10c5c228d3e';
@@ -51,6 +54,7 @@ const CommunicationStatus = () => {
       const total = responseData.ydata1.slice(0, 3).reduce((acc, curr) => acc + curr, 0);
       const series = responseData.ydata1.slice(0, 3);
       const labels = responseData.xData.slice(0, 3);
+      
 
       // Set loading to false once data is fetched
       setLoading(false);
@@ -96,6 +100,7 @@ const CommunicationStatus = () => {
           const selectedValue = series[config.dataPointIndex];
           const percentage = ((selectedValue / total) * 100).toFixed(2);
           setSelectedData({ label: selectedLabel, value: selectedValue, percentage });
+          setSelectLabel(selectedLabel);
           setShowModal(true);
         },
       },
@@ -157,7 +162,7 @@ const CommunicationStatus = () => {
 
   return (
     <div className="container mx-auto p-4">
-      <div className="w-full max-w-md mx-auto mb-8">
+      <div className="w-full max-w-md mx-auto mb-8" style={{width:"20vw"}}>
         <ReactApexChart
           options={options}
           series={series}
@@ -167,20 +172,43 @@ const CommunicationStatus = () => {
         />
       </div>
 
-      <Modal show={showModal} onHide={handleClose} centered size="xl" style={{ height: "550px", marginLeft: '120px' }} className='mdl'>
-        <Modal.Header closeButton>
-          <Modal.Title>{selectedData?.label}</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <p>Count: {selectedData?.value}</p>
-          <p>Percentage: {selectedData?.percentage}%</p>
-        </Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={handleClose}>
-            Close
-          </Button>
-        </Modal.Footer>
-      </Modal>
+      {showModal && (
+        <div
+          style={{
+            position: 'fixed',
+            top: '50%',
+            left: '50%',
+            transform: 'translate(-50%, -50%)',
+            zIndex: 1050,
+            backgroundColor: '#fff',
+            width: '1000px',
+            borderRadius: '5px',
+            boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.3)',
+            padding: '1em',
+            marginLeft: '125px',
+          }}
+        >
+          {/* Modal Header */}
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <h5 id="contained-modal-title-vcenter">{selectlabel}</h5>
+            <button onClick={handleClose} style={{ background: 'none', border: 'none', fontSize: '1.5rem' }}>
+              &times;
+            </button>
+          </div>
+
+          {/* Modal Body */}
+          <div style={{ maxHeight: '70vh',width:'970px', overflowY: 'auto' }}>
+            <Apicall selectedLabel={selectlabel} />
+          </div>
+
+          {/* Modal Footer */}
+          <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '1em' }}>
+            <button onClick={handleClose} style={{ padding: '0.5em 1em', cursor: 'pointer' }}>
+              Close
+            </button>
+          </div>
+        </div>
+        )}
     </div>
   );
 };

@@ -6,7 +6,7 @@ import * as XLSX from 'xlsx'; // Import for Excel
 import jsPDF from 'jspdf'; // Import for PDF
 import 'jspdf-autotable'; // Import for using autotable with jsPDF
 
-const Apicall = () => {
+const GetNotCommunicated = () => {
   const [data, setData] = useState([]); // Ensure data is an array
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -21,7 +21,7 @@ const Apicall = () => {
   const fetchData = useCallback(async () => {
     setLoading(true);
     setError(null);
-
+  
     try {
       const tokenResponse = await fetch(tokenUrl, {
         method: 'POST',
@@ -34,30 +34,31 @@ const Apicall = () => {
           client_secret: 'secret',
         }),
       });
-
+  
       if (!tokenResponse.ok) throw new Error('Failed to authenticate');
       const tokenData = await tokenResponse.json();
       const accessToken = tokenData.access_token;
-
+  
       // Use the updated start parameter for pagination
-      const baseUrl = `/api/server3/UHES-0.0.1/WS/ServerpaginationForCommunicationReport?office=3459274e-f20f-4df8-a960-b10c5c228d3e&fromdate=${fromDate}&TOTAL_COUNT=&userName=Admin&password=Admin@123&oAuthDetails=${accessToken}&draw=2&start=${start}&length=${length}`;
-
+      const baseUrl = `/api/server3/UHES-0.0.1/WS/ServerpaginationForNeverCommunicatedMetersReport?Date=${fromDate}&OfficeId=3459274e-f20f-4df8-a960-b10c5c228d3e&draw=1&length=${length}&start=${start}`; // Updated to include start
+  
       const dataResponse = await fetch(baseUrl, {
         headers: { 'Authorization': `Bearer ${accessToken}` },
       });
-
+  
       if (!dataResponse.ok) throw new Error('Failed to fetch data');
       const responseData = await dataResponse.json();
-
+  
       // Set records total from API response
       setRecordsTotal(responseData.recordsTotal || 0); // Update this key based on your API response
       setData(responseData.data || []); // Set data to responseData.data or an empty array
     } catch (err) {
-      setError(err.message);
+      setError(err.message + "hello");
     } finally {
       setLoading(false);
     }
   }, [fromDate, start, length]);
+  
 
   useEffect(() => {
     fetchData();
@@ -196,4 +197,4 @@ const Apicall = () => {
   );
 };
 
-export default Apicall;
+export default GetNotCommunicated;

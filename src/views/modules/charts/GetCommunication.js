@@ -6,11 +6,11 @@ import * as XLSX from 'xlsx'; // Import for Excel
 import jsPDF from 'jspdf'; // Import for PDF
 import 'jspdf-autotable'; // Import for using autotable with jsPDF
 
-const Apicall = () => {
+const Apicall = ({ selectedLabel }) => {
   const [data, setData] = useState([]); // Ensure data is an array
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [fromDate, setFromDate] = useState('20241030');
+  const [fromDate, setFromDate] = useState('20241029');
   const [start, setStart] = useState(0); // Start index for pagination
   const [recordsTotal, setRecordsTotal] = useState(0); // Total records count
   const length = 10; // Number of records per page
@@ -21,7 +21,7 @@ const Apicall = () => {
   const fetchData = useCallback(async () => {
     setLoading(true);
     setError(null);
-
+    console.log(selectedLabel);
     try {
       const tokenResponse = await fetch(tokenUrl, {
         method: 'POST',
@@ -41,17 +41,43 @@ const Apicall = () => {
 
       // Use the updated start parameter for pagination
       const baseUrl = `/api/server3/UHES-0.0.1/WS/ServerpaginationForCommunicationReport?office=3459274e-f20f-4df8-a960-b10c5c228d3e&fromdate=${fromDate}&TOTAL_COUNT=&userName=Admin&password=Admin@123&oAuthDetails=${accessToken}&draw=2&start=${start}&length=${length}`;
+      const baseUrl1 = `/api/server3/UHES-0.0.1/WS/ServerpaginationForNonCommunicationReport?office=3459274e-f20f-4df8-a960-b10c5c228d3e&fromdate=${fromDate}&TOTAL_COUNT=&userName=Admin&password=Admin@123&oAuthDetails=${accessToken}&draw=2&start=${start}&length=${length}`;
+      const baseUrl2 = `/api/server3/UHES-0.0.1/WS/ServerpaginationForNeverCommunicatedMetersReport?Date=${fromDate}&OfficeId=3459274e-f20f-4df8-a960-b10c5c228d3e&draw=1&length=${length}&start=${start}`;
+      if(selectedLabel === 'COMMUNICATED'){
+        const dataResponse = await fetch(baseUrl, {
+          headers: { 'Authorization': `Bearer ${accessToken}` },
+        });
+        if (!dataResponse.ok) throw new Error('Failed to fetch data');
+        const responseData = await dataResponse.json();
 
-      const dataResponse = await fetch(baseUrl, {
-        headers: { 'Authorization': `Bearer ${accessToken}` },
-      });
+        // Set records total from API response
+        setRecordsTotal(responseData.recordsTotal || 0); // Update this key based on your API response
+        setData(responseData.data || []);
+      }
+      else if(selectedLabel === 'NOT COMMUNICATED'){
+        const dataResponse1 = await fetch(baseUrl1, {
+          headers: { 'Authorization': `Bearer ${accessToken}` },
+        });
+        if (!dataResponse1.ok) throw new Error('Failed to fetch data');
+        const responseData = await dataResponse1.json();
 
-      if (!dataResponse.ok) throw new Error('Failed to fetch data');
-      const responseData = await dataResponse.json();
+        // Set records total from API response
+        setRecordsTotal(responseData.recordsTotal || 0); // Update this key based on your API response
+        setData(responseData.data || []);
+      }
+      else if(selectedLabel === 'NEVER COMMUNICATED'){
+        const dataResponse2 = await fetch(baseUrl2, {
+          headers: { 'Authorization': `Bearer ${accessToken}` },
+        });
+        if (!dataResponse2.ok) throw new Error('Failed to fetch data');
+        const responseData = await dataResponse2.json();
 
-      // Set records total from API response
-      setRecordsTotal(responseData.recordsTotal || 0); // Update this key based on your API response
-      setData(responseData.data || []); // Set data to responseData.data or an empty array
+        // Set records total from API response
+        setRecordsTotal(responseData.recordsTotal || 0); // Update this key based on your API response
+        setData(responseData.data || []);
+      }
+
+       // Set data to responseData.data or an empty array
     } catch (err) {
       setError(err.message);
     } finally {
@@ -179,18 +205,16 @@ const Apicall = () => {
         <AgGridReact
           rowData={data}
           columnDefs={columnDefs}
-          pagination={true}
-          paginationPageSize={length}
           onGridReady={fetchData}
         />
       </div>
 
-      <div style={{ marginTop: '20px' }}>
-        <button onClick={handlePreviousPage} disabled={start === 0}>Previous</button>
-        <button onClick={handleNextPage} disabled={start + length >= recordsTotal}>Next</button>
+      <div style={{ marginTop: '20px', display:'flex', justifyContent:'space-between' }}>
         <span style={{ marginLeft: '10px' }}>
           Page {currentPage} of {totalPages}
         </span>
+        <button onClick={handlePreviousPage} disabled={start === 0} style={{backgroundColor:'black', color:'white'}}>Previous</button>
+        <button onClick={handleNextPage} disabled={start + length >= recordsTotal} style={{backgroundColor:'black', color:'white'}}>Next</button>
       </div>
     </div>
   );

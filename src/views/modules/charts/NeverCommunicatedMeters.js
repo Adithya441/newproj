@@ -105,7 +105,7 @@ const NeverCommunicatedMeters = () => {
 
   return (
     <div className="container mx-auto p-4">
-      <div className="w-full max-w-md mx-auto mb-8">
+      <div className="w-full max-w-md mx-auto mb-8" style={{width:"23vw"}}>
         <ReactApexChart
           options={options}
           series={series}
@@ -115,7 +115,7 @@ const NeverCommunicatedMeters = () => {
         />
       </div>
 
-      <Modal show={showModal} onHide={handleClose} centered size="xl" style={{ height: "550px", marginLeft: '120px' }}>
+      <Modal show={showModal} onHide={handleClose} centered size="xl" style={{ height: "550px", marginLeft: '65px' }}>
         <Modal.Header closeButton>
           <Modal.Title>{selectedData?.label}</Modal.Title>
         </Modal.Header>

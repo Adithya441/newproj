@@ -86,8 +86,8 @@ const VerticalNav = memo(() => {
                   isTag="false"
                   staticIcon="true"
                   iconClass="ri-user-3-fill"
-                  pathname="/comm"
-                  title="Communication Status"
+                  pathname="/getnotcommunicated"
+                  title="Not Communicated Status"
                 ></SidebarMenu>
                 <SidebarMenu
                   isTag="false"
@@ -96,12 +96,7 @@ const VerticalNav = memo(() => {
                   pathname="/12345"
                   title="Data Availability 30days"
                 ></SidebarMenu>
-                <SidebarMenu 
-                isTag="false"
-                staticIcon="true"
-                iconClass='ri-user-add-fill'
-                pathname="/datagrid"
-                title="Ag Grid"></SidebarMenu>
+                
               </ul>
             </Accordion.Collapse>
           </Accordion.Item>
@@ -156,23 +151,22 @@ const VerticalNav = memo(() => {
             >
               <OverlayTrigger
                 placement="right"
-                overlay={<Tooltip>Meters Details</Tooltip>}
+                overlay={<Tooltip>Meters Data</Tooltip>}
               >
                 <i className="ri-dashboard-fill"></i>
               </OverlayTrigger>
-              <span className="item-name">Meters Details</span>
+              <span className="item-name">Meters Data</span>
               <i className="ri-arrow-right-s-line iq-arrow-right"></i>
             </CustomToggle>
             <Accordion.Collapse eventKey="doctor1-menu">
               <ul className="iq-submenu collapse menu-open">
 
-                <SidebarMenu
-                  isTag="false"
-                  staticIcon="true"
-                  iconClass="ri-profile-fill"
-                  pathname="/"
-                  title="Meters Details1"
-                ></SidebarMenu>
+              <SidebarMenu 
+                isTag="false"
+                staticIcon="true"
+                iconClass='ri-user-add-fill'
+                pathname="/datagrid"
+                title="Meter Details"></SidebarMenu>
 
               </ul>
             </Accordion.Collapse>

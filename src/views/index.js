@@ -5,6 +5,7 @@ import axios from 'axios';
 import CommunicationStatus from "./modules/charts/CommunicationStatus";
 import NonCommunicatedMeters from './modules/charts/NonCommunicatedMeters';
 import NeverCommunicatedMeters from './modules/charts/NeverCommunicatedMeters';
+import CommunicationStatusonMITypes from "./modules/charts/CommunicationStatusonMITypes";
 // import '../../src/views/modules/charts/styles.css';
 import { RiBillLine } from 'react-icons/ri'; // Importing the meter icon
 // import myicon from '../assets/images/user/metericon';
@@ -33,6 +34,7 @@ import * as am4charts from "@amcharts/amcharts4/charts";
 // eslint-disable-next-line camelcase
 import am4themes_animated from "@amcharts/amcharts4/themes/animated";
 import LoadSwitchStatus from "./modules/charts/LoadSwitch";
+import OlderonMITypes from "./modules/charts/OlderonMITypes";
 am4core.useTheme(am4themes_animated);
 
 
@@ -105,7 +107,7 @@ useEffect(()=>{
                       <div className="rounded-circle iq-card-icon bg-primary">
                         <RiBillLine/>
                       </div>
-                      <div className="text-end">
+                      <div className="text-end" style={{width:"25vh", height:"13vh"}}>
                       <h5 className="">Meter Count</h5>
                         <h2 className="mb-0">
                           <span className="counter">{menclCount}</span>
@@ -122,7 +124,7 @@ useEffect(()=>{
                       <div className="rounded-circle iq-card-icon bg-warning">
                          <RiBillLine/>
                       </div>
-                      <div className="text-end">
+                      <div className="text-end" style={{width:"25vh", height:"13vh"}}>
                       <h5 className="">Active Meters</h5>
                         <h2 className="mb-0">
                           <span className="counter">{womenclCount}</span>
@@ -139,7 +141,7 @@ useEffect(()=>{
                       <div className="rounded-circle iq-card-icon bg-danger">
                         <RiBillLine/>
                       </div>
-                      <div className="text-end">
+                      <div className="text-end" style={{width:"25vh", height:"13vh"}}>
                       <h5 className="">De-active Meters</h5>
                         <h2 className="mb-0">
                           <span className="counter">{jewCount}</span>
@@ -156,7 +158,7 @@ useEffect(()=>{
                       <div className="rounded-circle iq-card-icon bg-info">
                         <RiBillLine/>
                       </div>
-                      <div className="text-end">
+                      <div className="text-end" style={{width:"25vh", height:"13vh"}}  >
                       <h5 className="">Today Active</h5>
                         <h2 className="mb-0">
                           <span className="counter">{electCount}</span>
@@ -178,6 +180,16 @@ useEffect(()=>{
                 </Col>
                 <Col md='4'>
                   <NeverCommunicatedMeters/>
+                </Col>
+              </Row>
+          </Col>
+          <Col lg="12">
+              <Row>
+                <Col md='6'>
+                  <CommunicationStatusonMITypes/>
+                </Col>
+                <Col md='6'>
+                  <OlderonMITypes/>
                 </Col>
               </Row>
           </Col>

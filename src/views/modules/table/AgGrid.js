@@ -18,21 +18,111 @@ export default function ProgressiveFetcher() {
   });
 
   const columnDefs = [
-    { field: 'meterNumber', sortable: true, filter: true },
-    { field: 'ipAddress' },
-    { field: 'portNumber' },
-    { field: 'meterManfacturer' },
-    { field: 'authKey' },
-    { field: 'chyperKey' },
-    { field: 'fwPwd' },
-    { field: 'usPwd' },
-    { field: 'mrPwd' },
-    { field: 'meterID' },
-    { field: 'fieldDeviceID' },
-    { field: 'fieldDeviceNumber' },
-    { field: 'meterMake' },
-    { field: 'meterType' },
-    { field: 'fieldDeviceType' },
+    { field: 'meterNumber', sortable: true, filter: true, valueFormatter: (params) => {
+      // Check if the value is null, undefined, or an empty string
+      if (params.value === null || params.value === undefined || params.value === "") {
+          return "N/A"; // Return "N/A" if no data
+      }
+      return params.value; // Otherwise, return the actual value
+  } },
+    { field: 'ipAddress', sortable: true, filter: true, valueFormatter: (params) => {
+      // Check if the value is null, undefined, or an empty string
+      if (params.value === null || params.value === undefined || params.value === "") {
+          return "N/A"; // Return "N/A" if no data
+      }
+      return params.value; // Otherwise, return the actual value
+  } },
+    { field: 'portNumber', sortable: true, filter: true, valueFormatter: (params) => {
+      // Check if the value is null, undefined, or an empty string
+      if (params.value === null || params.value === undefined || params.value === "") {
+          return "N/A"; // Return "N/A" if no data
+      }
+      return params.value; // Otherwise, return the actual value
+  } },
+    { field: 'meterManfacturer', sortable: true, filter: true, valueFormatter: (params) => {
+      // Check if the value is null, undefined, or an empty string
+      if (params.value === null || params.value === undefined || params.value === "") {
+          return "N/A"; // Return "N/A" if no data
+      }
+      return params.value; // Otherwise, return the actual value
+  } },
+    { field: 'authKey' , sortable: true, filter: true, valueFormatter: (params) => {
+      // Check if the value is null, undefined, or an empty string
+      if (params.value === null || params.value === undefined || params.value === "") {
+          return "N/A"; // Return "N/A" if no data
+      }
+      return params.value; // Otherwise, return the actual value
+  }},
+    { field: 'chyperKey', sortable: true, filter: true, valueFormatter: (params) => {
+      // Check if the value is null, undefined, or an empty string
+      if (params.value === null || params.value === undefined || params.value === "") {
+          return "N/A"; // Return "N/A" if no data
+      }
+      return params.value; // Otherwise, return the actual value
+  } },
+    { field: 'fwPwd', sortable: true, filter: true, valueFormatter: (params) => {
+      // Check if the value is null, undefined, or an empty string
+      if (params.value === null || params.value === undefined || params.value === "") {
+          return "N/A"; // Return "N/A" if no data
+      }
+      return params.value; // Otherwise, return the actual value
+  } },
+    { field: 'usPwd', sortable: true, filter: true, valueFormatter: (params) => {
+      // Check if the value is null, undefined, or an empty string
+      if (params.value === null || params.value === undefined || params.value === "") {
+          return "N/A"; // Return "N/A" if no data
+      }
+      return params.value; // Otherwise, return the actual value
+  } },
+    { field: 'mrPwd', sortable: true, filter: true, valueFormatter: (params) => {
+      // Check if the value is null, undefined, or an empty string
+      if (params.value === null || params.value === undefined || params.value === "") {
+          return "N/A"; // Return "N/A" if no data
+      }
+      return params.value; // Otherwise, return the actual value
+  } },
+    { field: 'meterID', sortable: true, filter: true, valueFormatter: (params) => {
+      // Check if the value is null, undefined, or an empty string
+      if (params.value === null || params.value === undefined || params.value === "") {
+          return "N/A"; // Return "N/A" if no data
+      }
+      return params.value; // Otherwise, return the actual value
+  } },
+    { field: 'fieldDeviceID', sortable: true, filter: true, valueFormatter: (params) => {
+      // Check if the value is null, undefined, or an empty string
+      if (params.value === null || params.value === undefined || params.value === "") {
+          return "N/A"; // Return "N/A" if no data
+      }
+      return params.value; // Otherwise, return the actual value
+  } },
+    { field: 'fieldDeviceNumber', sortable: true, filter: true, valueFormatter: (params) => {
+      // Check if the value is null, undefined, or an empty string
+      if (params.value === null || params.value === undefined || params.value === "") {
+          return "N/A"; // Return "N/A" if no data
+      }
+      return params.value; // Otherwise, return the actual value
+  } },
+    { field: 'meterMake', sortable: true, filter: true, valueFormatter: (params) => {
+      // Check if the value is null, undefined, or an empty string
+      if (params.value === null || params.value === undefined || params.value === "") {
+          return "N/A"; // Return "N/A" if no data
+      }
+      return params.value; // Otherwise, return the actual value
+  } },
+    { field: 'meterType' , sortable: true, filter: true, valueFormatter: (params) => {
+      // Check if the value is null, undefined, or an empty string
+      if (params.value === null || params.value === undefined || params.value === "") {
+          return "N/A"; // Return "N/A" if no data
+      }
+      return params.value; // Otherwise, return the actual value
+  }},
+    { field: 'fieldDeviceType' , sortable: true, filter: true, valueFormatter: (params) => {
+      // Check if the value is null, undefined, or an empty string
+      if (params.value === null || params.value === undefined || params.value === "") {
+          return "N/A"; // Return "N/A" if no data
+      }
+      return params.value; // Otherwise, return the actual value
+  }},
   ];
 
   const fetchTotalCount = useCallback(async () => {
@@ -114,7 +204,7 @@ export default function ProgressiveFetcher() {
 
   return (
     <div className="container mx-auto p-4">
-      <h1 className="text-2xl font-bold mb-4">Data Grid with Progressive Loading</h1>
+      <h1 className="text-2xl font-bold mb-4">Meter Details</h1>
 
       {error && (
         <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4" role="alert">
@@ -128,7 +218,6 @@ export default function ProgressiveFetcher() {
         <AgGridReact
           columnDefs={columnDefs}
           rowData={rowData}
-          pagination={true}
           paginationPageSize={pageSize}
           domLayout="autoHeight"
         />
@@ -139,7 +228,7 @@ export default function ProgressiveFetcher() {
         <button
           onClick={() => onPageChange(currentPage - 1)}
           disabled={currentPage === 1}
-          className="px-4 py-2 bg-blue-500 text-white rounded disabled:opacity-50"
+          className="px-4 py-2 bg-black-500 text-white rounded" style={{backgroundColor:'black'}}
         >
           Previous
         </button>
@@ -149,7 +238,7 @@ export default function ProgressiveFetcher() {
         <button
           onClick={() => onPageChange(currentPage + 1)}
           disabled={currentPage === Math.ceil(totalRecords / pageSize)}
-          className="px-4 py-2 bg-blue-500 text-white rounded disabled:opacity-50"
+          className="px-4 py-2 bg-black-500 text-white rounded" style={{backgroundColor:'black'}}
         >
           Next
         </button>
