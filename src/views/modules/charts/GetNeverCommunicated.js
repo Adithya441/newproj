@@ -2,38 +2,38 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { AgGridReact } from 'ag-grid-react';
 import 'ag-grid-community/styles/ag-grid.css';
 import 'ag-grid-community/styles/ag-theme-alpine.css';
-import * as XLSX from 'xlsx'; // Import for Excel
-import jsPDF from 'jspdf'; // Import for PDF
-import 'jspdf-autotable'; // Import for using autotable with jsPDF
+import * as XLSX from 'xlsx';
+import jsPDF from 'jspdf';
+import 'jspdf-autotable';
 import ExcelJS from 'exceljs';
 import { saveAs } from 'file-saver';
 
-const GetNotCommunicated = ({ selectedLabel }) => {
-  const [data, setData] = useState([]); // Ensure data is an array
+const GetNeverCommunicated = ({ selectedLabel }) => {
+  const [data, setData] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [fromDate, setFromDate] = useState(null);
-  const [start, setStart] = useState(0); // Start index for pagination
-  const [recordsTotal, setRecordsTotal] = useState(0); // Total records count
-  const length = 10; // Number of records per page
-  const [exportFormat, setExportFormat] = useState(''); // Selected export format
+  const [start, setStart] = useState(0);
+  const [recordsTotal, setRecordsTotal] = useState(0);
+  const length = 10;
+  const [exportFormat, setExportFormat] = useState('');
 
-  useEffect(()=>{
+  useEffect(() => {
     const date = new Date();
     const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are 0-indexed
+    const month = String(date.getMonth() + 1).padStart(2, '0');
     const day = String(date.getDate()).padStart(2, '0');
 
     const todaydate = year + month + day;
     setFromDate(todaydate);
-})
+  }, []);
 
   const tokenUrl = '/api/server3/UHES-0.0.1/oauth/token';
 
   const fetchData = useCallback(async () => {
     setLoading(true);
     setError(null);
-    console.log(selectedLabel);
+
     try {
       const tokenResponse = await fetch(tokenUrl, {
         method: 'POST',
@@ -51,43 +51,36 @@ const GetNotCommunicated = ({ selectedLabel }) => {
       const tokenData = await tokenResponse.json();
       const accessToken = tokenData.access_token;
 
-      // Use the updated start parameter for pagination
-      const baseUrl = `/api/server3/UHES-0.0.1/WS/ServerpaginationForMeterCommunicationReport?Flag=${selectedLabel}&draw=1&length=${length}&officeid=3459274e-f20f-4df8-a960-b10c5c228d3e%20%20&start=${start}`;
-        const dataResponse = await fetch(baseUrl, {
-          headers: { 'Authorization': `Bearer ${accessToken}` },
-        });
-        const responseData = await dataResponse.json();
-        setRecordsTotal(responseData.recordsTotal || 0); // Update this key based on your API response
-        setData(responseData.data || []);
+      const baseUrl = `/api/server3/UHES-0.0.1/WS/getCommissionedButNotCommunicatedReport?Flag=${selectedLabel}&OfficeId=3459274e-f20f-4df8-a960-b10c5c228d3e%20%20`;
+      const dataResponse = await fetch(baseUrl, {
+        headers: { 'Authorization': `Bearer ${accessToken}` },
+      });
 
-       // Set data to responseData.data or an empty array
+      const responseData = await dataResponse.json();
+      setRecordsTotal(responseData.recordsTotal || 0);
+      setData(responseData.data || []);
     } catch (err) {
       setError(err.message);
     } finally {
       setLoading(false);
     }
-  }, [fromDate, start, length]);
+  }, [selectedLabel, start, length]);
 
   useEffect(() => {
-    fetchData();
-  }, [fetchData]);
+    if (fromDate) fetchData();
+  }, [fetchData, fromDate]);
 
-  // AG Grid column definitions
   const columnDefs = [
-    { headerName: "METERNO", field: "METERNO", flex: 1, filter: true, sortable: true },
-    { headerName: "MeterLastCommunicated", field: "MeterLastCommunicated", flex: 1, filter: true, sortable: true },
-    // Add more columns based on your data structure
+    { headerName: "METERNO", field: "METER_NUMBER", flex: 1, filter: true, sortable: true },
+    { headerName: "MeterLastCommunicated", field: "COMM_DATE", flex: 1, filter: true, sortable: true },
   ];
 
-  // Handler for pagination
   const handleNextPage = () => setStart((prevStart) => prevStart + length);
   const handlePreviousPage = () => setStart((prevStart) => Math.max(prevStart - length, 0));
 
-  // Calculate the current page number
   const currentPage = Math.floor(start / length) + 1;
   const totalPages = Math.ceil(recordsTotal / length);
 
-  // Export function for CSV
   const exportToCSV = () => {
     const csvData = data.map(row => ({
       METERNO: row.METERNO,
@@ -103,7 +96,7 @@ const GetNotCommunicated = ({ selectedLabel }) => {
     const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
     const link = document.createElement('a');
     link.href = URL.createObjectURL(blob);
-    link.setAttribute('download', 'data.csv');
+    link.setAttribute('download', `${selectedLabel}.csv`);
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -164,10 +157,9 @@ const GetNotCommunicated = ({ selectedLabel }) => {
     });
 
     doc.autoTable(tableColumn, tableRows);
-    doc.save('data.pdf');
+    doc.save(`${selectedLabel}.pdf`);
   };
 
-  // Handle export format change
   const handleExport = () => {
     switch (exportFormat) {
       case 'csv':
@@ -186,7 +178,7 @@ const GetNotCommunicated = ({ selectedLabel }) => {
 
   return (
     <div style={{ fontFamily: 'Arial, sans-serif', padding: '20px' }}>
-      {loading && <p>Loading...</p>}
+      {loading && <div className="spinner">Loading...</div>}
       {error && <p style={{ color: 'red' }}>Error: {error}</p>}
 
       <div>
@@ -210,19 +202,16 @@ const GetNotCommunicated = ({ selectedLabel }) => {
         <AgGridReact
           rowData={data}
           columnDefs={columnDefs}
-          onGridReady={fetchData}
         />
       </div>
 
-      <div style={{ marginTop: '20px', display:'flex', justifyContent:'space-between' }}>
-        <span style={{ marginLeft: '10px' }}>
-          Page {currentPage} of {totalPages}
-        </span>
-        <button onClick={handlePreviousPage} disabled={start === 0} style={{backgroundColor:'black', color:'white'}}>Previous</button>
-        <button onClick={handleNextPage} disabled={start + length >= recordsTotal} style={{backgroundColor:'black', color:'white'}}>Next</button>
+      <div style={{ marginTop: '20px', display: 'flex', justifyContent: 'space-between' }}>
+        <span>Page {currentPage} of {totalPages}</span>
+        <button onClick={handlePreviousPage} disabled={start === 0} style={{ backgroundColor: 'black', color: 'white' }}>Previous</button>
+        <button onClick={handleNextPage} disabled={start + length >= recordsTotal} style={{ backgroundColor: 'black', color: 'white' }}>Next</button>
       </div>
     </div>
   );
 };
 
-export default GetNotCommunicated;
+export default GetNeverCommunicated;

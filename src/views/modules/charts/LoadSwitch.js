@@ -1,14 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import ReactApexChart from 'react-apexcharts';
 import { Modal, Button } from 'react-bootstrap';
+import GetLoadSwitch from './GetLoadSwitch';
 
 const LoadSwitchStatus = () => {
   const [showModal, setShowModal] = useState(false);
   const [selectedData, setSelectedData] = useState(null);
   const [loading, setLoading] = useState(true); // Add loading state
+  const [selectlabel,setSelectLabel] = useState(null);
 
   const tokenUrl = '/api/server3/UHES-0.0.1/oauth/token';
-  const baseUrl = '/api/server3/UHES-0.0.1/WS/getPowerConnectDisconnectStatus?officeid=3459274e-f20f-4df8-a960-b10c5c228d3e';
+  const baseUrl = '/api/server3/UHES-0.0.1/WS/getPowerConnectDisconnectStatus?applyMaskingFlag=N&officeid=3459274e-f20f-4df8-a960-b10c5c228d3e';
 
   const fetchData = async () => {
     try {
@@ -98,6 +100,7 @@ const LoadSwitchStatus = () => {
           const percentage = ((selectedValue / total) * 100).toFixed(2);
           setSelectedData({ label: selectedLabel, value: selectedValue, percentage });
           setShowModal(true);
+          setSelectLabel(selectedLabel);
         },
       },
     },
@@ -168,20 +171,43 @@ const LoadSwitchStatus = () => {
         />
       </div>
 
-      <Modal show={showModal} onHide={handleClose} centered size="xl" style={{ height: "550px", marginLeft: '65px' }} className='mdl'>
-        <Modal.Header closeButton>
-          <Modal.Title>{selectedData?.label}</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <p>Count: {selectedData?.value}</p>
-          <p>Percentage: {selectedData?.percentage}%</p>
-        </Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={handleClose}>
-            Close
-          </Button>
-        </Modal.Footer>
-      </Modal>
+      {showModal && (
+        <div
+          style={{
+            position: 'fixed',
+            top: '50%',
+            left: '50%',
+            transform: 'translate(-50%, -50%)',
+            zIndex: 1050,
+            backgroundColor: '#fff',
+            width: '1000px',
+            borderRadius: '5px',
+            boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.3)',
+            padding: '1em',
+            marginLeft: '125px',
+          }}
+        >
+          {/* Modal Header */}
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <h5 id="contained-modal-title-vcenter">{selectlabel}</h5>
+            <button onClick={handleClose} style={{ background: 'none', border: 'none', fontSize: '1.5rem' }}>
+              &times;
+            </button>
+          </div>
+
+          {/* Modal Body */}
+          <div style={{ maxHeight: '70vh',width:'970px', overflowY: 'auto' }}>
+            <GetLoadSwitch selectedLabel={selectlabel}/>
+          </div>
+
+          {/* Modal Footer */}
+          <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '1em' }}>
+            <button onClick={handleClose} style={{ padding: '0.5em 1em', cursor: 'pointer' }}>
+              Close
+            </button>
+          </div>
+        </div>
+        )}
     </div>
   );
 };

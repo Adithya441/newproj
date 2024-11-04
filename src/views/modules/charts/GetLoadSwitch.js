@@ -8,7 +8,7 @@ import 'jspdf-autotable'; // Import for using autotable with jsPDF
 import ExcelJS from 'exceljs';
 import { saveAs } from 'file-saver';
 
-const GetNotCommunicated = ({ selectedLabel }) => {
+const GetLoadSwitch = ({ selectedLabel }) => {
   const [data, setData] = useState([]); // Ensure data is an array
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -52,13 +52,24 @@ const GetNotCommunicated = ({ selectedLabel }) => {
       const accessToken = tokenData.access_token;
 
       // Use the updated start parameter for pagination
-      const baseUrl = `/api/server3/UHES-0.0.1/WS/ServerpaginationForMeterCommunicationReport?Flag=${selectedLabel}&draw=1&length=${length}&officeid=3459274e-f20f-4df8-a960-b10c5c228d3e%20%20&start=${start}`;
+      if(selectedLabel === 'CONNECTED'){
+      const baseUrl = `/api/server3/UHES-0.0.1/WS/ServerpaginationForLoadSwitchStatus?RelayStatus=1&applyMaskingFlag=N&draw=1&length=${length}&officeid=3459274e-f20f-4df8-a960-b10c5c228d3e&start=${start}`;
         const dataResponse = await fetch(baseUrl, {
           headers: { 'Authorization': `Bearer ${accessToken}` },
         });
         const responseData = await dataResponse.json();
         setRecordsTotal(responseData.recordsTotal || 0); // Update this key based on your API response
         setData(responseData.data || []);
+        }
+        else if(selectedLabel === 'DISCONNECTED'){
+            const baseUrl = `/api/server3/UHES-0.0.1/WS/ServerpaginationForLoadSwitchStatus?RelayStatus=0&applyMaskingFlag=N&draw=1&length=${length}&officeid=3459274e-f20f-4df8-a960-b10c5c228d3e&start=${start}`;
+            const dataResponse = await fetch(baseUrl, {
+            headers: { 'Authorization': `Bearer ${accessToken}` },
+            });
+            const responseData = await dataResponse.json();
+            setRecordsTotal(responseData.recordsTotal || 0); // Update this key based on your API response
+            setData(responseData.data || []);
+        }
 
        // Set data to responseData.data or an empty array
     } catch (err) {
@@ -75,7 +86,7 @@ const GetNotCommunicated = ({ selectedLabel }) => {
   // AG Grid column definitions
   const columnDefs = [
     { headerName: "METERNO", field: "METERNO", flex: 1, filter: true, sortable: true },
-    { headerName: "MeterLastCommunicated", field: "MeterLastCommunicated", flex: 1, filter: true, sortable: true },
+    { headerName: "STATUS", field: "STATUS", flex: 1, filter: true, sortable: true },
     // Add more columns based on your data structure
   ];
 
@@ -225,4 +236,4 @@ const GetNotCommunicated = ({ selectedLabel }) => {
   );
 };
 
-export default GetNotCommunicated;
+export default GetLoadSwitch;

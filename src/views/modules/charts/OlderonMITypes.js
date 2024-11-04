@@ -1,13 +1,18 @@
 import React, { useEffect, useState } from 'react';
+import { Bar } from 'react-chartjs-2';
+import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend } from 'chart.js';
+import { Modal, Button } from 'react-bootstrap';
+
+ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
 const OlderonMITypes = () => {
-  const [chartData, setChartData] = useState([]);
+  const [chartData, setChartData] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [selectedData, setSelectedData] = useState(null);
   const [showModal, setShowModal] = useState(false);
+  const [selectedData, setSelectedData] = useState(null);
 
   const tokenUrl = '/api/server3/UHES-0.0.1/oauth/token';
-  const baseUrl = '/api/server3/UHES-0.0.1/WS/gettingOlderBasedOnMI?officeid=3459274e-f20f-4df8-a960-b10c5c228d3e';
+  const baseUrl = '/api/server3/UHES-0.0.1/WS/getmeterCommunicationStatusBasedOnMI?officeid=3459274e-f20f-4df8-a960-b10c5c228d3e';
 
   const fetchData = async () => {
     try {
@@ -37,23 +42,38 @@ const OlderonMITypes = () => {
       if (!dataResponse.ok) throw new Error('Failed to fetch data');
       const responseData = await dataResponse.json();
 
-      // Process and manipulate data
-      const processedData = (responseData.xData || []).map((name, index) => {
-        const moreThanOneMonth = responseData.yData[0]?.data[index] || 0;
-        const lessThanOneMonth = responseData.yData[1]?.data[index] || 0;
+      const labels = responseData.xData;
+      const communicatedData = responseData.yData[0].data;
+      const notCommunicatedData = responseData.yData[1].data;
 
-        // Additional data manipulation can be done here
+      const percentageData = labels.map((_, index) => {
+        const total = communicatedData[index] + notCommunicatedData[index];
+        const commPercent = total ? ((communicatedData[index] / total) * 100).toFixed(2) : 0;
+        const notCommPercent = total ? ((notCommunicatedData[index] / total) * 100).toFixed(2) : 0;
         return {
-          name,
-          moreThanOneMonth,
-          lessThanOneMonth,
+          communicated: parseFloat(commPercent),
+          notCommunicated: parseFloat(notCommPercent),
         };
       });
 
-      setChartData(processedData);
+      setChartData({
+        labels,
+        datasets: [
+          {
+            label: 'Meter Communicated',
+            data: percentageData.map(d => d.communicated),
+            backgroundColor: 'rgb(35, 240, 12)', // Green color
+          },
+          {
+            label: 'Meter Not Communicated',
+            data: percentageData.map(d => d.notCommunicated),
+            backgroundColor: 'rgb(28, 148, 142)', // Teal color
+          },
+        ],
+      });
+      setLoading(false);
     } catch (err) {
-      console.error(err);
-    } finally {
+      console.error(err.message);
       setLoading(false);
     }
   };
@@ -62,85 +82,72 @@ const OlderonMITypes = () => {
     fetchData();
   }, []);
 
-  const handleBarClick = (data) => {
-    setSelectedData(data);
+  const handleBarClick = (event, elements) => {
+    if (!elements.length) return;
+    const { index, datasetIndex } = elements[0];
+    const category = chartData.labels[index];
+    const value = chartData.datasets[datasetIndex].data[index];
+    const label = chartData.datasets[datasetIndex].label;
+
+    setSelectedData({ category, value, label });
     setShowModal(true);
   };
 
-  const closeModal = () => {
-    setShowModal(false);
-    setSelectedData(null);
+  if (loading) return <p>Loading...</p>;
+  if (!chartData) return <p>No data available.</p>;
+
+  const options = {
+    indexAxis: 'y', // Horizontal bars
+    onClick: handleBarClick,
+    plugins: {
+      tooltip: {
+        callbacks: {
+          label: (context) => `${context.dataset.label}: ${context.raw}%`, // Display percentage
+        },
+      },
+    },
+    responsive: true,
+    scales: {
+      x: {
+        beginAtZero: true,
+        max: 100, // Max percentage
+        stacked: true,
+      },
+      y: {
+        stacked: true,
+        title: {
+          display: true,
+        },
+      },
+    },
   };
 
-  if (loading) return <p>Loading...</p>;
-  if (chartData.length === 0) return <p>No data available.</p>;
-
-  const maxValue = Math.max(...chartData.flatMap(d => [d.moreThanOneMonth, d.lessThanOneMonth]));
+  const handleClose = () => setShowModal(false);
 
   return (
-    <div style={{ margin: "20px", fontFamily: "Arial, sans-serif" }}>
-      <h2>Meter Communication Status Based on MI Types</h2>
-      <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
-        {chartData.map((data, index) => (
-          <div key={index} style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-            <span style={{ width: "100px", textAlign: "right" }}>{data.name}</span>
-            <div style={{ display: "flex", width: "300px", height: "20px" }}>
-              <div
-                style={{
-                  width: `${(data.moreThanOneMonth / maxValue) * 100}%`,
-                  backgroundColor: "rgb(35, 240, 12)",
-                  height: "100%",
-                  cursor: "pointer",
-                }}
-                onClick={() => handleBarClick(data)}
-                aria-label={`More than one month: ${data.moreThanOneMonth}`}
-              />
-              <div
-                style={{
-                  width: `${(data.lessThanOneMonth / maxValue) * 100}%`,
-                  backgroundColor: "rgb(28, 148, 142)",
-                  height: "100%",
-                  cursor: "pointer",
-                }}
-                onClick={() => handleBarClick(data)}
-                aria-label={`Less than one month: ${data.lessThanOneMonth}`}
-              />
+    <div>
+      <h5>Meter Communication Status Based on MI Types</h5>
+      <div style={{ width: '35vw', height: '40vh' }}>
+        <Bar data={chartData} options={options} />
+      </div>
+
+      <Modal show={showModal} onHide={handleClose}>
+        <Modal.Header closeButton>
+          <Modal.Title>Details</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          {selectedData && (
+            <div>
+              <p><strong>Category:</strong> {selectedData.category}</p>
+              <p><strong>Status:</strong> {selectedData.label}</p>
+              <p><strong>Percentage:</strong> {selectedData.value}%</p>
             </div>
-          </div>
-        ))}
-      </div>
-      <div style={{ marginTop: "20px" }}>
-        <span style={{ display: "inline-block", width: "20px", height: "20px", backgroundColor: "rgb(35, 240, 12)", marginRight: "10px" }}></span>
-        <span>More than one month</span>
-        <span style={{ display: "inline-block", width: "20px", height: "20px", backgroundColor: "rgb(28, 148, 142)", margin: "0 10px 0 20px" }}></span>
-        <span>Less than one month</span>
-      </div>
-      {showModal && selectedData && (
-        <div style={{
-          position: "fixed",
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          backgroundColor: "rgba(0,0,0,0.5)",
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center"
-        }}>
-          <div style={{
-            backgroundColor: "white",
-            padding: "20px",
-            borderRadius: "5px",
-            maxWidth: "300px"
-          }}>
-            <h3>Details</h3>
-            <p><strong>Category:</strong> {selectedData.name}</p>
-            <p><strong>More than one month:</strong> {selectedData.moreThanOneMonth}</p>
-            <p><strong>Less than one month:</strong> {selectedData.lessThanOneMonth}</p>
-            <button onClick={closeModal}>Close</button>
-          </div>
-        </div>
-      )}
+          )}
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={handleClose}>Close</Button>
+        </Modal.Footer>
+      </Modal>
     </div>
   );
 };

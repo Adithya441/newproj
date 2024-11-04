@@ -117,7 +117,6 @@ const CommunicationStatusonMITypes = () => {
         stacked: true,
         title: {
           display: true,
-          text: 'Communication Type',
         },
       },
     },
@@ -126,9 +125,11 @@ const CommunicationStatusonMITypes = () => {
   const handleClose = () => setShowModal(false);
 
   return (
-    <div style={{margin:"20px 20px"}}>
+    <div>
       <h5>Meter Communication Status Based on MI Types</h5>
-      <Bar data={chartData} options={options}/>
+      <div style={{ width: '35vw', height: '40vh' }}>
+        <Bar data={chartData} options={options} />
+      </div>
 
       <Modal show={showModal} onHide={handleClose}>
         <Modal.Header closeButton>

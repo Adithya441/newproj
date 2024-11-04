@@ -5,16 +5,28 @@ import 'ag-grid-community/styles/ag-theme-alpine.css';
 import * as XLSX from 'xlsx'; // Import for Excel
 import jsPDF from 'jspdf'; // Import for PDF
 import 'jspdf-autotable'; // Import for using autotable with jsPDF
+import ExcelJS from 'exceljs';
+import { saveAs } from 'file-saver';
 
 const Apicall = ({ selectedLabel }) => {
   const [data, setData] = useState([]); // Ensure data is an array
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [fromDate, setFromDate] = useState('20241029');
+  const [fromDate, setFromDate] = useState(null);
   const [start, setStart] = useState(0); // Start index for pagination
   const [recordsTotal, setRecordsTotal] = useState(0); // Total records count
   const length = 10; // Number of records per page
   const [exportFormat, setExportFormat] = useState(''); // Selected export format
+
+  useEffect(()=>{
+    const date = new Date();
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are 0-indexed
+    const day = String(date.getDate()).padStart(2, '0');
+
+    const todaydate = year + month + day;
+    setFromDate(todaydate);
+})
 
   const tokenUrl = '/api/server3/UHES-0.0.1/oauth/token';
 
@@ -120,31 +132,53 @@ const Apicall = ({ selectedLabel }) => {
     const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
     const link = document.createElement('a');
     link.href = URL.createObjectURL(blob);
-    link.setAttribute('download', 'data.csv');
+    link.setAttribute('download', `${selectedLabel}.csv`);
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
   };
 
   // Export function for Excel with adjusted column widths
-  const exportToExcel = () => {
-    const worksheet = XLSX.utils.json_to_sheet(data);
-    const workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workbook, worksheet, 'Data');
-
-    // Adjust column widths based on the max length of the column data
-    const columnKeys = Object.keys(data[0]); // Get the keys from the first object for column names
-    const columnWidths = columnKeys.map(key => {
-      const maxLength = Math.max(
-        key.length, // Length of the header
-        ...data.map(row => (row[key] ? row[key].toString().length : 0)) // Length of the content
-      );
-      return { wch: maxLength + 10 }; // Adding 2 for some extra padding
+  const exportToExcel = async () => {
+      const workbook = new ExcelJS.Workbook();
+      const worksheet = workbook.addWorksheet('Data');
+  
+      // Define header and set styles
+      const headers = Object.keys(data[0] || {}); // Extract column names from the data keys
+      const headerRow = worksheet.addRow(headers);
+  
+      headerRow.eachCell((cell) => {
+        cell.font = { bold: true, color: { argb: 'FFFFFF' } }; // White font color
+        cell.fill = {
+            type: 'pattern',
+            pattern: 'solid',
+            fgColor: { argb: 'FFADD8E6' }, // Black background color
+        };
     });
+  
+      // Add data rows
+      data.forEach(row => {
+          worksheet.addRow(Object.values(row));
+      });
 
-    worksheet['!cols'] = columnWidths; // Set the column widths
-
-    XLSX.writeFile(workbook, 'data.xlsx');
+      worksheet.autoFilter = {
+        from: 'A1', // Starting cell of the filter (top-left corner)
+        to: `${String.fromCharCode(64 + headers.length)}1` // Ending cell (top-right corner based on header count)
+    };
+  
+      // Adjust column widths based on the max length of the column data
+      headers.forEach((header, index) => {
+          const maxLength = Math.max(
+              header.length, // Length of the header
+              ...data.map(row => row[header] ? row[header].toString().length : 0) // Length of the content
+          );
+          worksheet.getColumn(index + 1).width = maxLength + 2; // Adding padding
+      });
+  
+      // Generate Excel file and trigger download
+      const buffer = await workbook.xlsx.writeBuffer();
+      const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+      saveAs(blob, `${selectedLabel}.xlsx`);
   };
 
   // Export function for PDF
@@ -159,7 +193,7 @@ const Apicall = ({ selectedLabel }) => {
     });
 
     doc.autoTable(tableColumn, tableRows);
-    doc.save('data.pdf');
+    doc.save(`${selectedLabel}.pdf`);
   };
 
   // Handle export format change

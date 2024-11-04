@@ -8,7 +8,7 @@ import 'jspdf-autotable'; // Import for using autotable with jsPDF
 import ExcelJS from 'exceljs';
 import { saveAs } from 'file-saver';
 
-const GetNotCommunicated = ({ selectedLabel }) => {
+const GetCommunicationStatusonMITypes = ({ selectedLabel }) => {
   const [data, setData] = useState([]); // Ensure data is an array
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -17,16 +17,15 @@ const GetNotCommunicated = ({ selectedLabel }) => {
   const [recordsTotal, setRecordsTotal] = useState(0); // Total records count
   const length = 10; // Number of records per page
   const [exportFormat, setExportFormat] = useState(''); // Selected export format
+    useEffect(()=>{
+        const date = new Date();
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are 0-indexed
+        const day = String(date.getDate()).padStart(2, '0');
 
-  useEffect(()=>{
-    const date = new Date();
-    const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are 0-indexed
-    const day = String(date.getDate()).padStart(2, '0');
-
-    const todaydate = year + month + day;
-    setFromDate(todaydate);
-})
+        const todaydate = year + month + day;
+        setFromDate(todaydate);
+    })
 
   const tokenUrl = '/api/server3/UHES-0.0.1/oauth/token';
 
@@ -52,7 +51,7 @@ const GetNotCommunicated = ({ selectedLabel }) => {
       const accessToken = tokenData.access_token;
 
       // Use the updated start parameter for pagination
-      const baseUrl = `/api/server3/UHES-0.0.1/WS/ServerpaginationForMeterCommunicationReport?Flag=${selectedLabel}&draw=1&length=${length}&officeid=3459274e-f20f-4df8-a960-b10c5c228d3e%20%20&start=${start}`;
+      const baseUrl = `/api/server3/UHES-0.0.1/WS/getCommissionedButNotCommunicatedReport?Flag=${selectedLabel}&OfficeId=3459274e-f20f-4df8-a960-b10c5c228d3e%20%20`;
         const dataResponse = await fetch(baseUrl, {
           headers: { 'Authorization': `Bearer ${accessToken}` },
         });
@@ -74,8 +73,8 @@ const GetNotCommunicated = ({ selectedLabel }) => {
 
   // AG Grid column definitions
   const columnDefs = [
-    { headerName: "METERNO", field: "METERNO", flex: 1, filter: true, sortable: true },
-    { headerName: "MeterLastCommunicated", field: "MeterLastCommunicated", flex: 1, filter: true, sortable: true },
+    { headerName: "METERNO", field: "METER_NUMBER", flex: 1, filter: true, sortable: true },
+    { headerName: "MeterLastCommunicated", field: "COMM_DATE", flex: 1, filter: true, sortable: true },
     // Add more columns based on your data structure
   ];
 
@@ -225,4 +224,4 @@ const GetNotCommunicated = ({ selectedLabel }) => {
   );
 };
 
-export default GetNotCommunicated;
+export default GetCommunicationStatusonMITypes;
