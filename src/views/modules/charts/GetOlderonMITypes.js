@@ -65,8 +65,8 @@ const GetOlderonMITypes = ({ selectedLabel, selectedCategory }) => {
 
   // AG Grid column definitions
   const columnDefs = [
-    { headerName: "METERNO", field: "METERNO", flex: 1, filter: true, sortable: true },
-    { headerName: "MeterLastCommunicated", field: "MeterLastCommunicated", flex: 1, filter: true, sortable: true },
+    { headerName: "METERNO", field: "METERNO", flex: 1, filter: true, sortable: true, valueFormatter: (params) => params.value ? params.value : "N/A" },
+    { headerName: "MeterLastCommunicated", field: "MeterLastCommunicated", flex: 1, filter: true, sortable: true , valueFormatter: (params) => params.value ? params.value : "N/A"},
     // Add more columns based on your data structure
   ];
 
@@ -104,9 +104,12 @@ const GetOlderonMITypes = ({ selectedLabel, selectedCategory }) => {
   const exportToExcel = async () => {
     const workbook = new ExcelJS.Workbook();
     const worksheet = workbook.addWorksheet('Data');
+    const headers = Object.keys(data[0] || {});
+    const title = worksheet.addRow([`${selectedLabel}`]); // Replace with your title text
+    title.font = { bold: true, size: 16, color: { argb: 'FFFF00' } }; // Set font color and size
+    title.alignment = { horizontal: 'center' };
+    worksheet.mergeCells('A1', `${String.fromCharCode(64 + headers.length)}1`);
 
-    // Define header and set styles
-    const headers = Object.keys(data[0] || {}); // Extract column names from the data keys
     const headerRow = worksheet.addRow(headers);
 
     headerRow.eachCell((cell) => {
@@ -124,8 +127,8 @@ const GetOlderonMITypes = ({ selectedLabel, selectedCategory }) => {
     });
 
     worksheet.autoFilter = {
-      from: 'A1', // Starting cell of the filter (top-left corner)
-      to: `${String.fromCharCode(64 + headers.length)}1` // Ending cell (top-right corner based on header count)
+      from: 'A2', // Starting cell of the filter (top-left corner)
+      to: `${String.fromCharCode(64 + headers.length)}2` // Ending cell (top-right corner based on header count)
   };
 
     // Adjust column widths based on the max length of the column data
@@ -177,7 +180,7 @@ const GetOlderonMITypes = ({ selectedLabel, selectedCategory }) => {
 
   return (
     <div style={{ fontFamily: 'Arial, sans-serif', padding: '20px' }}>
-      {loading && <p>Loading...</p>}
+      
       {error && <p style={{ color: 'red' }}>Error: {error}</p>}
 
       <div>

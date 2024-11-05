@@ -139,46 +139,49 @@ const Apicall = ({ selectedLabel }) => {
 
   // Export function for Excel with adjusted column widths
   const exportToExcel = async () => {
-      const workbook = new ExcelJS.Workbook();
-      const worksheet = workbook.addWorksheet('Data');
-  
-      // Define header and set styles
-      const headers = Object.keys(data[0] || {}); // Extract column names from the data keys
-      const headerRow = worksheet.addRow(headers);
-  
-      headerRow.eachCell((cell) => {
-        cell.font = { bold: true, color: { argb: 'FFFFFF' } }; // White font color
-        cell.fill = {
-            type: 'pattern',
-            pattern: 'solid',
-            fgColor: { argb: 'FFADD8E6' }, // Black background color
-        };
-    });
-  
-      // Add data rows
-      data.forEach(row => {
-          worksheet.addRow(Object.values(row));
-      });
+    const workbook = new ExcelJS.Workbook();
+    const worksheet = workbook.addWorksheet('Data');
+    const headers = Object.keys(data[0] || {});
+    const title = worksheet.addRow([`${selectedLabel}`]); // Replace with your title text
+    title.font = { bold: true, size: 16, color: { argb: 'FFFF00' } }; // Set font color and size
+    title.alignment = { horizontal: 'center' };
+    worksheet.mergeCells('A1', `${String.fromCharCode(64 + headers.length)}1`);
 
-      worksheet.autoFilter = {
-        from: 'A1', // Starting cell of the filter (top-left corner)
-        to: `${String.fromCharCode(64 + headers.length)}1` // Ending cell (top-right corner based on header count)
-    };
-  
-      // Adjust column widths based on the max length of the column data
-      headers.forEach((header, index) => {
-          const maxLength = Math.max(
-              header.length, // Length of the header
-              ...data.map(row => row[header] ? row[header].toString().length : 0) // Length of the content
-          );
-          worksheet.getColumn(index + 1).width = maxLength + 2; // Adding padding
-      });
-  
-      // Generate Excel file and trigger download
-      const buffer = await workbook.xlsx.writeBuffer();
-      const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
-      saveAs(blob, `${selectedLabel}.xlsx`);
+    const headerRow = worksheet.addRow(headers);
+
+    headerRow.eachCell((cell) => {
+      cell.font = { bold: true, color: { argb: 'FFFFFF' } }; // White font color
+      cell.fill = {
+          type: 'pattern',
+          pattern: 'solid',
+          fgColor: { argb: 'FFADD8E6' }, // Black background color
+      };
+  });
+
+    // Add data rows
+    data.forEach(row => {
+        worksheet.addRow(Object.values(row));
+    });
+
+    worksheet.autoFilter = {
+      from: 'A2', // Starting cell of the filter (top-left corner)
+      to: `${String.fromCharCode(64 + headers.length)}2` // Ending cell (top-right corner based on header count)
   };
+
+    // Adjust column widths based on the max length of the column data
+    headers.forEach((header, index) => {
+        const maxLength = Math.max(
+            header.length, // Length of the header
+            ...data.map(row => row[header] ? row[header].toString().length : 0) // Length of the content
+        );
+        worksheet.getColumn(index + 1).width = maxLength + 2; // Adding padding
+    });
+
+    // Generate Excel file and trigger download
+    const buffer = await workbook.xlsx.writeBuffer();
+    const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+    saveAs(blob, `${selectedLabel}.xlsx`);
+};
 
   // Export function for PDF
   const exportToPDF = () => {
@@ -214,7 +217,6 @@ const Apicall = ({ selectedLabel }) => {
 
   return (
     <div style={{ fontFamily: 'Arial, sans-serif', padding: '20px' }}>
-      {loading && <p>Loading...</p>}
       {error && <p style={{ color: 'red' }}>Error: {error}</p>}
 
       <div>
