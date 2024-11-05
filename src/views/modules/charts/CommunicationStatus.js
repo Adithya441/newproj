@@ -94,6 +94,23 @@ const CommunicationStatus = () => {
   const options = {
     chart: {
       type: 'donut',
+      toolbar: {
+        show: true, // Show the toolbar
+        tools: {
+            download: true, 
+            export: {
+              csv: {
+                  filename: `Communication Status`
+              },
+              svg: {
+                  filename: `Communication Status`
+              },
+              png: {
+                  filename: `Communication Status`
+              }
+          },
+        },
+      },
       events: {
         dataPointSelection: (event, chartContext, config) => {
           const selectedLabel = labels[config.dataPointIndex];
@@ -162,7 +179,7 @@ const CommunicationStatus = () => {
 
   return (
     <div className="container mx-auto p-4">
-      <div className="w-full max-w-md mx-auto mb-8" style={{width:"20vw"}}>
+      <div className="w-full max-w-md mx-auto mb-8" style={{width:"25vw"}}>
         <ReactApexChart
           options={options}
           series={series}

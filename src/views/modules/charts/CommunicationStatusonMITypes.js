@@ -1,15 +1,15 @@
 import React, { useEffect, useState } from 'react';
-import { Bar } from 'react-chartjs-2';
-import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend } from 'chart.js';
+import ReactApexChart from 'react-apexcharts';
 import { Modal, Button } from 'react-bootstrap';
-
-ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
+import GetCommunicationStatusonMITypes from './GetCommunicationStatusonMITypes';
 
 const CommunicationStatusonMITypes = () => {
   const [chartData, setChartData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
   const [selectedData, setSelectedData] = useState(null);
+  const [categorys, setCategory] = useState(null);
+  const [selectlabel, setSelectlabel] = useState(null);
 
   const tokenUrl = '/api/server3/UHES-0.0.1/oauth/token';
   const baseUrl = '/api/server3/UHES-0.0.1/WS/getmeterCommunicationStatusBasedOnMI?officeid=3459274e-f20f-4df8-a960-b10c5c228d3e';
@@ -50,26 +50,76 @@ const CommunicationStatusonMITypes = () => {
         const total = communicatedData[index] + notCommunicatedData[index];
         const commPercent = total ? ((communicatedData[index] / total) * 100).toFixed(2) : 0;
         const notCommPercent = total ? ((notCommunicatedData[index] / total) * 100).toFixed(2) : 0;
-        return {
-          communicated: parseFloat(commPercent),
-          notCommunicated: parseFloat(notCommPercent),
-        };
+        return [parseFloat(commPercent), parseFloat(notCommPercent)];
       });
 
       setChartData({
-        labels,
-        datasets: [
+        options: {
+          chart: {
+            type: 'bar',
+            stacked: true,
+            stackType: '100%',
+            toolbar: {
+              show: true, // Show the toolbar
+              tools: {
+                  download: true,
+              },
+              export: {
+                  csv: {
+                      filename: `Meter Communication Status Based on MI Types`,
+                  },
+                  svg: {
+                      filename: `Meter Communication Status Based on MI Types`
+                  },
+                  png: {
+                      filename: `Meter Communication Status Based on MI Types`
+                  }
+              },
+          },
+            events: {
+              dataPointSelection: (event, chartContext, config) => {
+                const { dataPointIndex, seriesIndex } = config;
+                const category = labels[dataPointIndex];
+                const value = percentageData[dataPointIndex][seriesIndex];
+                const label = seriesIndex === 0 ? 'Meter Communicated' : 'Meter Not Communicated';
+                setCategory(category);
+                setSelectlabel(label);
+                setSelectedData({ category, value, label });
+                setShowModal(true);
+              }
+            }
+          },
+          plotOptions: {
+            bar: {
+              horizontal: true,
+            }
+          },
+          xaxis: {
+            categories: labels,
+          },
+          yaxis: {
+            max: 100
+          },
+          colors: ['rgb(35, 240, 12)', 'rgb(28, 148, 142)'],
+          tooltip: {
+            y: {
+              formatter: (val) => `${val}%`
+            }
+          },
+          legend: {
+            position: 'top'
+          }
+        },
+        series: [
           {
-            label: 'Meter Communicated',
-            data: percentageData.map(d => d.communicated),
-            backgroundColor: 'rgb(35, 240, 12)', // Green color
+            name: 'Meter Communicated',
+            data: percentageData.map(d => d[0])
           },
           {
-            label: 'Meter Not Communicated',
-            data: percentageData.map(d => d.notCommunicated),
-            backgroundColor: 'rgb(28, 148, 142)', // Teal color
-          },
-        ],
+            name: 'Meter Not Communicated',
+            data: percentageData.map(d => d[1])
+          }
+        ]
       });
       setLoading(false);
     } catch (err) {
@@ -82,45 +132,8 @@ const CommunicationStatusonMITypes = () => {
     fetchData();
   }, []);
 
-  const handleBarClick = (event, elements) => {
-    if (!elements.length) return;
-    const { index, datasetIndex } = elements[0];
-    const category = chartData.labels[index];
-    const value = chartData.datasets[datasetIndex].data[index];
-    const label = chartData.datasets[datasetIndex].label;
-
-    setSelectedData({ category, value, label });
-    setShowModal(true);
-  };
-
   if (loading) return <p>Loading...</p>;
   if (!chartData) return <p>No data available.</p>;
-
-  const options = {
-    indexAxis: 'y', // Horizontal bars
-    onClick: handleBarClick,
-    plugins: {
-      tooltip: {
-        callbacks: {
-          label: (context) => `${context.dataset.label}: ${context.raw}%`, // Display percentage
-        },
-      },
-    },
-    responsive: true,
-    scales: {
-      x: {
-        beginAtZero: true,
-        max: 100, // Max percentage
-        stacked: true,
-      },
-      y: {
-        stacked: true,
-        title: {
-          display: true,
-        },
-      },
-    },
-  };
 
   const handleClose = () => setShowModal(false);
 
@@ -128,26 +141,52 @@ const CommunicationStatusonMITypes = () => {
     <div>
       <h5>Meter Communication Status Based on MI Types</h5>
       <div style={{ width: '35vw', height: '40vh' }}>
-        <Bar data={chartData} options={options} />
+        <ReactApexChart
+          options={chartData.options}
+          series={chartData.series}
+          type="bar"
+          width="100%"
+          height="100%"
+        />
       </div>
 
-      <Modal show={showModal} onHide={handleClose}>
-        <Modal.Header closeButton>
-          <Modal.Title>Details</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          {selectedData && (
-            <div>
-              <p><strong>Category:</strong> {selectedData.category}</p>
-              <p><strong>Status:</strong> {selectedData.label}</p>
-              <p><strong>Percentage:</strong> {selectedData.value}%</p>
-            </div>
-          )}
-        </Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={handleClose}>Close</Button>
-        </Modal.Footer>
-      </Modal>
+      {showModal && (
+        <div
+          style={{
+            position: 'fixed',
+            top: '50%',
+            left: '50%',
+            transform: 'translate(-50%, -50%)',
+            zIndex: 1050,
+            backgroundColor: '#fff',
+            width: '1000px',
+            borderRadius: '5px',
+            boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.3)',
+            padding: '1em',
+            marginLeft: '125px',
+          }}
+        >
+          {/* Modal Header */}
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <h5 id="contained-modal-title-vcenter">{selectlabel}</h5>
+            <button onClick={handleClose} style={{ background: 'none', border: 'none', fontSize: '1.5rem' }}>
+              &times;
+            </button>
+          </div>
+
+          {/* Modal Body */}
+          <div style={{ maxHeight: '70vh', width: '970px', overflowY: 'auto' }}>
+            <GetCommunicationStatusonMITypes selectedLabel={selectlabel} selectedCategory={categorys} />
+          </div>
+
+          {/* Modal Footer */}
+          <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '1em' }}>
+            <button onClick={handleClose} style={{ padding: '0.5em 1em', cursor: 'pointer' }}>
+              Close
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

@@ -66,6 +66,23 @@ const NeverCommunicatedMeters = () => {
   const options = {
     chart: {
       type: 'bar',
+      toolbar: {
+        show: true, // Show the toolbar
+        tools: {
+            download: true,
+        },
+        export: {
+            csv: {
+                filename: `Never Communicated Meters`,
+            },
+            svg: {
+                filename: `Never Communicated Meters`
+            },
+            png: {
+                filename: `Never Communicated Meters`
+            }
+        },
+    },
       events: {
         dataPointSelection: (event, chartContext, config) => {
           const selectedLabel = labels[config.dataPointIndex];

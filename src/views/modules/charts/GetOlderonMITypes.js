@@ -9,25 +9,15 @@ import ExcelJS from 'exceljs';
 import { saveAs } from 'file-saver';
 import loadingGif from '../../../assets/img2.gif'
 
-const GetNotCommunicated = ({ selectedLabel }) => {
+const GetOlderonMITypes = ({ selectedLabel, selectedCategory }) => {
   const [data, setData] = useState([]); // Ensure data is an array
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [fromDate, setFromDate] = useState(null);
   const [start, setStart] = useState(0); // Start index for pagination
   const [recordsTotal, setRecordsTotal] = useState(0); // Total records count
   const length = 10; // Number of records per page
-  const [exportFormat, setExportFormat] = useState(''); // Selected export format
-
-  useEffect(()=>{
-    const date = new Date();
-    const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are 0-indexed
-    const day = String(date.getDate()).padStart(2, '0');
-
-    const todaydate = year + month + day;
-    setFromDate(todaydate);
-})
+  const [exportFormat, setExportFormat] = useState(''); 
+  console.log(selectedLabel);// Selected export format
 
   const tokenUrl = '/api/server3/UHES-0.0.1/oauth/token';
 
@@ -46,13 +36,14 @@ const GetNotCommunicated = ({ selectedLabel }) => {
           client_secret: 'secret',
         }),
       });
+      console.log(',,,,,,,,,,,,,,,,,,');
 
       if (!tokenResponse.ok) throw new Error('Failed to authenticate');
       const tokenData = await tokenResponse.json();
+      console.log('hello')
       const accessToken = tokenData.access_token;
-
-      // Use the updated start parameter for pagination
-      const baseUrl = `/api/server3/UHES-0.0.1/WS/ServerpaginationForMeterCommunicationReport?Flag=${selectedLabel}&draw=1&length=${length}&officeid=3459274e-f20f-4df8-a960-b10c5c228d3e%20%20&start=${start}`;
+      console.log('hello world')
+      const baseUrl = `/api/server3/UHES-0.0.1/WS/ServerpaginationForGettingOlderReportBasedOnMI?Flag=${selectedLabel}&applyMaskingFlag=document.getElementsByName('N')%5B0%5D.value&draw=1&length=${length}&mtrInterface=${selectedCategory}&office=3459274e-f20f-4df8-a960-b10c5c228d3e&start=${start}`;
         const dataResponse = await fetch(baseUrl, {
           headers: { 'Authorization': `Bearer ${accessToken}` },
         });
@@ -66,7 +57,7 @@ const GetNotCommunicated = ({ selectedLabel }) => {
     } finally {
       setLoading(false);
     }
-  }, [fromDate, start, length]);
+  }, [ start, length]);
 
   useEffect(() => {
     fetchData();
@@ -225,4 +216,4 @@ const GetNotCommunicated = ({ selectedLabel }) => {
   );
 };
 
-export default GetNotCommunicated;
+export default GetOlderonMITypes;

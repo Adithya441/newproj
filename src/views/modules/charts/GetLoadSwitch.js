@@ -7,33 +7,31 @@ import jsPDF from 'jspdf'; // Import for PDF
 import 'jspdf-autotable'; // Import for using autotable with jsPDF
 import ExcelJS from 'exceljs';
 import { saveAs } from 'file-saver';
+import loadingGif from '../../../assets/img2.gif'
 
 const GetLoadSwitch = ({ selectedLabel }) => {
-  const [data, setData] = useState([]); // Ensure data is an array
-  const [loading, setLoading] = useState(false);
+  const [data, setData] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [fromDate, setFromDate] = useState(null);
-  const [start, setStart] = useState(0); // Start index for pagination
-  const [recordsTotal, setRecordsTotal] = useState(0); // Total records count
-  const length = 10; // Number of records per page
-  const [exportFormat, setExportFormat] = useState(''); // Selected export format
+  const [start, setStart] = useState(0);
+  const [recordsTotal, setRecordsTotal] = useState(0);
+  const length = 10;
+  const [exportFormat, setExportFormat] = useState('');
 
-  useEffect(()=>{
+  useEffect(() => {
     const date = new Date();
     const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are 0-indexed
+    const month = String(date.getMonth() + 1).padStart(2, '0');
     const day = String(date.getDate()).padStart(2, '0');
-
     const todaydate = year + month + day;
     setFromDate(todaydate);
-})
+  }, []);
 
   const tokenUrl = '/api/server3/UHES-0.0.1/oauth/token';
 
   const fetchData = useCallback(async () => {
-    setLoading(true);
     setError(null);
-    console.log(selectedLabel);
     try {
       const tokenResponse = await fetch(tokenUrl, {
         method: 'POST',
@@ -51,54 +49,33 @@ const GetLoadSwitch = ({ selectedLabel }) => {
       const tokenData = await tokenResponse.json();
       const accessToken = tokenData.access_token;
 
-      // Use the updated start parameter for pagination
-      if(selectedLabel === 'CONNECTED'){
-      const baseUrl = `/api/server3/UHES-0.0.1/WS/ServerpaginationForLoadSwitchStatus?RelayStatus=1&applyMaskingFlag=N&draw=1&length=${length}&officeid=3459274e-f20f-4df8-a960-b10c5c228d3e&start=${start}`;
-        const dataResponse = await fetch(baseUrl, {
-          headers: { 'Authorization': `Bearer ${accessToken}` },
-        });
-        const responseData = await dataResponse.json();
-        setRecordsTotal(responseData.recordsTotal || 0); // Update this key based on your API response
-        setData(responseData.data || []);
-        }
-        else if(selectedLabel === 'DISCONNECTED'){
-            const baseUrl = `/api/server3/UHES-0.0.1/WS/ServerpaginationForLoadSwitchStatus?RelayStatus=0&applyMaskingFlag=N&draw=1&length=${length}&officeid=3459274e-f20f-4df8-a960-b10c5c228d3e&start=${start}`;
-            const dataResponse = await fetch(baseUrl, {
-            headers: { 'Authorization': `Bearer ${accessToken}` },
-            });
-            const responseData = await dataResponse.json();
-            setRecordsTotal(responseData.recordsTotal || 0); // Update this key based on your API response
-            setData(responseData.data || []);
-        }
+      const baseUrl = `/api/server3/UHES-0.0.1/WS/ServerpaginationForLoadSwitchStatus?RelayStatus=${selectedLabel === 'CONNECTED' ? 1 : 0}&applyMaskingFlag=N&draw=1&length=${length}&officeid=3459274e-f20f-4df8-a960-b10c5c228d3e&start=${start}`;
+      const dataResponse = await fetch(baseUrl, {
+        headers: { 'Authorization': `Bearer ${accessToken}` },
+      });
+      const responseData = await dataResponse.json();
 
-       // Set data to responseData.data or an empty array
+      setRecordsTotal(responseData.recordsTotal || 0);
+      setData(responseData.data || []);
     } catch (err) {
       setError(err.message);
     } finally {
       setLoading(false);
     }
-  }, [fromDate, start, length]);
+  }, [selectedLabel, start, length]);
 
   useEffect(() => {
     fetchData();
   }, [fetchData]);
 
-  // AG Grid column definitions
   const columnDefs = [
     { headerName: "METERNO", field: "METERNO", flex: 1, filter: true, sortable: true },
     { headerName: "STATUS", field: "STATUS", flex: 1, filter: true, sortable: true },
-    // Add more columns based on your data structure
   ];
 
-  // Handler for pagination
   const handleNextPage = () => setStart((prevStart) => prevStart + length);
   const handlePreviousPage = () => setStart((prevStart) => Math.max(prevStart - length, 0));
 
-  // Calculate the current page number
-  const currentPage = Math.floor(start / length) + 1;
-  const totalPages = Math.ceil(recordsTotal / length);
-
-  // Export function for CSV
   const exportToCSV = () => {
     const csvData = data.map(row => ({
       METERNO: row.METERNO,
@@ -178,7 +155,9 @@ const GetLoadSwitch = ({ selectedLabel }) => {
     doc.save('data.pdf');
   };
 
-  // Handle export format change
+  const currentPage = Math.floor(start / length) + 1;
+  const totalPages = Math.ceil(recordsTotal / length);
+
   const handleExport = () => {
     switch (exportFormat) {
       case 'csv':
@@ -197,10 +176,7 @@ const GetLoadSwitch = ({ selectedLabel }) => {
 
   return (
     <div style={{ fontFamily: 'Arial, sans-serif', padding: '20px' }}>
-      {loading && <p>Loading...</p>}
-      {error && <p style={{ color: 'red' }}>Error: {error}</p>}
-
-      <div>
+        <div>
         <label htmlFor="export-format">Export Data As:</label>
         <select
           id="export-format"
@@ -216,14 +192,13 @@ const GetLoadSwitch = ({ selectedLabel }) => {
           Export
         </button>
       </div>
-
-      <div className="ag-theme-alpine" style={{ height: 400, width: '100%', marginTop: '20px' }}>
-        <AgGridReact
-          rowData={data}
-          columnDefs={columnDefs}
-          onGridReady={fetchData}
-        />
-      </div>
+      {loading ? (
+        <img src={loadingGif} alt="Loading..." style={{ width: '150px', height: '150px', margin:'50px 350px' }} />
+      ) : (
+        <div className="ag-theme-alpine" style={{ height: 400, width: '100%', marginTop: '20px' }}>
+          <AgGridReact rowData={data} columnDefs={columnDefs} onGridReady={fetchData} />
+        </div>
+      )}
 
       <div style={{ marginTop: '20px', display:'flex', justifyContent:'space-between' }}>
         <span style={{ marginLeft: '10px' }}>

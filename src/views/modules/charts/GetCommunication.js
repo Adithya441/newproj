@@ -7,17 +7,17 @@ import jsPDF from 'jspdf'; // Import for PDF
 import 'jspdf-autotable'; // Import for using autotable with jsPDF
 import ExcelJS from 'exceljs';
 import { saveAs } from 'file-saver';
+import loadingGif from '../../../assets/img2.gif'
 
 const Apicall = ({ selectedLabel }) => {
   const [data, setData] = useState([]); // Ensure data is an array
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [fromDate, setFromDate] = useState(null);
   const [start, setStart] = useState(0); // Start index for pagination
   const [recordsTotal, setRecordsTotal] = useState(0); // Total records count
   const length = 10; // Number of records per page
   const [exportFormat, setExportFormat] = useState(''); // Selected export format
-
+  let fromDate;
   useEffect(()=>{
     const date = new Date();
     const year = date.getFullYear();
@@ -25,13 +25,12 @@ const Apicall = ({ selectedLabel }) => {
     const day = String(date.getDate()).padStart(2, '0');
 
     const todaydate = year + month + day;
-    setFromDate(todaydate);
+    fromDate = todaydate;
 })
 
   const tokenUrl = '/api/server3/UHES-0.0.1/oauth/token';
 
   const fetchData = useCallback(async () => {
-    setLoading(true);
     setError(null);
     console.log(selectedLabel);
     try {
@@ -52,8 +51,8 @@ const Apicall = ({ selectedLabel }) => {
       const accessToken = tokenData.access_token;
 
       // Use the updated start parameter for pagination
-      const baseUrl = `/api/server3/UHES-0.0.1/WS/ServerpaginationForCommunicationReport?office=3459274e-f20f-4df8-a960-b10c5c228d3e&fromdate=${fromDate}&TOTAL_COUNT=&userName=Admin&password=Admin@123&oAuthDetails=${accessToken}&draw=2&start=${start}&length=${length}`;
-      const baseUrl1 = `/api/server3/UHES-0.0.1/WS/ServerpaginationForNonCommunicationReport?office=3459274e-f20f-4df8-a960-b10c5c228d3e&fromdate=${fromDate}&TOTAL_COUNT=&userName=Admin&password=Admin@123&oAuthDetails=${accessToken}&draw=2&start=${start}&length=${length}`;
+      const baseUrl = `/api/server3/UHES-0.0.1/WS/ServerpaginationForCommunicationReport?office=3459274e-f20f-4df8-a960-b10c5c228d3e&fromdate=${fromDate}&TOTAL_COUNT=&draw=2&start=${start}&length=${length}`;
+      const baseUrl1 = `/api/server3/UHES-0.0.1/WS/ServerpaginationForNonCommunicationReport?office=3459274e-f20f-4df8-a960-b10c5c228d3e&fromdate=${fromDate}&TOTAL_COUNT=&draw=2&start=${start}&length=${length}`;
       const baseUrl2 = `/api/server3/UHES-0.0.1/WS/ServerpaginationForNeverCommunicatedMetersReport?Date=${fromDate}&OfficeId=3459274e-f20f-4df8-a960-b10c5c228d3e&draw=1&length=${length}&start=${start}`;
       if(selectedLabel === 'COMMUNICATED'){
         const dataResponse = await fetch(baseUrl, {
@@ -67,22 +66,22 @@ const Apicall = ({ selectedLabel }) => {
         setData(responseData.data || []);
       }
       else if(selectedLabel === 'NOT COMMUNICATED'){
-        const dataResponse1 = await fetch(baseUrl1, {
+        const dataResponse = await fetch(baseUrl1, {
           headers: { 'Authorization': `Bearer ${accessToken}` },
         });
-        if (!dataResponse1.ok) throw new Error('Failed to fetch data');
-        const responseData = await dataResponse1.json();
+        if (!dataResponse.ok) throw new Error('Failed to fetch data');
+        const responseData = await dataResponse.json();
 
         // Set records total from API response
         setRecordsTotal(responseData.recordsTotal || 0); // Update this key based on your API response
         setData(responseData.data || []);
       }
       else if(selectedLabel === 'NEVER COMMUNICATED'){
-        const dataResponse2 = await fetch(baseUrl2, {
+        const dataResponse = await fetch(baseUrl2, {
           headers: { 'Authorization': `Bearer ${accessToken}` },
         });
-        if (!dataResponse2.ok) throw new Error('Failed to fetch data');
-        const responseData = await dataResponse2.json();
+        if (!dataResponse.ok) throw new Error('Failed to fetch data');
+        const responseData = await dataResponse.json();
 
         // Set records total from API response
         setRecordsTotal(responseData.recordsTotal || 0); // Update this key based on your API response
@@ -103,8 +102,8 @@ const Apicall = ({ selectedLabel }) => {
 
   // AG Grid column definitions
   const columnDefs = [
-    { headerName: "METERNO", field: "METERNO", flex: 1, filter: true, sortable: true },
-    { headerName: "MeterLastCommunicated", field: "MeterLastCommunicated", flex: 1, filter: true, sortable: true },
+    { headerName: "METERNO", field: "METERNO", flex: 1, filter: true, sortable: true, valueFormatter: (params) => params.value ? params.value : "N/A" },
+    { headerName: "MeterLastCommunicated", field: "MeterLastCommunicated", flex: 1, filter: true, sortable: true , valueFormatter: (params) => params.value ? params.value : "N/A"},
     // Add more columns based on your data structure
   ];
 
@@ -235,13 +234,13 @@ const Apicall = ({ selectedLabel }) => {
         </button>
       </div>
 
-      <div className="ag-theme-alpine" style={{ height: 400, width: '100%', marginTop: '20px' }}>
-        <AgGridReact
-          rowData={data}
-          columnDefs={columnDefs}
-          onGridReady={fetchData}
-        />
-      </div>
+      {loading ? (
+        <img src={loadingGif} alt="Loading..." style={{ width: '150px', height: '150px', margin:'50px 350px' }} />
+      ) : (
+        <div className="ag-theme-alpine" style={{ height: 400, width: '100%', marginTop: '20px' }}>
+          <AgGridReact rowData={data} columnDefs={columnDefs} onGridReady={fetchData} />
+        </div>
+      )}
 
       <div style={{ marginTop: '20px', display:'flex', justifyContent:'space-between' }}>
         <span style={{ marginLeft: '10px' }}>

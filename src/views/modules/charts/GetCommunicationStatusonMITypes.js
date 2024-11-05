@@ -7,16 +7,18 @@ import jsPDF from 'jspdf'; // Import for PDF
 import 'jspdf-autotable'; // Import for using autotable with jsPDF
 import ExcelJS from 'exceljs';
 import { saveAs } from 'file-saver';
+import loadingGif from '../../../assets/img2.gif'
 
-const GetCommunicationStatusonMITypes = ({ selectedLabel }) => {
+const GetCommunicationStatusonMITypes = ({ selectedLabel, selectedCategory }) => {
   const [data, setData] = useState([]); // Ensure data is an array
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [fromDate, setFromDate] = useState(null);
   const [start, setStart] = useState(0); // Start index for pagination
   const [recordsTotal, setRecordsTotal] = useState(0); // Total records count
   const length = 10; // Number of records per page
-  const [exportFormat, setExportFormat] = useState(''); // Selected export format
+  const [exportFormat, setExportFormat] = useState(''); 
+  console.log(selectedLabel);// Selected export format
     useEffect(()=>{
         const date = new Date();
         const year = date.getFullYear();
@@ -30,7 +32,6 @@ const GetCommunicationStatusonMITypes = ({ selectedLabel }) => {
   const tokenUrl = '/api/server3/UHES-0.0.1/oauth/token';
 
   const fetchData = useCallback(async () => {
-    setLoading(true);
     setError(null);
     console.log(selectedLabel);
     try {
@@ -51,13 +52,24 @@ const GetCommunicationStatusonMITypes = ({ selectedLabel }) => {
       const accessToken = tokenData.access_token;
 
       // Use the updated start parameter for pagination
-      const baseUrl = `/api/server3/UHES-0.0.1/WS/getCommissionedButNotCommunicatedReport?Flag=${selectedLabel}&OfficeId=3459274e-f20f-4df8-a960-b10c5c228d3e%20%20`;
+      if(selectedLabel==='Meter Communicated'){
+      const baseUrl = `/api/server3/UHES-0.0.1/WS/ServerpaginationForCommunicationQueryBasedOnMI?Flag=COMMUNICATED&draw=1&length=${length}&mtrInterface=${selectedCategory}&office=3459274e-f20f-4df8-a960-b10c5c228d3e&start=${start}`;
         const dataResponse = await fetch(baseUrl, {
           headers: { 'Authorization': `Bearer ${accessToken}` },
         });
         const responseData = await dataResponse.json();
         setRecordsTotal(responseData.recordsTotal || 0); // Update this key based on your API response
         setData(responseData.data || []);
+    }
+    else if(selectedLabel === 'Meter Not Communicated'){
+        const baseUrl = `/api/server3/UHES-0.0.1/WS/ServerpaginationForNonCommunicationQueryBasedOnMI?Flag=NOTCOMMUNICATED&draw=1&length=${length}&mtrInterface=${selectedCategory}&office=3459274e-f20f-4df8-a960-b10c5c228d3e&start=${start}`;
+        const dataResponse = await fetch(baseUrl, {
+          headers: { 'Authorization': `Bearer ${accessToken}` },
+        });
+        const responseData = await dataResponse.json();
+        setRecordsTotal(responseData.recordsTotal || 0); // Update this key based on your API response
+        setData(responseData.data || []);
+    }
 
        // Set data to responseData.data or an empty array
     } catch (err) {
@@ -73,8 +85,8 @@ const GetCommunicationStatusonMITypes = ({ selectedLabel }) => {
 
   // AG Grid column definitions
   const columnDefs = [
-    { headerName: "METERNO", field: "METER_NUMBER", flex: 1, filter: true, sortable: true },
-    { headerName: "MeterLastCommunicated", field: "COMM_DATE", flex: 1, filter: true, sortable: true },
+    { headerName: "METERNO", field: "METERNO", flex: 1, filter: true, sortable: true },
+    { headerName: "MeterLastCommunicated", field: "MeterLastCommunicated", flex: 1, filter: true, sortable: true },
     // Add more columns based on your data structure
   ];
 
@@ -205,13 +217,13 @@ const GetCommunicationStatusonMITypes = ({ selectedLabel }) => {
         </button>
       </div>
 
-      <div className="ag-theme-alpine" style={{ height: 400, width: '100%', marginTop: '20px' }}>
-        <AgGridReact
-          rowData={data}
-          columnDefs={columnDefs}
-          onGridReady={fetchData}
-        />
-      </div>
+      {loading ? (
+        <img src={loadingGif} alt="Loading..." style={{ width: '150px', height: '150px' , margin:'50px 350px'}} />
+      ) : (
+        <div className="ag-theme-alpine" style={{ height: 400, width: '100%', marginTop: '20px' }}>
+          <AgGridReact rowData={data} columnDefs={columnDefs} onGridReady={fetchData} />
+        </div>
+      )}
 
       <div style={{ marginTop: '20px', display:'flex', justifyContent:'space-between' }}>
         <span style={{ marginLeft: '10px' }}>

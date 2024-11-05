@@ -7,10 +7,11 @@ import jsPDF from 'jspdf';
 import 'jspdf-autotable';
 import ExcelJS from 'exceljs';
 import { saveAs } from 'file-saver';
+import loadingGif from '../../../assets/img2.gif'
 
 const GetNeverCommunicated = ({ selectedLabel }) => {
   const [data, setData] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [fromDate, setFromDate] = useState(null);
   const [start, setStart] = useState(0);
@@ -31,7 +32,6 @@ const GetNeverCommunicated = ({ selectedLabel }) => {
   const tokenUrl = '/api/server3/UHES-0.0.1/oauth/token';
 
   const fetchData = useCallback(async () => {
-    setLoading(true);
     setError(null);
 
     try {
@@ -178,7 +178,6 @@ const GetNeverCommunicated = ({ selectedLabel }) => {
 
   return (
     <div style={{ fontFamily: 'Arial, sans-serif', padding: '20px' }}>
-      {loading && <div className="spinner">Loading...</div>}
       {error && <p style={{ color: 'red' }}>Error: {error}</p>}
 
       <div>
@@ -193,17 +192,18 @@ const GetNeverCommunicated = ({ selectedLabel }) => {
           <option value="excel">Excel</option>
           <option value="pdf">PDF</option>
         </select>
-        <button onClick={handleExport} disabled={!exportFormat} style={{ marginLeft: '10px', backgroundColor: 'black', color: 'white' }}>
+        <button onClick={handleExport} disabled={!exportFormat} style={{ marginLeft: '10px', backgroundColor: 'black', color: 'white', borderRadius:'15px' }}>
           Export
         </button>
       </div>
 
-      <div className="ag-theme-alpine" style={{ height: 400, width: '100%', marginTop: '20px' }}>
-        <AgGridReact
-          rowData={data}
-          columnDefs={columnDefs}
-        />
-      </div>
+      {loading ? (
+        <img src={loadingGif} alt="Loading..." style={{ width: '150px', height: '150px', margin:'50px 350px' }} />
+      ) : (
+        <div className="ag-theme-alpine" style={{ height: 400, width: '100%', marginTop: '20px' }}>
+          <AgGridReact rowData={data} columnDefs={columnDefs} onGridReady={fetchData} />
+        </div>
+      )}
 
       <div style={{ marginTop: '20px', display: 'flex', justifyContent: 'space-between' }}>
         <span>Page {currentPage} of {totalPages}</span>
