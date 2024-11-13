@@ -9,39 +9,38 @@ import ExcelJS from 'exceljs';
 import { saveAs } from 'file-saver';
 import loadingGif from '../../../assets/img2.gif'
 
-const GetDataAvailability = ({ selecteddate, profile }) => {
+const GetDataAvailability = ({ selecteddate, profile, officess, names }) => {
     const [tableData, setTableData] = useState([]);
     const [start, setStart] = useState(0);
     const [loading, setLoading] = useState(true);
     const [exportFormat, setExportFormat] = useState(''); 
     const [recordsTotal, setRecordsTotal] = useState(null);
     const length = 10;
-
+    console.log(selecteddate);
     const fetchTableData = useCallback(async () => {
-        console.log(start);
         if (!profile) return;
     
         const endpoints = {
           "Daily Load Profile": {
-            received: `/api/server3/UHES-0.0.1/WS/ServerpaginationForEDDARReport?applyMaskingFlag=N&draw=2&length=${length}&lpDate=${selecteddate}&office=3459274e-f20f-4df8-a960-b10c5c228d3e&start=${start}`,
-            notReceived: `/api/server3/UHES-0.0.1/WS/ServerpaginationForEDDANotRReport?applyMaskingFlag=N&draw=2&length=${length}&lpDate=${selecteddate}&office=3459274e-f20f-4df8-a960-b10c5c228d3e&start=${start}`
+            received: `/api/server3/UHES-0.0.1/WS/ServerpaginationForEDDARReport?applyMaskingFlag=N&draw=2&length=${length}&lpDate=${selecteddate}&office=${officess}&start=${start}`,
+            notReceived: `/api/server3/UHES-0.0.1/WS/ServerpaginationForEDDANotRReport?applyMaskingFlag=N&draw=2&length=${length}&lpDate=${selecteddate}&office=${officess}&start=${start}`
           },
           "Block Load Profile": {
-            received: `/api/server3/UHES-0.0.1/WS/ServerpaginationForLPDARReport?applyMaskingFlag=N&draw=2&length=${length}&lpDate=${selecteddate}&office=3459274e-f20f-4df8-a960-b10c5c228d3e&start=${start}`,
-            notReceived: `/api/server3/UHES-0.0.1/WS/ServerpaginationForLPDANRReport?applyMaskingFlag=N&draw=2&length=${length}&lpDate=${selecteddate}&office=3459274e-f20f-4df8-a960-b10c5c228d3e&start=${start}`,
-            partiallyReceived: `/api/server3/UHES-0.0.1/WS/ServerpaginationForLPDAPRReport?applyMaskingFlag=N&draw=2&length=${length}&lpDate=${selecteddate}&office=3459274e-f20f-4df8-a960-b10c5c228d3e&start=${start}`
+            received: `/api/server3/UHES-0.0.1/WS/ServerpaginationForLPDARReport?applyMaskingFlag=N&draw=2&length=${length}&lpDate=${selecteddate}&office=${officess}&start=${start}`,
+            notReceived: `/api/server3/UHES-0.0.1/WS/ServerpaginationForLPDANRReport?applyMaskingFlag=N&draw=2&length=${length}&lpDate=${selecteddate}&office=${officess}&start=${start}`,
+            partiallyReceived: `/api/server3/UHES-0.0.1/WS/ServerpaginationForLPDAPRReport?applyMaskingFlag=N&draw=2&length=${length}&lpDate=${selecteddate}&office=${officess}&start=${start}`
           },
            "Monthly Billing": {
-            received:`/api/server3/UHES-0.0.1/WS/ServerpaginationForEOBDAReport?applyMaskingFlag=N&draw=2&length=${length}&lpDate=${selecteddate}&office=3459274e-f20f-4df8-a960-b10c5c228d3e&start=${start}`,
-            notReceived: `/api/server3/UHES-0.0.1/WS/ServerpaginationForEOBDANRReport?applyMaskingFlag=N&draw=2&length=${length}&lpDate=${selecteddate}&office=3459274e-f20f-4df8-a960-b10c5c228d3e&start=${start}`
+            received:`/api/server3/UHES-0.0.1/WS/ServerpaginationForEOBDAReport?applyMaskingFlag=N&draw=2&length=${length}&lpDate=${selecteddate}&office=${officess}&start=${start}`,
+            notReceived: `/api/server3/UHES-0.0.1/WS/ServerpaginationForEOBDANRReport?applyMaskingFlag=N&draw=2&length=${length}&lpDate=${selecteddate}&office=${officess}&start=${start}`
           },
           "Instantaneous": {
-            received: `/api/server3/UHES-0.0.1/WS/ServerpaginationForInstantaneousDARReport?applyMaskingFlag=N&draw=2&length=${length}&lpDate=${selecteddate}&office=3459274e-f20f-4df8-a960-b10c5c228d3e&start=${start}`,
-            notReceived: `/api/server3/UHES-0.0.1/WS/ServerpaginationForInstantaneousDANotRReport?applyMaskingFlag=N&draw=2&length=${length}&lpDate=${selecteddate}&office=3459274e-f20f-4df8-a960-b10c5c228d3e&start=${start}`
+            received: `/api/server3/UHES-0.0.1/WS/ServerpaginationForInstantaneousDARReport?applyMaskingFlag=N&draw=2&length=${length}&lpDate=${selecteddate}&office=${officess}&start=${start}`,
+            notReceived: `/api/server3/UHES-0.0.1/WS/ServerpaginationForInstantaneousDANotRReport?applyMaskingFlag=N&draw=2&length=${length}&lpDate=${selecteddate}&office=${officess}&start=${start}`
           },
           "Instantaneous Push": {
-            received: `/api/server3/UHES-0.0.1/WS/ServerpaginationForINSTDPushDARReport?applyMaskingFlag=N&draw=2&length=${length}&lpDate=${selecteddate}&office=3459274e-f20f-4df8-a960-b10c5c228d3e&start=${start}`,
-            notReceived: `/api/server3/UHES-0.0.1/WS/ServerpaginationForINSTDPushDANRReport?applyMaskingFlag=N&draw=2&length=${length}&lpDate=${selecteddate}&office=3459274e-f20f-4df8-a960-b10c5c228d3e&start=${start}`
+            received: `/api/server3/UHES-0.0.1/WS/ServerpaginationForINSTDPushDARReport?applyMaskingFlag=N&draw=2&length=${length}&lpDate=${selecteddate}&office=${officess}&start=${start}`,
+            notReceived: `/api/server3/UHES-0.0.1/WS/ServerpaginationForINSTDPushDANRReport?applyMaskingFlag=N&draw=2&length=${length}&lpDate=${selecteddate}&office=${officess}&start=${start}`
           }
           // Additional profile endpoints as required...
         };
@@ -58,21 +57,42 @@ const GetDataAvailability = ({ selecteddate, profile }) => {
               client_secret: 'secret',
             }),
           });
-          const { access_token } = await tokenResponse.json();
-    
-          const response = await fetch(endpoints[profile].received, {
-            headers: { Authorization: `Bearer ${access_token}` },
-          });
-    
-          const dataresponse = await response.json();
-          setTableData(dataresponse.data);
-          setRecordsTotal(dataresponse.recordsTotal);
+          if (!tokenResponse.ok) throw new Error('Failed to authenticate');
+            const tokenData = await tokenResponse.json();
+            const accessToken = tokenData.access_token;
+            if(names === 'Received'){
+                const response = await fetch(endpoints[profile].received, {
+                    headers: { Authorization: `Bearer ${accessToken}` },
+                });
+                const dataresponse = await response.json();
+                console.log(dataresponse)
+                setTableData(dataresponse.data);
+                setRecordsTotal(dataresponse.recordsTotal);
+            }
+            else if(names === 'Yet to receive'){
+                const response = await fetch(endpoints[profile].notReceived, {
+                    headers: { Authorization: `Bearer ${accessToken}` },
+                });
+                const dataresponse = await response.json();
+                console.log(dataresponse)
+                setTableData(dataresponse.data);
+                setRecordsTotal(dataresponse.recordsTotal);
+            }
+            else if(names === 'Partially Received'){
+                const response = await fetch(endpoints[profile].partiallyReceived, {
+                    headers: { Authorization: `Bearer ${accessToken}` },
+                });
+                const dataresponse = await response.json();
+                console.log(dataresponse)
+                setTableData(dataresponse.data);
+                setRecordsTotal(dataresponse.recordsTotal);
+            }
         } catch (error) {
           console.error("Error fetching table data:", error);
         }finally {
           setLoading(false);
         }
-      }, [profile, start]);
+      }, [start]);
     
       const exportToCSV = () => {
         const csvData = tableData.map(row => ({

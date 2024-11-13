@@ -22,7 +22,7 @@ function MeterDetails() {
   const [start, setStart] = useState(0);
   const [recordsTotal, setRecordsTotal] = useState(0);
   const [grid, setGrid] = useState(false);
-  const [selectedValue, setSelectedValue] = useState('');
+  const [selectedValue, setSelectedValue] = useState('3459274e-f20f-4df8-a960-b10c5c228d3e');
   
   const [selectedManufacture, setSelectedManufacture] = useState('');
   const [selectedType, setSelectedType] = useState('');
@@ -749,7 +749,7 @@ const fetchData = useCallback(async () => {
       <h1 className="form-title">Meters List</h1>
       <form className="meter-details-form" onSubmit={handleSubmit}>
         <div className="form-row form-floating mb-3">
-          <DropDownTreeComponent fields={fields} placeholder='select an office' popupHeight={'200px'} popupWidth={'250px'} change={handleChange}>
+          <DropDownTreeComponent fields={fields} placeholder='select an office' popupHeight={'200px'} popupWidth={'250px'} change={handleChange} value={selectedValue}>
           </DropDownTreeComponent>
         </div>
  
