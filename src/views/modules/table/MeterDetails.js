@@ -1,31 +1,53 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect,useCallback } from 'react';
 import { AgGridReact } from 'ag-grid-react';
 import "ag-grid-community/styles/ag-grid.css";
 import "ag-grid-community/styles/ag-theme-quartz.css";
 import './MeterDetails.css';
+import * as XLSX from 'xlsx';
+import { saveAs } from 'file-saver';
+import html2canvas from 'html2canvas';
+import jsPDF from 'jspdf';
+import 'jspdf-autotable';
+import ExcelJS from 'exceljs';
 import { DropDownTreeComponent } from '@syncfusion/ej2-react-dropdowns';
 
 function MeterDetails() {
   const tokenUrl = '/api/server3/UHES-0.0.1/oauth/token';
   
   const [loading, setLoading] = useState(false);
-  const [grid, setGrid] = useState(false);
-  const [meterData, setMeterData] = useState([]);
+  const [meterData, setMeterData] = useState(null);
   const [manufactures, setManufactures] = useState([]);
   const [types, setTypes] = useState([]);
   const [interfaces, setInterfaces] = useState([]);
   const [start, setStart] = useState(0);
   const [recordsTotal, setRecordsTotal] = useState(0);
+  const [grid, setGrid] = useState(false);
   const [selectedValue, setSelectedValue] = useState('');
-
+  
   const [selectedManufacture, setSelectedManufacture] = useState('');
   const [selectedType, setSelectedType] = useState('');
   const [selectedInterface, setSelectedInterface] = useState('');
   const [selectedPaymentMode, setSelectedPaymentMode] = useState('');
   const [selectedRelayStatus, setSelectedRelayStatus] = useState('');
   const [meterNumber, setMeterNumber] = useState('');
+  const [office, setOffice] = useState('');
   const length = 10;
-
+ 
+  const columnDefs = [
+    { headerName: "Meter No", field: "meterno" ,headerClass: 'custom-header' },
+    { headerName: "Meter Type", field: "metertype",headerClass: 'custom-header'  },
+    { headerName: "Meter Manufacture", field: "metermake" ,headerClass: 'custom-header' },
+    { headerName: "Meter Interface", field: "meterInterface" ,headerClass: 'custom-header' },
+    { headerName: "Payment Type", field: "paymenttype" ,headerClass: 'custom-header' },
+    { headerName: "Relay Status", field: "relaystatus",headerClass: 'custom-header'  },
+  ];
+  const onCellClicked = (event) => {
+   
+    if (event.colDef.field === 'meterno') {
+      console.log(event.data);
+    }
+  };
+  
   const data = [{
     "code": "Fluentgrid",
     "text": "Fluentgrid",
@@ -534,64 +556,56 @@ function MeterDetails() {
     ]
 }
 ]
+const getBaseUrl = () => `/api/server3/UHES-0.0.1/WS/callForServerpaginationForMeterDetails?draw=2&length=${length}&metermake=${selectedManufacture}&metertype=${selectedType}&mtrInterface=${selectedInterface?.ID || ''}&mtrNumber=${meterNumber}&office=${selectedValue}&paymenttype=${selectedPaymentMode}&relaystatus=${selectedRelayStatus}&start=${start}`;
+const totalurl='api/server3/UHES-0.0.1//WS/callForServerpaginationForMeterDetails?draw=2&length=272&office=3459274e-f20f-4df8-a960-b10c5c228d3e&start=0';
+let fields = {dataSource: data, value:'id', text: 'text', child:'inc'}
+const fetchAccessToken = useCallback(async () => {
+  const tokenResponse = await fetch(tokenUrl, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    body: new URLSearchParams({
+      grant_type: 'password',
+      username: 'Admin',
+      password: 'Admin@123',
+      client_id: 'fooClientId',
+      client_secret: 'secret',
+    }),
+  });
 
-  const columnDefs = [
-    { headerName: "Meter Number", field: "meterno" },
-    { headerName: "Meter Type", field: "metertype" },
-    { headerName: "Meter Manufacture", field: "metermake" },
-    { headerName: "Meter Interface", field: "meterInterface" },
-    { headerName: "Payment Mode", field: "paymenttype" },
-    { headerName: "Relay Status", field: "relaystatus" },
-  ];
+  if (!tokenResponse.ok) throw new Error('Failed to authenticate');
+  const tokenData = await tokenResponse.json();
+  return tokenData.access_token;
+}, []);
 
-  const getBaseUrl = () => `/api/server3/UHES-0.0.1/WS/callForServerpaginationForMeterDetails?draw=2&length=${length}&metermake=${selectedManufacture}&metertype=${selectedType}&mtrInterface=${selectedInterface?.ID || ''}&mtrNumber=${meterNumber}&office=${selectedValue}&paymenttype=${selectedPaymentMode}&relaystatus=${selectedRelayStatus}&start=${start}`;
+const fetchData = useCallback(async () => {
+  try {
+    const accessToken = await fetchAccessToken();
+    const urls = [
+      `/api/server3/UHES-0.0.1/WS/getmetermake?officeid=${selectedValue}`,
+      `/api/server3/UHES-0.0.1/WS/getMeterType?officeid=${selectedValue}`,
+      `/api/server3/UHES-0.0.1/WS/getMeterInterface?officeid=${selectedValue}`,
+    ];
 
-  const fetchAccessToken = useCallback(async () => {
-    const tokenResponse = await fetch(tokenUrl, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-      body: new URLSearchParams({
-        grant_type: 'password',
-        username: 'Admin',
-        password: 'Admin@123',
-        client_id: 'fooClientId',
-        client_secret: 'secret',
-      }),
-    });
+    const [manufactureData, typeData, interfaceData] = await Promise.all(
+      urls.map((url) =>
+        fetch(url, { headers: { 'Authorization': `Bearer ${accessToken}` } })
+          .then(response => response.ok ? response.json() : Promise.reject('Fetch failed'))
+      )
+    );
+    
+    setManufactures(manufactureData.data || []);
+    setTypes(typeData.data || []);
+    setInterfaces(interfaceData.data || []);
+  } catch (err) {
+    console.error(err.message);
+  }
+}, [fetchAccessToken, selectedValue]);
 
-    if (!tokenResponse.ok) throw new Error('Failed to authenticate');
-    const tokenData = await tokenResponse.json();
-    return tokenData.access_token;
-  }, []);
-
-  const fetchData = useCallback(async () => {
-    try {
-      const accessToken = await fetchAccessToken();
-      const urls = [
-        `/api/server3/UHES-0.0.1/WS/getmetermake?officeid=${selectedValue}`,
-        `/api/server3/UHES-0.0.1/WS/getMeterType?officeid=${selectedValue}`,
-        `/api/server3/UHES-0.0.1/WS/getMeterInterface?officeid=${selectedValue}`,
-      ];
-
-      const [manufactureData, typeData, interfaceData] = await Promise.all(
-        urls.map((url) =>
-          fetch(url, { headers: { 'Authorization': `Bearer ${accessToken}` } })
-            .then(response => response.ok ? response.json() : Promise.reject('Fetch failed'))
-        )
-      );
-      
-      setManufactures(manufactureData.data || []);
-      setTypes(typeData.data || []);
-      setInterfaces(interfaceData.data || []);
-    } catch (err) {
-      console.error(err.message);
-    }
-  }, [fetchAccessToken, selectedValue]);
-
+ 
   const fetchMeterData = useCallback(async () => {
     try {
       setLoading(true);
-      setGrid(false); // Hide grid while data is loading
+      setGrid(false); 
       const accessToken = await fetchAccessToken();
 
       const dataResponse = await fetch(getBaseUrl(), {
@@ -609,48 +623,138 @@ function MeterDetails() {
       setLoading(false);
     }
   }, [fetchAccessToken, getBaseUrl]);
-
+ 
   useEffect(() => {
     fetchData();
   }, []);
-
+ 
+  const fetchAllData = useCallback(async () => {
+    try {
+      setLoading(true);
+  
+      const accessToken = await fetchAccessToken();
+      const url = totalurl; 
+      const dataResponse = await fetch(url, {
+        headers: { 'Authorization': `Bearer ${accessToken}` },
+      });
+  
+      if (!dataResponse.ok) throw new Error('Failed to fetch data');
+      const responseData = await dataResponse.json();
+  
+      setMeterData(responseData.data || []);
+      console.log(responseData.data)
+      setRecordsTotal(responseData.recordsTotal || 0);
+      console.log(responseData.recordsTotal)
+    } catch (err) {
+      console.error(err.message);
+    } finally {
+      setLoading(false);
+    }
+  }, [fetchAccessToken]);
+  
+  const handleChange = (event) => {
+    setSelectedValue(event.value);
+  };
+ 
+  const handleNextPage = () => {
+    setStart((prevStart) => prevStart + length);
+  };
+  
+  const handlePreviousPage = () => {
+    setStart((prevStart) => Math.max(prevStart - length, 0));
+  };
+  
+  // Fetch data when 'start' changes
   useEffect(() => {
     fetchMeterData();
   }, [start]);
-
-  const handleChange = (event) => setSelectedValue(event.value);
-
-  const handleNextPage = () => setStart((prevStart) => prevStart + length);
-  const handlePreviousPage = () => setStart((prevStart) => Math.max(prevStart - length, 0));
-
+  
+ 
+  
   const handleSubmit = (event) => {
     event.preventDefault();
-    setStart(0); // Reset to first page when submitting a new search
+    setStart(0); 
     fetchMeterData();
   };
-
+ 
   const defaultColDef = {
     sortable: true,
     filter: true,
     resizable: true,
     flex: 1,
   };
+ 
+
+  const exportExcel = async () => {
+    await fetchAllData();
+    const workbook = new ExcelJS.Workbook();
+    const worksheet = workbook.addWorksheet('Meter Details');
+    worksheet.addRow([`Meter Details Data for Office: ${selectedValue}`]);
+    const headers = ['Meter Type', 'Metering Mode', 'Relay Status', 'Meter Interface', 'Firmware Version', 'Meter Number', 'Meter Make', 'Payment Type'];
+    const headerRow = worksheet.addRow(headers);
+    headerRow.eachCell((cell) => {
+      cell.font = { bold: true };
+      cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFFF00' } };
+    });
+    meterData.forEach((data) => {
+      worksheet.addRow([data.metertype, data.meteringmode, data.relaystatus, data.meterInterface, data.firmwareversion, data.meterno, data.metermake, data.paymenttype]);
+    });
+    worksheet.columns.forEach((column) => {
+      let maxLength = 0;
+      column.eachCell({ includeEmpty: true }, (cell) => {
+        const columnLength = cell.value ? cell.value.toString().length : 10;
+        if (columnLength > maxLength) maxLength = columnLength;
+      });
+      column.width = maxLength + 6;
+    });
+    worksheet.autoFilter = { from: 'A2', to: `${String.fromCharCode(64 + headers.length)}2` };
+    const buffer = await workbook.xlsx.writeBuffer();
+    const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+    saveAs(blob, 'MeterDetails.xlsx');
+  };
   
+  const exportCSV = async () => {
+    await fetchAllData();
+    const worksheet = XLSX.utils.json_to_sheet(meterData);
+    const csv = XLSX.utils.sheet_to_csv(worksheet);
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    saveAs(blob, 'MeterDetails.csv');
+  };
+  
+  const exportPDF = async () => {
+    await fetchAllData();
+    const doc = new jsPDF();
+    doc.text("Meter Details Data", 20, 10);
+    doc.autoTable({
+      head: [["Meter Number", "Meter Type", "Metering Mode", "Relay Status", "Meter Interface", "Firmware Version", "Meter Make", "Payment Type"]],
+      body: meterData.map((data) => [
+        data.meterno,
+        data.metertype,
+        data.meteringmode,
+        data.relaystatus,
+        data.meterInterface,
+        data.firmwareversion,
+        data.metermake,
+        data.paymenttype
+      ]),
+      startY: 20,
+    });
+    doc.save("MeterDetails.pdf");
+  };
+ 
+
+
   return (
-    <div className="meter-details-container" style={{margin:'20px 10px'}}>
+    <div className="meter-details-container">
       <h1 className="form-title">Meters List</h1>
       <form className="meter-details-form" onSubmit={handleSubmit}>
         <div className="form-row form-floating mb-3">
-          <DropDownTreeComponent 
-            fields={{ dataSource: data, value: 'id', text: 'text', child: 'inc' }} 
-            placeholder='Select an office' 
-            popupHeight='200px' 
-            popupWidth='250px' 
-            change={handleChange}
-          />
+          <DropDownTreeComponent fields={fields} placeholder='select an office' popupHeight={'200px'} popupWidth={'250px'} change={handleChange}>
+          </DropDownTreeComponent>
         </div>
+ 
         <div className="form-row form-floating mb-3">
-          <select className="form-control" id="meterManufacture" name="meterManufacture" value={selectedManufacture}
+          <select className="form-control form-control-sm" id="meterManufacture" name="meterManufacture" value={selectedManufacture}
             onChange={(e) => setSelectedManufacture(e.target.value)}>
             <option value="">-NA-</option>
             {manufactures.map((manufacture, index) => (
@@ -663,7 +767,7 @@ function MeterDetails() {
         </div>
  
         <div className="form-row form-floating mb-3">
-          <select className="form-control" id="meterType" name="meterType" value={selectedType}
+          <select className="form-control form-control-sm" id="meterType" name="meterType" value={selectedType}
             onChange={(e) => setSelectedType(e.target.value)}>
             <option value="">-NA-</option>
             {types.map((type, index) => (
@@ -676,7 +780,7 @@ function MeterDetails() {
         </div>
  
         <div className="form-row form-floating mb-3">
-          <select className="form-control" id="meterInterface" name="meterInterface" value={selectedInterface.ID}
+          <select className="form-control form-control-sm" id="meterInterface" name="meterInterface" value={selectedInterface.ID}
             onChange={(e) => setSelectedInterface(e.target.value)}>
             <option value="">-NA-</option>
             {interfaces.map((meterInterface, index) => (
@@ -689,7 +793,7 @@ function MeterDetails() {
         </div>
  
         <div className="form-row form-floating mb-3">
-          <select className="form-control" name="paymentMode" id="paymentMode" value={selectedPaymentMode}
+          <select className="form-control form-control-sm" name="paymentMode" id="paymentMode" value={selectedPaymentMode}
             onChange={(e) => setSelectedPaymentMode(e.target.value)}>
             <option value="">-NA-</option>
             <option value="POSTPAID">Postpaid</option>
@@ -699,7 +803,7 @@ function MeterDetails() {
         </div>
  
         <div className="form-row form-floating mb-3">
-          <select className="form-control" name="relaystatus" id="relaystatus" value={selectedRelayStatus}
+          <select className="form-control form-control-sm" name="relaystatus" id="relaystatus" value={selectedRelayStatus}
             onChange={(e) => setSelectedRelayStatus(e.target.value)}>
             <option value="">-NA-</option>
             <option value="0">Disconnected</option>
@@ -708,7 +812,7 @@ function MeterDetails() {
           <label htmlFor="relaystatus" className="form-label">Relay Status</label>
         </div>
  
-        <div className="form-row full-width">
+        <div className="form-row full-width meter-number-field">
           <input
             type="text"
             id="meterNumber"
@@ -723,32 +827,36 @@ function MeterDetails() {
           <button type="submit" className="submit-button">Submit</button>
         </center>
       </form>
-
+      <div className="export-buttons-container">
+       <button onClick={exportExcel} className="export-button">Excel</button>
+         <button onClick={exportPDF} className="export-button">Pdf</button>
+         <button onClick={exportCSV} className="export-button">Csv</button>
+         </div>
       {loading && <p>Loading...</p>}
+ 
+      {meterData && (
+  <div className="meter-data-table ag-theme-quartz" id="myGrid" style={{ height: '400px', width: '100%' }}>
+    <AgGridReact
+      columnDefs={columnDefs.map((col) => ({
+        ...col,
+        headerClass: 'custom-header',
+      }))}
+      rowData={meterData}
+      pagination={false}
+      domLayout="normal"
+      defaultColDef={defaultColDef}
+      onCellClicked={onCellClicked} 
+    />
+  </div>
+)}
 
-      {grid && meterData.length > 0 && (
-        <div className="meter-data-table ag-theme-quartz" style={{ height: '400px', width: '100%' }}>
-          <AgGridReact
-            columnDefs={columnDefs}
-            rowData={meterData}
-            pagination={false}
-            domLayout='normal'
-            defaultColDef={defaultColDef}            
-          />
-        </div>
-      )}
-      {grid && meterData.length > 0 && (
-      <div style={{ display: 'flex', justifyContent: 'space-between', margin:'10px 10px' }}>
-        <span>Page {Math.floor(start / length) + 1} of {Math.ceil(recordsTotal / length)}</span>
+      <div style={{ marginTop: '20px', display:'flex', justifyContent:'space-between' }}>
+      <span>Page {Math.floor(start / length) + 1} of {Math.ceil(recordsTotal / length)}</span>
         <button onClick={handlePreviousPage} disabled={start === 0}>Previous</button>
         <button onClick={handleNextPage} disabled={start + length >= recordsTotal}>Next</button>
       </div>
-      )}
     </div>
   );
 }
-
+ 
 export default MeterDetails;
-
-
-
