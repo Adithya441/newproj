@@ -9,6 +9,7 @@ import { Navbar, Dropdown, Form } from "react-bootstrap";
 // components
 import CustomToggle from "../../dropdowns";
 import Fullscreen from "../../fullscreen";
+import downloadPDF from "../../../Download/PDF";
 
 // img
 import flag1 from "../../../assets/images/small/flag-01.png";
@@ -22,6 +23,8 @@ import user2 from "../../../assets/images/user/02.jpg";
 import user3 from "../../../assets/images/user/03.jpg";
 import user4 from "../../../assets/images/user/04.jpg";
 import user5 from "../../../assets/images/user/05.jpg";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faFileCirclePlus } from "@fortawesome/free-solid-svg-icons";
 
 import { useSelector, useDispatch } from "react-redux";
 import * as SettingSelector from "../../../store/setting/selectors";
@@ -76,8 +79,8 @@ const Header = memo(() => {
   };
   return (
     <Fragment>
-      <div className={`iq-top-navbar ${isFixed ? "fixed-header" : ""}`}>
-        <div className="iq-navbar-custom">
+      <div className="iq-top-navbar" style={{maxHeight:'100px'}}>
+        <div className="iq-navbar-custom" style={{maxHeight:'100px'}}>
           <div className="iq-sidebar-logo">
             <div className="top-logo">
               <Link to="index.html" className="logo">
@@ -209,6 +212,14 @@ const Header = memo(() => {
                 {/* RTL & LTR Mode end */}
 
                 {/* <li className="nav-item iq-full-screen"> */}
+                <div>
+                  <FontAwesomeIcon
+                  icon={faFileCirclePlus}
+                  onClick={downloadPDF} // Attach the download function
+                  style={{ cursor: "pointer", fontSize: "20px",margin:'26px 20px' }} // Optional styling
+                  />
+                </div>
+                
                 <div to="#" className="iq-waves-effect" id="btnFullscreen">
                   <Fullscreen />
                 </div>

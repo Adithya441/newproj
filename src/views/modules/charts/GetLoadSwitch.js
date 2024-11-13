@@ -161,8 +161,8 @@ const GetLoadSwitch = ({ selectedLabel }) => {
   const currentPage = Math.floor(start / length) + 1;
   const totalPages = Math.ceil(recordsTotal / length);
 
-  const handleExport = () => {
-    switch (exportFormat) {
+  const handleExport = (value) => {
+    switch (value) {
       case 'csv':
         exportToCSV();
         break;
@@ -180,20 +180,17 @@ const GetLoadSwitch = ({ selectedLabel }) => {
   return (
     <div style={{ fontFamily: 'Arial, sans-serif', padding: '20px' }}>
         <div>
-        <label htmlFor="export-format">Export Data As:</label>
         <select
           id="export-format"
           value={exportFormat}
-          onChange={(e) => setExportFormat(e.target.value)}
+          onChange={(e) => handleExport(e.target.value)}
+          style={{height:'30px'}}
         >
-          <option value="">Select format</option>
+          <option value="">Export</option>
           <option value="csv">CSV</option>
           <option value="excel">Excel</option>
           <option value="pdf">PDF</option>
         </select>
-        <button onClick={handleExport} disabled={!exportFormat} style={{ marginLeft: '10px', backgroundColor: 'black', color: 'white' }}>
-          Export
-        </button>
       </div>
       {loading ? (
         <img src={loadingGif} alt="Loading..." style={{ width: '150px', height: '150px', margin:'50px 350px' }} />

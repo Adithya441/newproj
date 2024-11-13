@@ -138,13 +138,13 @@ const OlderonMITypes = () => {
   }, []);
 
   if (loading) return <p>Loading...</p>;
-  if (!chartData) return <p>No data available.</p>;
+  if (!chartData) return <h4 style={{marginTop:'160px', marginLeft:'100px'}}>No data available.</h4>;
 
   const handleClose = () => setShowModal(false);
 
   return (
     <div>
-      <h5>Getting Older Based on MI Types</h5>
+      <h5 style={{marginLeft:'115px', fontWeight:'bold'}}>Getting Older Based on MI Types</h5>
       <div style={{ width: '35vw', height: '40vh' }}>
         <ReactApexChart
           options={chartData.options}

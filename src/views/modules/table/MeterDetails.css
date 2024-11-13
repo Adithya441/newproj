@@ -1,0 +1,110 @@
+/* import the Dropdown Tree dependency styles */
+
+@import "../../../../node_modules/@syncfusion/ej2-base/styles/material.css";
+@import "../../../../node_modules/@syncfusion/ej2-inputs/styles/material.css";
+@import "../../../../node_modules/@syncfusion/ej2-buttons/styles/material.css";
+@import "../../../../node_modules/@syncfusion/ej2-navigations/styles/material.css";
+@import "../../../../node_modules/@syncfusion/ej2-react-dropdowns/styles/material.css";
+
+.meter-details-container {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    position: relative; 
+    width: 100%; 
+}
+
+.form-title {
+    background-color: #007bff;
+    color: white;                
+    padding: 5px;               
+    border-radius: 4px 4px 0 0;  
+    margin-bottom: 10px;        
+    text-align: left;           
+    font-size: 20px;            
+}
+
+.meter-details-form {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr); 
+    gap: 20px;
+    margin: 10px 10px;
+}
+
+.form-row {
+    position: relative; 
+}
+
+.form-row select.form-control,
+.form-row input[type="text"] {
+    padding: 10px; /* Padding for better spacing */
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    width: 100%;
+}
+
+.form-row label {
+    position: absolute; 
+    left: 12px;
+    top: 12px;
+    color: #aaa; 
+    transition: all 0.2s ease;
+    pointer-events: none; 
+}
+
+/* Floating label styles for input text */
+.form-row input[type="text"]:focus + label,
+.form-row input[type="text"]:not(:placeholder-shown) + label {
+    top: -8px; 
+    left: 10px; 
+    font-size: 16px; 
+    color: #000; 
+}
+
+/* Styles for placeholder shown state */
+.form-row input[type="text"]:placeholder-shown + label {
+    top: 12px; 
+    left: 12px; 
+    font-size: 16px; 
+    color: #aaa; 
+}
+
+/* Floating label styles for dropdowns */
+.form-row select.form-control:focus + label,
+.form-row select.form-control:not(:placeholder-shown) + label {
+    top: -8px; /* Position above the dropdown */
+    left: 10px; 
+    font-size: 16px; 
+    color: #000; 
+}
+
+/* Maintain the label's original position for empty dropdowns */
+.form-row select.form-control + label {
+    top: 12px; 
+    left: 12px; 
+    font-size: 16px; 
+    color: #aaa; 
+}
+
+/* Styles for when the dropdown has a value selected */
+.form-row select.form-control:not(:empty) + label {
+    top: -8px; 
+    left: 10px; 
+    font-size: 16px; 
+    color: #000; 
+}
+
+.submit-button {
+    grid-column: span 1;
+    padding: 5px;
+    background-color: darkcyan;
+    color: white;
+    border: none;
+    border-radius: 15px;
+    cursor: pointer;
+    font-size: 18px;
+}
+
+.submit-button:hover {
+    background-color: #0056b3;
+}

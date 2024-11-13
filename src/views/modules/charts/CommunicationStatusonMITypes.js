@@ -133,13 +133,13 @@ const CommunicationStatusonMITypes = () => {
   }, []);
 
   if (loading) return <p>Loading...</p>;
-  if (!chartData) return <p>No data available.</p>;
+  if (!chartData) return <h4 style={{marginTop:'160px', marginLeft:'100px'}}>No data available.</h4>;
 
   const handleClose = () => setShowModal(false);
 
   return (
     <div>
-      <h5>Meter Communication Status Based on MI Types</h5>
+      <h5 style={{marginLeft:'45px', fontWeight:'bold'}}>Meter Communication Status Based on MI Types</h5>
       <div style={{ width: '35vw', height: '40vh' }}>
         <ReactApexChart
           options={chartData.options}

@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 
 import logo from "../../../assets/images/logo.png";
 import VerticalNav from "./verticalNav";
+import logo1 from '../../../assets/img5.png'
 
 // Redux Selector / Action
 import {  useSelector } from "react-redux";
@@ -21,7 +22,8 @@ const Sidebar = memo(() => {
       <div className="iq-sidebar">
         <div className="iq-sidebar-logo d-flex justify-content-between">
           <Link to="/">
-            <img src={logo} className="img-fluid" alt="" />
+            <img src={logo1} className="" alt="" />
+            <img src={logo} className="iq-sidebar-logo1" alt="" />
             
           </Link>
           <div className="iq-menu-bt-sidebar">

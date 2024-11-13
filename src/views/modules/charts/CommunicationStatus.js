@@ -86,7 +86,7 @@ const CommunicationStatus = () => {
   }
 
   if (!chartData) {
-    return <p>No data available.</p>;
+    return <h4 style={{marginTop:'160px', marginLeft:'100px'}}>No data available.</h4>;
   }
 
   const { total, series, labels } = chartData;

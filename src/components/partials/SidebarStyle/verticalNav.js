@@ -50,8 +50,7 @@ const VerticalNav = memo(() => {
       <nav className="iq-sidebar-menu">
         <Accordion as="ul" className="iq-menu">
           <li className="iq-menu-title">
-            <i className="ri-subtract-line"></i>
-            <span>Dashboard</span>
+            <span>UHES</span>
           </li>
           {/* Doctors menu Start */}
           <Accordion.Item
@@ -93,7 +92,7 @@ const VerticalNav = memo(() => {
                   isTag="false"
                   staticIcon="true"
                   iconClass="ri-user-add-fill"
-                  pathname="/12345"
+                  pathname="/getdataavailability"
                   title="Data Availability 30days"
                 ></SidebarMenu>
                 
@@ -167,6 +166,13 @@ const VerticalNav = memo(() => {
                 iconClass='ri-user-add-fill'
                 pathname="/datagrid"
                 title="Meter Details"></SidebarMenu>
+
+                <SidebarMenu 
+                isTag="false"
+                staticIcon="true"
+                iconClass='ri-user-add-fill'
+                pathname="/meterdetails"
+                title="Meter Details 1"></SidebarMenu>
 
               </ul>
             </Accordion.Collapse>

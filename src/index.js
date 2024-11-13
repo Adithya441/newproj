@@ -3,6 +3,10 @@ import ReactDOM from 'react-dom/client';
 import reportWebVitals from './reportWebVitals';
 import '../node_modules/bootstrap/dist/css/bootstrap.css';
 import './style.css'
+import 'primereact/resources/themes/lara-light-indigo/theme.css';  // or any other theme you prefer
+import 'primereact/resources/primereact.min.css';  // core PrimeReact styles
+import 'primeicons/primeicons.css';  // PrimeIcons for icons
+
 
 // react-router
 import { RouterProvider,createBrowserRouter } from 'react-router-dom';
@@ -18,6 +22,9 @@ import {IndexRouters} from './router/index-routers'
 import { Provider } from 'react-redux';
 //reducer
 import { store } from './store';
+
+import {registerLicense} from '@syncfusion/ej2-base'
+registerLicense("Ngo9BigBOggjHTQxAR8/V1NDaF5cWWtCf1JpRGdGfV5ycEVAal5VTnJYUiweQnxTdEFiWH9ZcHJXQmRbVk10XQ==")
 
 const router = createBrowserRouter([
     ...IndexRouters,

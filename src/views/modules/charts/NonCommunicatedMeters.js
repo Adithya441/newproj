@@ -59,7 +59,7 @@ const NonCommunicatedMeters = () => {
   }, []);
 
   if (loading) return <p>Loading...</p>;
-  if (!chartData) return <p>No data available.</p>;
+  if (!chartData) return <h4 style={{marginTop:'160px', marginLeft:'100px'}}>No data available.</h4>;
 
   const { labels, series } = chartData;
 

@@ -98,6 +98,7 @@ useEffect(()=>{
 },[])
   return (
     <Fragment>
+      <div id="pdfdownload">
      <Col lg="12">
             <Row>
               <Col md="6" lg="3">
@@ -200,6 +201,7 @@ useEffect(()=>{
                 </Col>
               </Row>
           </Col>
+          </div>
     </Fragment>
   );
 };

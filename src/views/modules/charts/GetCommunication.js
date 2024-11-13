@@ -199,8 +199,8 @@ const Apicall = ({ selectedLabel }) => {
   };
 
   // Handle export format change
-  const handleExport = () => {
-    switch (exportFormat) {
+  const handleExport = (value) => {
+    switch (value) {
       case 'csv':
         exportToCSV();
         break;
@@ -220,20 +220,17 @@ const Apicall = ({ selectedLabel }) => {
       {error && <p style={{ color: 'red' }}>Error: {error}</p>}
 
       <div>
-        <label htmlFor="export-format">Export Data As:</label>
         <select
           id="export-format"
           value={exportFormat}
-          onChange={(e) => setExportFormat(e.target.value)}
+          onChange={(e) => handleExport(e.target.value)}
+          style={{height:'30px'}}
         >
-          <option value="">Select format</option>
+          <option value="">Export</option>
           <option value="csv">CSV</option>
           <option value="excel">Excel</option>
           <option value="pdf">PDF</option>
         </select>
-        <button onClick={handleExport} disabled={!exportFormat} style={{ marginLeft: '10px', backgroundColor: 'black', color: 'white' }}>
-          Export
-        </button>
       </div>
 
       {loading ? (

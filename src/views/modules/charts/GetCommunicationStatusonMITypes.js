@@ -83,7 +83,7 @@ const GetCommunicationStatusonMITypes = ({ selectedLabel, selectedCategory }) =>
     fetchData();
   }, [fetchData]);
 
-  // AG Grid column definitions
+  // AG Grid column definitions               
   const columnDefs = [
     { headerName: "METERNO", field: "METERNO", flex: 1, filter: true, sortable: true, valueFormatter: (params) => params.value ? params.value : "N/A" },
     { headerName: "MeterLastCommunicated", field: "MeterLastCommunicated", flex: 1, filter: true, sortable: true, valueFormatter: (params) => params.value ? params.value : "N/A" },
@@ -182,8 +182,8 @@ const GetCommunicationStatusonMITypes = ({ selectedLabel, selectedCategory }) =>
   };
 
   // Handle export format change
-  const handleExport = () => {
-    switch (exportFormat) {
+  const handleExport = (value) => {
+    switch (value) {
       case 'csv':
         exportToCSV();
         break;
@@ -204,20 +204,18 @@ const GetCommunicationStatusonMITypes = ({ selectedLabel, selectedCategory }) =>
       {error && <p style={{ color: 'red' }}>Error: {error}</p>}
 
       <div>
-        <label htmlFor="export-format">Export Data As:</label>
+        {/* <label htmlFor="export-format">Export - </label> */}
         <select
           id="export-format"
           value={exportFormat}
-          onChange={(e) => setExportFormat(e.target.value)}
+          onChange={(e) => handleExport(e.target.value)}
+          style={{height:'30px'}}
         >
-          <option value="">Select format</option>
+          <option value="">Export</option>
           <option value="csv">CSV</option>
           <option value="excel">Excel</option>
           <option value="pdf">PDF</option>
         </select>
-        <button onClick={handleExport} disabled={!exportFormat} style={{ marginLeft: '10px', backgroundColor: 'black', color: 'white' }}>
-          Export
-        </button>
       </div>
 
       {loading ? (
@@ -231,6 +229,9 @@ const GetCommunicationStatusonMITypes = ({ selectedLabel, selectedCategory }) =>
       <div style={{ marginTop: '20px', display:'flex', justifyContent:'space-between' }}>
         <span style={{ marginLeft: '10px' }}>
           Page {currentPage} of {totalPages}
+        </span>
+        <span style={{ marginLeft: '10px' }}>
+          {start+1} to {(currentPage * length > recordsTotal)? recordsTotal:(currentPage * length)} of {recordsTotal}
         </span>
         <button onClick={handlePreviousPage} disabled={start === 0} style={{backgroundColor:'black', color:'white'}}>Previous</button>
         <button onClick={handleNextPage} disabled={start + length >= recordsTotal} style={{backgroundColor:'black', color:'white'}}>Next</button>

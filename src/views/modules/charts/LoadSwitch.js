@@ -85,7 +85,7 @@ const LoadSwitchStatus = () => {
   }
 
   if (!chartData) {
-    return <p>No data available.</p>;
+    return <h4 style={{marginTop:'160px', marginLeft:'100px'}}>No data available.</h4>;
   }
 
   const { total, series, labels } = chartData;
@@ -156,7 +156,7 @@ const LoadSwitchStatus = () => {
       position: 'bottom',
     },
     title: {
-      text: 'Meter Communication Status',
+      text: 'Load Switch Status',
       align: 'center',
     },
     responsive: [
