@@ -24,7 +24,7 @@ import { Provider } from 'react-redux';
 import { store } from './store';
 
 import {registerLicense} from '@syncfusion/ej2-base'
-registerLicense("Ngo9BigBOggjHTQxAR8/V1NDaF5cWWtCf1JpRGdGfV5ycEVAal5VTnJYUiweQnxTdEFiWH9ZcHJXQmRbVk10XQ==")
+registerLicense("ORg4AjUWIQA/Gnt2UlhhQlVMfV5AQmBIYVp/TGpJfl96cVxMZVVBJAtUQF1hTX9Sd0ZhWnpdcXFRRmJb")
 
 const router = createBrowserRouter([
     ...IndexRouters,
@@ -33,6 +33,7 @@ const router = createBrowserRouter([
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
     <Provider store={store}>
+      
     <App>
       <RouterProvider router={router}></RouterProvider>
     </App>

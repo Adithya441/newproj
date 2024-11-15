@@ -1,0 +1,12 @@
+.ag-theme-quartz .ag-header-cell {
+  background-color: #5cb0e7; /* Green background */
+  color: black;               /* White text */
+  font-weight: bold;          /* Bold text */
+  text-align: center;         /* Center text */
+}
+.ag-theme-quartz .ag-header-cell:hover{
+  background-color: #3b99d7; /* Green background */
+  color: black;               /* White text */
+  font-weight: bold;          /* Bold text */
+  text-align: center;  
+}

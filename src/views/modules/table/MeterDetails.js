@@ -10,10 +10,13 @@ import jsPDF from 'jspdf';
 import 'jspdf-autotable';
 import ExcelJS from 'exceljs';
 import { DropDownTreeComponent } from '@syncfusion/ej2-react-dropdowns';
+import { Link } from 'react-router-dom';
+import CryptoJS from 'crypto-js';
+import MeterLinkRenderer from './MeterLinkRenderer';
 
 function MeterDetails() {
   const tokenUrl = '/api/server3/UHES-0.0.1/oauth/token';
-  
+ 
   const [loading, setLoading] = useState(false);
   const [meterData, setMeterData] = useState(null);
   const [manufactures, setManufactures] = useState([]);
@@ -23,7 +26,8 @@ function MeterDetails() {
   const [recordsTotal, setRecordsTotal] = useState(0);
   const [grid, setGrid] = useState(false);
   const [selectedValue, setSelectedValue] = useState('3459274e-f20f-4df8-a960-b10c5c228d3e');
-  
+  const [submitted, setSubmitted] = useState(false);
+ 
   const [selectedManufacture, setSelectedManufacture] = useState('');
   const [selectedType, setSelectedType] = useState('');
   const [selectedInterface, setSelectedInterface] = useState('');
@@ -34,20 +38,16 @@ function MeterDetails() {
   const length = 10;
  
   const columnDefs = [
-    { headerName: "Meter No", field: "meterno" ,headerClass: 'custom-header' },
-    { headerName: "Meter Type", field: "metertype",headerClass: 'custom-header'  },
-    { headerName: "Meter Manufacture", field: "metermake" ,headerClass: 'custom-header' },
-    { headerName: "Meter Interface", field: "meterInterface" ,headerClass: 'custom-header' },
-    { headerName: "Payment Type", field: "paymenttype" ,headerClass: 'custom-header' },
-    { headerName: "Relay Status", field: "relaystatus",headerClass: 'custom-header'  },
+    { headerName: "Meter No", field: "meterno", cellRenderer: MeterLinkRenderer },
+    { headerName: "Meter Type", field: "metertype" },
+    { headerName: "Meter Manufacture", field: "metermake" },
+    { headerName: "Meter Interface", field: "meterInterface" },
+    { headerName: "Payment Type", field: "paymenttype" },
+    { headerName: "Relay Status", field: "relaystatus" },
   ];
-  const onCellClicked = (event) => {
-   
-    if (event.colDef.field === 'meterno') {
-      console.log(event.data);
-    }
-  };
+ 
   
+ 
   const data = [{
     "code": "Fluentgrid",
     "text": "Fluentgrid",
@@ -571,12 +571,12 @@ const fetchAccessToken = useCallback(async () => {
       client_secret: 'secret',
     }),
   });
-
+ 
   if (!tokenResponse.ok) throw new Error('Failed to authenticate');
   const tokenData = await tokenResponse.json();
   return tokenData.access_token;
 }, []);
-
+ 
 const fetchData = useCallback(async () => {
   try {
     const accessToken = await fetchAccessToken();
@@ -585,14 +585,14 @@ const fetchData = useCallback(async () => {
       `/api/server3/UHES-0.0.1/WS/getMeterType?officeid=${selectedValue}`,
       `/api/server3/UHES-0.0.1/WS/getMeterInterface?officeid=${selectedValue}`,
     ];
-
+ 
     const [manufactureData, typeData, interfaceData] = await Promise.all(
       urls.map((url) =>
         fetch(url, { headers: { 'Authorization': `Bearer ${accessToken}` } })
           .then(response => response.ok ? response.json() : Promise.reject('Fetch failed'))
       )
     );
-    
+   
     setManufactures(manufactureData.data || []);
     setTypes(typeData.data || []);
     setInterfaces(interfaceData.data || []);
@@ -600,23 +600,23 @@ const fetchData = useCallback(async () => {
     console.error(err.message);
   }
 }, [fetchAccessToken, selectedValue]);
-
+ 
  
   const fetchMeterData = useCallback(async () => {
     try {
       setLoading(true);
-      setGrid(false); 
+      setGrid(false);
       const accessToken = await fetchAccessToken();
-
+ 
       const dataResponse = await fetch(getBaseUrl(), {
         headers: { 'Authorization': `Bearer ${accessToken}` },
       });
-
+ 
       if (!dataResponse.ok) throw new Error('Failed to fetch data');
       const responseData = await dataResponse.json();
       setMeterData(responseData.data || []);
       setRecordsTotal(responseData.recordsTotal || 0);
-      setGrid(true); // Show grid only when data is successfully loaded
+      setGrid(true);
     } catch (err) {
       console.error(err.message);
     } finally {
@@ -631,16 +631,16 @@ const fetchData = useCallback(async () => {
   const fetchAllData = useCallback(async () => {
     try {
       setLoading(true);
-  
+ 
       const accessToken = await fetchAccessToken();
-      const url = totalurl; 
+      const url = totalurl;
       const dataResponse = await fetch(url, {
         headers: { 'Authorization': `Bearer ${accessToken}` },
       });
-  
+ 
       if (!dataResponse.ok) throw new Error('Failed to fetch data');
       const responseData = await dataResponse.json();
-  
+ 
       setMeterData(responseData.data || []);
       console.log(responseData.data)
       setRecordsTotal(responseData.recordsTotal || 0);
@@ -651,31 +651,39 @@ const fetchData = useCallback(async () => {
       setLoading(false);
     }
   }, [fetchAccessToken]);
-  
+ 
   const handleChange = (event) => {
     setSelectedValue(event.value);
   };
  
-  const handleNextPage = () => {
-    setStart((prevStart) => prevStart + length);
-  };
-  
+const totalPages = Math.ceil(recordsTotal / length);
+const currentPage = Math.floor(start / length) + 1;
+ 
+const setPage = (page) => {
+  const newStart = (page - 1) * length;
+  setStart(newStart);
+}
+ 
   const handlePreviousPage = () => {
     setStart((prevStart) => Math.max(prevStart - length, 0));
   };
-  
+ 
   // Fetch data when 'start' changes
   useEffect(() => {
     fetchMeterData();
   }, [start]);
-  
  
-  
+ 
+ 
   const handleSubmit = (event) => {
     event.preventDefault();
-    setStart(0); 
-    fetchMeterData();
+    setStart(0);
+    fetchMeterData();  
+    setSubmitted(true);
   };
+ 
+ 
+ 
  
   const defaultColDef = {
     sortable: true,
@@ -684,7 +692,7 @@ const fetchData = useCallback(async () => {
     flex: 1,
   };
  
-
+ 
   const exportExcel = async () => {
     await fetchAllData();
     const workbook = new ExcelJS.Workbook();
@@ -712,7 +720,7 @@ const fetchData = useCallback(async () => {
     const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
     saveAs(blob, 'MeterDetails.xlsx');
   };
-  
+ 
   const exportCSV = async () => {
     await fetchAllData();
     const worksheet = XLSX.utils.json_to_sheet(meterData);
@@ -720,7 +728,7 @@ const fetchData = useCallback(async () => {
     const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
     saveAs(blob, 'MeterDetails.csv');
   };
-  
+ 
   const exportPDF = async () => {
     await fetchAllData();
     const doc = new jsPDF();
@@ -742,14 +750,12 @@ const fetchData = useCallback(async () => {
     doc.save("MeterDetails.pdf");
   };
  
-
-
   return (
     <div className="meter-details-container">
       <h1 className="form-title">Meters List</h1>
       <form className="meter-details-form" onSubmit={handleSubmit}>
         <div className="form-row form-floating mb-3">
-          <DropDownTreeComponent fields={fields} placeholder='select an office' popupHeight={'200px'} popupWidth={'250px'} change={handleChange} value={selectedValue}>
+          <DropDownTreeComponent fields={fields} placeholder='select an office' popupHeight={'200px'} popupWidth={'250px'} change={handleChange}>
           </DropDownTreeComponent>
         </div>
  
@@ -824,7 +830,7 @@ const fetchData = useCallback(async () => {
           />
         </div>
         <center>
-          <button type="submit" className="submit-button">Submit</button>
+          <button type="submit" className="submit-button"onClick={handleSubmit}>Submit</button>
         </center>
       </form>
       <div className="export-buttons-container">
@@ -832,9 +838,7 @@ const fetchData = useCallback(async () => {
          <button onClick={exportPDF} className="export-button">Pdf</button>
          <button onClick={exportCSV} className="export-button">Csv</button>
          </div>
-      {loading && <p>Loading...</p>}
- 
-      {meterData && (
+      {meterData && submitted &&  (
   <div className="meter-data-table ag-theme-quartz" id="myGrid" style={{ height: '400px', width: '100%' }}>
     <AgGridReact
       columnDefs={columnDefs.map((col) => ({
@@ -845,18 +849,111 @@ const fetchData = useCallback(async () => {
       pagination={false}
       domLayout="normal"
       defaultColDef={defaultColDef}
-      onCellClicked={onCellClicked} 
     />
   </div>
 )}
-
-      <div style={{ marginTop: '20px', display:'flex', justifyContent:'space-between' }}>
-      <span>Page {Math.floor(start / length) + 1} of {Math.ceil(recordsTotal / length)}</span>
-        <button onClick={handlePreviousPage} disabled={start === 0}>Previous</button>
-        <button onClick={handleNextPage} disabled={start + length >= recordsTotal}>Next</button>
+{submitted && (
+<div style={{ marginTop: '20px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', textAlign: 'right' }}>
+      <span style={{ fontSize: '0.875rem', marginLeft: '10px' }}>
+        Showing {start + length >= recordsTotal ? recordsTotal : start + 1} to {Math.min(start + length, recordsTotal)} of {recordsTotal} entries
+      </span>
+ 
+      <div>
+        <button
+          style={{ fontSize: '0.875rem', margin: '0 2px', padding: '4px 8px', marginLeft: '400px' }}
+          onClick={() => setPage(currentPage - 1)}
+          disabled={currentPage === 1}
+        >
+          Previous
+        </button>
+ 
+        {totalPages >= 5 && (
+  <>
+    <button
+      style={{
+        fontSize: '0.875rem',
+        margin: '0 2px',
+        padding: '4px 8px',
+        backgroundColor: currentPage === 1 ? '#2196f3' : 'white',
+        color: currentPage === 1 ? 'white' : 'black',
+        border: currentPage === 1 ? '1px solid #2196f3' : '1px solid #ddd',
+        borderRadius: '4px',
+        cursor: 'pointer'
+      }}
+      onClick={() => setPage(1)}
+    >
+      1
+    </button>
+    {currentPage > 4 && <span style={{ margin: '0 2px', fontSize: '0.875rem' }}>...</span>}
+    {Array.from({ length: 3 }, (_, i) => {
+      let page;
+      if (currentPage <= 3) {
+        page = i + 2;
+      }
+      else if (currentPage >= totalPages - 2) {
+        page = totalPages - 3 + i;
+      }
+      else {
+        page = currentPage - 1 + i;
+      }
+ 
+      if (page > 1 && page < totalPages) {
+        return (
+          <button
+            key={page}
+            style={{
+              fontSize: '0.875rem',
+              margin: '0 2px',
+              padding: '4px 8px',
+              backgroundColor: currentPage === page ? '#2196f3' : 'white',
+              color: currentPage === page ? 'white' : 'black',
+              border: currentPage === page ? '1px solid #2196f3' : '1px solid #ddd',
+              borderRadius: '4px',
+              cursor: 'pointer'
+            }}
+            onClick={() => setPage(page)}
+          >
+            {page}
+          </button>
+        );
+      }
+      return null;
+    })}
+ 
+ 
+    {currentPage < totalPages - 3 && <span style={{ margin: '0 2px', fontSize: '0.875rem' }}>...</span>}
+ 
+ 
+    <button
+      style={{
+        fontSize: '0.875rem',
+        margin: '0 2px',
+        padding: '4px 8px',
+        backgroundColor: currentPage === totalPages ? '#2196f3' : 'white',
+        color: currentPage === totalPages ? 'white' : 'black',
+        border: currentPage === totalPages ? '1px solid #2196f3' : '1px solid #ddd',
+        borderRadius: '4px',
+        cursor: 'pointer'
+      }}
+      onClick={() => setPage(totalPages)}
+    >
+      {totalPages}
+    </button>
+  </>
+)}
+ 
+ 
+<button
+  style={{ fontSize: '0.875rem', margin: '0 2px', padding: '4px 8px' }}
+  onClick={() => setPage(currentPage + 1)}
+  disabled={currentPage === totalPages}
+>
+  Next
+</button>
       </div>
+    </div>
+  )}
     </div>
   );
 }
- 
 export default MeterDetails;

@@ -10,10 +10,7 @@ import './assets/fullcalendar/timegrid/main.css'
 import './assets/fullcalendar/list/main.css'
 import './assets/css/flatpickr.min.css'
 import "choices.js/public/assets/styles/choices.min.css";
-import "flatpickr/dist/flatpickr.css";
-import 'primereact/resources/themes/lara-light-indigo/theme.css';  // or any other theme you prefer
-import 'primereact/resources/primereact.min.css';  // core PrimeReact styles
-import 'primeicons/primeicons.css';  // PrimeIcons for icons
+import "flatpickr/dist/flatpickr.css";  // PrimeIcons for icons
 
 
 // Redux Selector / Action

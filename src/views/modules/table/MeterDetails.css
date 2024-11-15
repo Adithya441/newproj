@@ -10,16 +10,28 @@
     position: relative; 
     width: 100%; 
     gap: 30px;
-    /* margin-bottom: 10px;  */
+
 }
-.custom-header {
-    color: white;              
-    background-color: #69acf3;    
-  }
+.ag-theme-quartz {
+  --ag-header-background-color: #51a7d2;
+  --ag-header-foreground-color: rgb(225,225,225);
+}
+  
   .form-group {
     position: relative;
   }
+
+  .ag-cell a {
+    color: blue;               
+    cursor: pointer;        
+  }
   
+  
+  .ag-cell a:hover {
+    color:  blue;            
+    text-decoration: none;       
+  }
+
   .floating-label {
     position: absolute;
     top: -10px;
@@ -31,10 +43,10 @@
     z-index: 1;
   }
   .form-floating {
-    margin-bottom: 15px; /* Adds space between form fields */
+    margin-bottom: 15px; 
   }
   .dropdown-tree {
-    margin-top: 15px; /* Adds space to ensure dropdown doesn't overlap label */
+    margin-top: 15px; 
     width: 100%;
   }
 .form-title {
@@ -42,18 +54,17 @@
     color: white;                
     padding: 0px 10px;              
     border-radius: 4px 4px 0 0;  
-    /* margin-bottom: 10px;         */
     text-align: left;           
     font-size: 18px;
     margin-bottom: 20px;        
 }
 .dropdown-wrapper {
     position: relative;
-    margin-bottom: 20px; /* Adjust margin as needed */
+    margin-bottom: 20px; 
   }
   
   .export-buttons-container .export-button {
-    margin-right: 10px; /* Space between buttons */
+    margin-right: 10px; 
   }
   
   .export-buttons-container .export-button:last-child {
@@ -71,7 +82,7 @@
 
 .form-row select.form-control,
 .form-row input[type="text"] {
-    padding: 5px; /* Padding for better spacing */
+    padding: 5px; 
     border: 1px solid #ccc;
     border-radius: 5px;
     width: 100%;
@@ -89,9 +100,9 @@
 }
 .form-control {
     position: relative;
-    /* margin-bottom: 10px;  */
+    
 }
-/* Floating label styles for input text */
+
 .form-row input[type="text"]:focus + label,
 .form-row input[type="text"]:not(:placeholder-shown) + label {
     padding: 5px;
@@ -101,7 +112,7 @@
     color: #000; 
 }
 
-/* Styles for placeholder shown state */
+
 .form-row input[type="text"]:placeholder-shown + label {
     padding: 5px;
     top: 12px; 
@@ -110,24 +121,23 @@
     color: #aaa; 
 }
 
-/* Floating label styles for dropdowns */
+
 .form-row select.form-control:focus + label,
 .form-row select.form-control:not(:placeholder-shown) + label {
-    top: -8px; /* Position above the dropdown */
+    top: -8px; 
     left: 10px; 
     font-size: 16px; 
     color: #000; 
 }
 
-/* Maintain the label's original position for empty dropdowns */
+
 .form-row select.form-control + label {
     top: 12px; 
     left: 12px; 
     font-size: 16px; 
-    color: #aaa; 
+
 }
 
-/* Styles for when the dropdown has a value selected */
 .form-row select.form-control:not(:empty) + label {
     top: -8px; 
     left: 10px; 
@@ -151,17 +161,11 @@
     justify-content: center;
     top: -5px;
     position: relative;
-    width: 60%;      /* Increased width */
-    height: 40px;    /* Decreased height */
+    width: 60%;      
+    height: 40px;   
     
 }
 
-  
-/* 
-.meter-number-field {
-    margin-bottom: 20px; 
-  } */
-  
   .export-buttons-container {
     margin-top: 10px;
     display: flex;
@@ -184,17 +188,9 @@
     transition: background-color 0.3s;
   }
   .meter-number-field {
-    margin-bottom: 20px; /* Adds a gap below the Meter Number field */
-}
-/* Styling for clickable meterNumber links */
-.link {
-  color: #0066cc;
-  text-decoration: underline;
+    margin-bottom: 20px; 
 }
 
-.link:hover {
-  color: #0044cc;
-}
 
   .export-button:hover {
     background-color: #69acf3; 
@@ -205,5 +201,11 @@
   }
 
 .submit-button:hover {
-    background-color: #69acf3;
+    background-color: #48688a;
+}
+
+
+.clicked-cell {
+  color: rgb(53, 142, 201);           
+  transition: background-color 0.3s ease; 
 }
