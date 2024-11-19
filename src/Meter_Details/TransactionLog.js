@@ -5,6 +5,8 @@ import "ag-grid-community/styles/ag-theme-quartz.css";
 import * as XLSX from "xlsx";
 import jsPDF from "jspdf";
 import "jspdf-autotable";
+import ExcelJS from 'exceljs';
+import { saveAs } from 'file-saver';
 
 const TransactionLog=({meternum})=>{
   const [transactionLogType,setTransactionLogType]=useState();

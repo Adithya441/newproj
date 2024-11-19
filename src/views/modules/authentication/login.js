@@ -124,7 +124,7 @@ const LoginPage = () => {
                             <Form className="mt-4">
                                 <Form.Group className='form-group'>
                                     <Form.Label htmlFor="exampleInputUserName1" className="mb-2">User Name</Form.Label>
-                                    <Form.Control type="text" className="form-control mb-0" id="exampleInputUserName1" placeholder="Enter User Name.." name="username" value={formData.username} onChange={handleChange} />
+                                    <Form.Control type="text" className="form-control mb-0" id="exampleInputUserName1" placeholder="Enter User Name.." name="username" value={formData.username} onChange={handleChange}/>
                                     {/* {errors&& (<span className='text-danger text-center'>{errors.username}</span>)} */}
                                 </Form.Group>
                                 <div className="d-flex justify-content-between my-2">

@@ -1,4 +1,4 @@
-import Index from "../views/index";
+import Index from "../views";
 import LargeData from "../views/modules/table/AgGrid";
 import Apicall from "../views/modules/charts/GetCommunication";
 import GetNotCommunicated from "../views/modules/charts/GetNotCommunicated";

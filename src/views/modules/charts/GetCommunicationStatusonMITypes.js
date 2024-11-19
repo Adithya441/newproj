@@ -233,7 +233,7 @@ const GetCommunicationStatusonMITypes = ({ selectedLabel, selectedCategory }) =>
         <span style={{ marginLeft: '10px' }}>
           {start+1} to {(currentPage * length > recordsTotal)? recordsTotal:(currentPage * length)} of {recordsTotal}
         </span>
-        <button onClick={handlePreviousPage} disabled={start === 0} style={{backgroundColor:'black', color:'white'}}>Previous</button>
+        <button onClick={handlePreviousPage} disabled={start === 0} style={{backgroundColor:'black', color:'white'}}>Previous</ button>
         <button onClick={handleNextPage} disabled={start + length >= recordsTotal} style={{backgroundColor:'black', color:'white'}}>Next</button>
       </div>
     </div>

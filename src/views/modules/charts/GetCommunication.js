@@ -9,7 +9,7 @@ import ExcelJS from 'exceljs';
 import { saveAs } from 'file-saver';
 import loadingGif from '../../../assets/img2.gif'
 
-const Apicall = ({ selectedLabel }) => {
+const Apicall = ({ selectedLabel , office }) => {
   const [data, setData] = useState([]); // Ensure data is an array
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -51,9 +51,9 @@ const Apicall = ({ selectedLabel }) => {
       const accessToken = tokenData.access_token;
 
       // Use the updated start parameter for pagination
-      const baseUrl = `/api/server3/UHES-0.0.1/WS/ServerpaginationForCommunicationReport?office=3459274e-f20f-4df8-a960-b10c5c228d3e&fromdate=${fromDate}&TOTAL_COUNT=&draw=2&start=${start}&length=${length}`;
-      const baseUrl1 = `/api/server3/UHES-0.0.1/WS/ServerpaginationForNonCommunicationReport?office=3459274e-f20f-4df8-a960-b10c5c228d3e&fromdate=${fromDate}&TOTAL_COUNT=&draw=2&start=${start}&length=${length}`;
-      const baseUrl2 = `/api/server3/UHES-0.0.1/WS/ServerpaginationForNeverCommunicatedMetersReport?Date=${fromDate}&OfficeId=3459274e-f20f-4df8-a960-b10c5c228d3e&draw=1&length=${length}&start=${start}`;
+      const baseUrl = `/api/server3/UHES-0.0.1/WS/ServerpaginationForCommunicationReport?office=${office}&fromdate=${fromDate}&TOTAL_COUNT=&draw=2&start=${start}&length=${length}`;
+      const baseUrl1 = `/api/server3/UHES-0.0.1/WS/ServerpaginationForNonCommunicationReport?office=${office}&fromdate=${fromDate}&TOTAL_COUNT=&draw=2&start=${start}&length=${length}`;
+      const baseUrl2 = `/api/server3/UHES-0.0.1/WS/ServerpaginationForNeverCommunicatedMetersReport?Date=${fromDate}&OfficeId=${office}&draw=1&length=${length}&start=${start}`;
       if(selectedLabel === 'COMMUNICATED'){
         const dataResponse = await fetch(baseUrl, {
           headers: { 'Authorization': `Bearer ${accessToken}` },

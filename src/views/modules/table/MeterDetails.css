@@ -145,7 +145,7 @@
     color: #000; 
 }
 
-.submit-button {
+.submitbutt {
     grid-column: span 1;
     padding: 7px 15px;
     background-color: #69acf3;

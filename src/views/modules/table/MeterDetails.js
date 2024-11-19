@@ -830,7 +830,7 @@ const setPage = (page) => {
           />
         </div>
         <center>
-          <button type="submit" className="submit-button"onClick={handleSubmit}>Submit</button>
+          <button className="submitbutt"onClick={handleSubmit}>Submit</button>
         </center>
       </form>
       <div className="export-buttons-container">
