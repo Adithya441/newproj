@@ -73,7 +73,7 @@ const PowerConnectDisconnect = () => {
     }));
 
     const csvContent = [
-      Object.keys(csvData[0]).join(','), // Header
+      Object.keys(csvData[0]).join(','), 
       ...csvData.map(row => Object.values(row).join(','))
     ].join('\n');
 
@@ -86,53 +86,48 @@ const PowerConnectDisconnect = () => {
     document.body.removeChild(link);
   };
 
-  // Export function for Excel with adjusted column widths
   const exportExcel = async () => {
     const workbook = new ExcelJS.Workbook();
     const worksheet = workbook.addWorksheet('Data');
     const headers = Object.keys(rowData[0] || {});
-    const title = worksheet.addRow([`Data on Demand`]); // Replace with your title text
-    title.font = { bold: true, size: 16, color: { argb: 'FFFF00' } }; // Set font color and size
+    const title = worksheet.addRow([`Data on Demand`]); 
+    title.font = { bold: true, size: 16, color: { argb: 'FFFF00' } };
     title.alignment = { horizontal: 'center' };
     worksheet.mergeCells('A1', `${String.fromCharCode(64 + headers.length)}1`);
 
     const headerRow = worksheet.addRow(headers);
 
     headerRow.eachCell((cell) => {
-      cell.font = { bold: true, color: { argb: 'FFFFFF' } }; // White font color
+      cell.font = { bold: true, color: { argb: 'FFFFFF' } }; 
       cell.fill = {
         type: 'pattern',
         pattern: 'solid',
-        fgColor: { argb: 'FFADD8E6' }, // Black background color
+        fgColor: { argb: 'FFADD8E6' }, 
       };
     });
 
-    // Add data rows
     rowData.forEach(row => {
       worksheet.addRow(Object.values(row));
     });
 
     worksheet.autoFilter = {
-      from: 'A2', // Starting cell of the filter (top-left corner)
-      to: `${String.fromCharCode(64 + headers.length)}2` // Ending cell (top-right corner based on header count)
+      from: 'A2', 
+      to: `${String.fromCharCode(64 + headers.length)}2` 
     };
 
-    // Adjust column widths based on the max length of the column data
     headers.forEach((header, index) => {
       const maxLength = Math.max(
-        header.length, // Length of the header
-        ...rowData.map(row => row[header] ? row[header].toString().length : 0) // Length of the content
+        header.length, 
+        ...rowData.map(row => row[header] ? row[header].toString().length : 0) 
       );
-      worksheet.getColumn(index + 1).width = maxLength + 2; // Adding padding
+      worksheet.getColumn(index + 1).width = maxLength + 2; 
     });
 
-    // Generate Excel file and trigger download
     const buffer = await workbook.xlsx.writeBuffer();
     const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
     saveAs(blob, `Configurations.xlsx`);
   };
 
-  // Export function for PDF
   const exportPDF = () => {
     const doc = new jsPDF();
     const tableColumn = ["Transaction Id", "Comments","Reason","Request From","Request Time","Response Time","Response Code"]; 
@@ -140,7 +135,6 @@ const PowerConnectDisconnect = () => {
 
     rowData.forEach(row => {
       tableRows.push([row.transactionId, row.comments,row.reason,row.responseFrom,row.requestTime,row.responseTime,row.responseCode]);
-      // Add other fields as needed
     });
 
     doc.autoTable(tableColumn, tableRows);
@@ -196,14 +190,6 @@ const PowerConnectDisconnect = () => {
         <label htmlFor="meterStatusInput">Meter Status</label>
         <input id="meterStatusInput" value={meterStatus} className="form-control" readOnly />
       </div>
-      {/* <div className="text-center mx-auto">
-        <button className="btn btn-primary btn-md" 
-        onClick={(e)=>{
-          e.preventDefault();
-          fetchGridData();
-        }}
-        >GetStatus</button>
-      </div> */}
       {rowData ? (
         <div className='col-12'>
           <div className="col-xs-12 mx-auto d-flex flex-wrap mt-4">
