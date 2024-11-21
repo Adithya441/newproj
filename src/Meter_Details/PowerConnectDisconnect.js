@@ -2,15 +2,12 @@ import { useState, useEffect } from "react";
 import { AgGridReact } from 'ag-grid-react';
 import "ag-grid-community/styles/ag-grid.css";
 import "ag-grid-community/styles/ag-theme-quartz.css";
-<<<<<<< HEAD
-=======
 import * as ExcelJS from "exceljs";
+import { saveAs } from "file-saver";
 import jsPDF from "jspdf";
 import "jspdf-autotable";
-import {saveAs} from 'file-saver';
->>>>>>> 3f01475372a3f62b63d5a7087432fa2fb961532e
 
-const PowerConnectDisconnect = () => {
+const PowerConnectDisconnect = ({meternum}) => {
   const [reasonType, setReasonType] = useState();
   const [commentValue, setCommentValue] = useState();
   const [meterStatus, setMeterStatus] = useState('Disconnected');
@@ -27,7 +24,7 @@ const PowerConnectDisconnect = () => {
   ]);
   //SERVICE URLS
   const tokenUrl = '/api/server3/UHES-0.0.1/oauth/token';
-  const gridUrl = `/api/server3/UHES-0.0.1/WS/getMeterConnectDisconnectData?meterno=Z20000127`;
+  const gridUrl = `/api/server3/UHES-0.0.1/WS/getMeterConnectDisconnectData?meterno=${meternum}`;
 
   const fetchGridData = async () => {
     try {
@@ -93,7 +90,7 @@ const PowerConnectDisconnect = () => {
     const workbook = new ExcelJS.Workbook();
     const worksheet = workbook.addWorksheet('Data');
     const headers = Object.keys(rowData[0] || {});
-    const title = worksheet.addRow([`Data on Demand`]); 
+    const title = worksheet.addRow([`Meter Connect Disconnect Data`]); 
     title.font = { bold: true, size: 16, color: { argb: 'FFFF00' } };
     title.alignment = { horizontal: 'center' };
     worksheet.mergeCells('A1', `${String.fromCharCode(64 + headers.length)}1`);
@@ -168,30 +165,6 @@ const PowerConnectDisconnect = () => {
       .catch((error) => alert("Failed to copy data: " + error));
   };
   return (
-<<<<<<< HEAD
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '2vh', padding: '2vw' }}>
-  <div style={{ display: 'flex', justifyContent: 'space-between', gap: '2vh', width: '100%' }}>
-    <div className="col-xs-10 col-md-4">
-      <label htmlFor="reasonInput">Reason</label>
-      <div className="input-group">
-        <div className="border border-left border-left-5 border-danger"></div>
-        <select
-          id="reasonInput"
-          value={reasonType}
-          className="form-control"
-          onChange={(e) => setReasonType(e.target.value)}
-          required
-        >
-          <option value="SURRENDER_OF_PREMISES">Surrender of Premises</option>
-          <option value="NON_PAYMENT">Non-Payment</option>
-          <option value="OTHERS">Others</option>
-          <option value="NEW_CONNECTION">New Connection</option>
-          <option value="CONNECTION_ON_SR_CARD">Connection on SR Card</option>
-          <option value="PAYMENT_DONE">Payment Done</option>
-          <option value="OTHERS">Others</option>
-        </select>
-      </div>
-=======
     <div className="col-xs-12 d-flex flex-wrap justify-content-between p-1">
       <div className="col-xs-10 col-md-4">
         <label htmlFor="reasonInput">Reason</label>
@@ -217,6 +190,14 @@ const PowerConnectDisconnect = () => {
         <label htmlFor="meterStatusInput">Meter Status</label>
         <input id="meterStatusInput" value={meterStatus} className="form-control" readOnly />
       </div>
+      {/* <div className="text-center mx-auto">
+        <button className="btn btn-primary btn-md" 
+        onClick={(e)=>{
+          e.preventDefault();
+          fetchGridData();
+        }}
+        >GetStatus</button>
+      </div> */}
       {rowData ? (
         <div className='col-12'>
           <div className="col-xs-12 mx-auto d-flex flex-wrap mt-4">
@@ -246,68 +227,7 @@ const PowerConnectDisconnect = () => {
             Loading Data...
           </div>
         )}
->>>>>>> 3f01475372a3f62b63d5a7087432fa2fb961532e
     </div>
-
-    <div className="col-xs-10 col-md-4">
-      <label htmlFor="commentInput">Comment</label>
-      <div className="input-group">
-        <div className="border border-left border-left-5 border-danger"></div>
-        <textarea
-          className="form-control"
-          id="commentInput"
-          rows="3"
-          required
-          value={commentValue}
-          onChange={(e) => setCommentValue(e.target.value)}
-        ></textarea>
-      </div>
-    </div>
-
-    <div className="col-xs-10 col-md-4">
-      <label htmlFor="meterStatusInput">Meter Status</label>
-      <input id="meterStatusInput" value={meterStatus} className="form-control" readOnly />
-    </div>
-  </div>
-
-  <div className="text-center mt-4">
-    <button
-      className="btn btn-primary btn-md"
-      onClick={(e) => {
-        e.preventDefault();
-        fetchGridData();
-      }}
-    >
-      GetStatus
-    </button>
-  </div>
-
-  {rowData && (
-    <div className="col-12 d-flex flex-column">
-      <div className="col-3 align-right"style={{marginLeft:'1vw'}}>
-        <input
-          type="text"
-          className="form-control"
-          placeholder="search"
-          value={searchKey}
-          onChange={searchData}
-        />
-      </div>
-      <div
-        className="container-fluid col-12 ag-theme-quartz m-2 mx-auto"
-        style={{ height: 350, width: '100%' }}
-      >
-        <AgGridReact
-          rowData={rowData}
-          columnDefs={colDefs}
-          pagination={true}
-          paginationPageSize={5}
-          paginationPageSizeSelector={[5, 10, 15, 20]}
-        />
-      </div>
-    </div>
-  )}
-</div>
   );
 }
 
