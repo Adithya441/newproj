@@ -3,14 +3,14 @@ import ReactApexChart from 'react-apexcharts';
 import { Modal, Button } from 'react-bootstrap';
 import GetLoadSwitch from './GetLoadSwitch';
 
-const LoadSwitchStatus = () => {
+const LoadSwitchStatus = ({officeid}) => {
   const [showModal, setShowModal] = useState(false);
   const [selectedData, setSelectedData] = useState(null);
   const [loading, setLoading] = useState(true); // Add loading state
   const [selectlabel,setSelectLabel] = useState(null);
 
   const tokenUrl = '/api/server3/UHES-0.0.1/oauth/token';
-  const baseUrl = '/api/server3/UHES-0.0.1/WS/getPowerConnectDisconnectStatus?applyMaskingFlag=N&officeid=3459274e-f20f-4df8-a960-b10c5c228d3e';
+  const baseUrl = `/api/server3/UHES-0.0.1/WS/getPowerConnectDisconnectStatus?applyMaskingFlag=N&officeid=${officeid}`;
 
   const fetchData = async () => {
     try {
@@ -28,47 +28,64 @@ const LoadSwitchStatus = () => {
           client_secret: 'secret',
         }),
       });
-
+  
       if (!tokenResponse.ok) {
         throw new Error('Failed to authenticate');
       }
-
+  
       const tokenData = await tokenResponse.json();
       const accessToken = tokenData.access_token;
-      console.log("token" + tokenData);
-
+  
+      console.log("Token: ", tokenData);
+  
       // Step 2: Use the access token to fetch data
       const dataResponse = await fetch(baseUrl, {
         headers: {
           'Authorization': `Bearer ${accessToken}`,
         },
       });
-
+  
       if (!dataResponse.ok) {
         throw new Error('Failed to fetch data');
       }
-
-      const responseData = await dataResponse.json();
-      console.log(responseData);
+  
+      // Check if the response body is empty
+      const responseBody = await dataResponse.text(); // Read the raw response body
+      if (!responseBody) {
+        throw new Error('Response body is empty');
+      }
+  
+      // Parse the response as JSON
+      const responseData = JSON.parse(responseBody);
+  
+      console.log("Response Data: ", responseData);
+  
+      // Check if required fields exist and are valid
+      if (!responseData.ydata1 || !responseData.xData) {
+        setLoading(false);
+        return <p style={{margin:'20px 20px'}}>No Data Available</p>
+      }
+  
       // Calculate total directly from responseData
       const total = responseData.ydata1.slice(0, 2).reduce((acc, curr) => acc + curr, 0);
       const series = responseData.ydata1.slice(0, 2);
       const labels = responseData.xData.slice(0, 2);
-
-      // Set loading to false once data is fetched
-      setLoading(false);
-
-      // Return values to be used for chart rendering
-      return { total, series, labels };
+  
+      setLoading(false); // Set loading to false once data is fetched
+  
+      return { total, series, labels }; // Return values to be used for chart rendering
     } catch (err) {
-      console.error(err.message); // Handle error as needed
+      console.error("Error fetching data: ", err.message); // Log error details
       setLoading(false);
+      return null; // Ensure chartData is not set if an error occurs
     }
   };
+  
 
   const [chartData, setChartData] = useState(null);
 
   useEffect(() => {
+    setLoading(true);
     const getData = async () => {
       const data = await fetchData();
       if (data) {
@@ -77,7 +94,7 @@ const LoadSwitchStatus = () => {
     };
     
     getData();
-  }, []);
+  }, [officeid]);
 
   // Render loading state
   if (loading) {
@@ -85,7 +102,7 @@ const LoadSwitchStatus = () => {
   }
 
   if (!chartData) {
-    return <h4 style={{marginTop:'160px', marginLeft:'100px'}}>No data available.</h4>;
+    return <h5 style={{margin:'110px 120px'}}>No data available.</h5>;
   }
 
   const { total, series, labels } = chartData;
@@ -177,8 +194,8 @@ const LoadSwitchStatus = () => {
   const handleClose = () => setShowModal(false);
 
   return (
-    <div className="container mx-auto p-4">
-      <div className="w-full max-w-md mx-auto mb-8" style={{width:"25vw"}}>
+    <div style={{ border:'2px solid black', borderRadius:'12px', paddingRight:'10px', height:'55vh',margin:'10px 10px'}}>
+      <div style={{width:"25vw"}}>
         <ReactApexChart
           options={options}
           series={series}
@@ -214,7 +231,7 @@ const LoadSwitchStatus = () => {
 
           {/* Modal Body */}
           <div style={{ maxHeight: '70vh',width:'970px', overflowY: 'auto' }}>
-            <GetLoadSwitch selectedLabel={selectlabel}/>
+            <GetLoadSwitch selectedLabel={selectlabel} office = {officeid}/>
           </div>
 
           {/* Modal Footer */}

@@ -67,50 +67,52 @@ const DetailPage = () => {
     }
   };
 
-  return (
-    <div style={{marginBottom:'30px'}} >
-      <div className='container-fluid'>
-        <ul className='d-flex flex-wrap flex-row justify-content-between list-unstyled'>
-          <li>
-            <button className='btn btn-secondary' onClick={() => setmeterdetType('meterinfo')}>Meter Information</button>
-          </li>
-          <li>
-            <button className='btn btn-secondary' onClick={() => setmeterdetType('dataondemand')}>Data On Demand</button>
-          </li>
-          <li>
-            <button className='btn btn-secondary' onClick={() => setmeterdetType('meterreading')}>Meter Reading</button>
-          </li>
-          <li>
-            <button className='btn btn-secondary' onClick={() => setmeterdetType('configurations')}>Configurations</button>
-          </li>
-          <li>
-            <button className='btn btn-secondary' onClick={() => setmeterdetType('firmwareupgrade')}>Firmware Upgrade</button>
-          </li>
-          <li>
-            <button className='btn btn-secondary' onClick={() => setmeterdetType('securitysetup')}>Security Setup</button>
-          </li>
-          <li>
-            <button className='btn btn-secondary' onClick={() => setmeterdetType('alarms')}>Alarms</button>
-          </li>
-          <li>
-            <button className='btn btn-secondary' onClick={() => setmeterdetType('transactionlog')}>Transaction Log</button>
-          </li>
-          <li>
-            <button className='btn btn-secondary' onClick={() => setmeterdetType('dynamicconfigurations')}>Dynamic Configurations</button>
-          </li>
-          <li>
-            <button className='btn btn-secondary' onClick={() => setmeterdetType('dynamicondemand')}>Dynamic OnDemand</button>
-          </li>
-          <li>
-          <button className='btn btn-secondary' onClick={()=>setmeterdetType('powerconndisconn')}>Power Connect Disconnect</button>
-          </li>
-        </ul>
+    return (
+      <div style={{ marginBottom: '30px' }}>
+        <div className="container-fluid">
+          <ul  
+            style={{ padding: 0, margin: 0, display: 'flex', flexWrap: 'wrap', gap: '10px', listStyle:'none' }}
+          >
+            <li>
+              <button className="btn btn-secondary" onClick={() => setmeterdetType('meterinfo')}>Meter Information</button>
+            </li>
+            <li>
+              <button className="btn btn-secondary" onClick={() => setmeterdetType('dataondemand')}>Data On Demand</button>
+            </li>
+            <li>
+              <button className="btn btn-secondary" onClick={() => setmeterdetType('meterreading')}>Meter Reading</button>
+            </li>
+            <li>
+              <button className="btn btn-secondary" onClick={() => setmeterdetType('configurations')}>Configurations</button>
+            </li>
+            <li>
+              <button className="btn btn-secondary" onClick={() => setmeterdetType('firmwareupgrade')}>Firmware Upgrade</button>
+            </li>
+            <li>
+              <button className="btn btn-secondary" onClick={() => setmeterdetType('securitysetup')}>Security Setup</button>
+            </li>
+            <li>
+              <button className="btn btn-secondary" onClick={() => setmeterdetType('alarms')}>Alarms</button>
+            </li>
+            <li>
+              <button className="btn btn-secondary" onClick={() => setmeterdetType('transactionlog')}>Transaction Log</button>
+            </li>
+            <li>
+              <button className="btn btn-secondary" onClick={() => setmeterdetType('dynamicconfigurations')}>Dynamic Configurations</button>
+            </li>
+            <li>
+              <button className="btn btn-secondary" onClick={() => setmeterdetType('dynamicondemand')}>Dynamic OnDemand</button>
+            </li>
+            <li>
+              <button className="btn btn-secondary" onClick={() => setmeterdetType('powerconndisconn')}>Power Connect Disconnect</button>
+            </li>
+          </ul>
+        </div>
+        <div className="container-fluid mt-3 m-1">
+          {renderComponent()}
+        </div>
       </div>
-      <div className='container-fluid mt-3 m-1'>
-        {renderComponent()}
-      </div>
-    </div>
-  );
+    );
 };
 
 export default DetailPage;

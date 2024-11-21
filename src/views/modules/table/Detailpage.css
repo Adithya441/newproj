@@ -1,0 +1,8 @@
+.button-style {
+    width: 100%;                 /* makes the button fill the entire width of its container */
+    height: 50px;                /* sets a fixed height for each button */
+    margin: 5px;                 /* margin between buttons */
+    padding: 10px;               /* optional: add some internal padding to buttons */
+    text-align: center;          /* ensure the text is centered */
+    box-sizing: border-box;      /* includes padding and borders in the element's total width and height */
+  }

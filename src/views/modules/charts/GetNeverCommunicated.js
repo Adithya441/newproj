@@ -9,7 +9,7 @@ import ExcelJS from 'exceljs';
 import { saveAs } from 'file-saver';
 import loadingGif from '../../../assets/img2.gif'
 
-const GetNeverCommunicated = ({ selectedLabel }) => {
+const GetNeverCommunicated = ({ selectedLabel, office }) => {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -51,7 +51,7 @@ const GetNeverCommunicated = ({ selectedLabel }) => {
       const tokenData = await tokenResponse.json();
       const accessToken = tokenData.access_token;
 
-      const baseUrl = `/api/server3/UHES-0.0.1/WS/getCommissionedButNotCommunicatedReport?Flag=${selectedLabel}&OfficeId=3459274e-f20f-4df8-a960-b10c5c228d3e%20%20`;
+      const baseUrl = `/api/server3/UHES-0.0.1/WS/getCommissionedButNotCommunicatedReport?Flag=${selectedLabel}&OfficeId=${office}`;
       const dataResponse = await fetch(baseUrl, {
         headers: { 'Authorization': `Bearer ${accessToken}` },
       });

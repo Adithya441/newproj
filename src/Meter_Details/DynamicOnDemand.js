@@ -4,8 +4,6 @@ import jsPDF from "jspdf";
 import "jspdf-autotable";
 import "ag-grid-community/styles/ag-grid.css";
 import "ag-grid-community/styles/ag-theme-quartz.css";
-import ExcelJS from 'exceljs';
-import { saveAs } from 'file-saver';
 import { useState, useEffect } from 'react';
 import './styles.css';
 
@@ -243,13 +241,13 @@ const DynamicOnDemand = ({meternum}) => {
       {/* Grid Container */}
       {(rowData) && (
         <div>
-        <div className="col-xs-12 mx-auto d-flex flex-wrap mt-4">
-          <div className="d-flex flex-wrap col-xs-10  col-md-6">
+        <div className="d-flex flex-wrap mt-4">
+          <div className="d-flex flex-wrap"style={{ marginLeft:'1vw',gap: '1vw'}}>
             <button className="btn btn-primary btn-md mr-1" onClick={exportExcel}>Excel</button>
             <button className='btn btn-primary btn-md mr-1' onClick={exportPDF}>PDF</button>
             <button className='btn btn-primary btn-md mr-1' onClick={exportCSV}>CSV</button>
           </div>
-          <div className="col-xs-8 col-md-3 align-right">
+          <div className="align-right" style={{ marginLeft: '2vw' }}>
             <input type="text" className="form-control" placeholder="search" value={searchKey} onChange={searchData} />
           </div>
         </div>

@@ -192,13 +192,13 @@ const FirmwareUpgrade = () => {
           <button className='btn btn-primary btn-md' onClick={getData}>Update</button>
         </div>
       </form>
-      <div className="col-12 mx-auto d-flex flex-wrap mt-4">
-        <div className="d-flex flex-wrap col-xs-10 col-md-6">
+      <div className="d-flex flex-wrap mt-4">
+        <div className="d-flex flex-wrap " style={{ gap: '1vw'}}>
           <button className="btn btn-primary btn-md mr-1" onClick={exportExcel}>Excel</button>
           <button className='btn btn-primary btn-md mr-1' onClick={exportPDF}>PDF</button>
           <button className='btn btn-primary btn-md mr-1' onClick={exportCSV}>CSV</button>
         </div>
-        <div className="col-xs-8 col-md-3 align-right">
+        <div className="align-right"style={{ marginLeft: '2vw' }}>
           <input type="text" className="form-control" placeholder="search" value={searchKey} onChange={searchData} />
         </div>
       </div>

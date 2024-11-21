@@ -4,8 +4,6 @@ import "ag-grid-community/styles/ag-grid.css";
 import "ag-grid-community/styles/ag-theme-quartz.css";
 import * as XLSX from "xlsx";
 import jsPDF from "jspdf";
-import ExcelJS from 'exceljs';
-import { saveAs } from 'file-saver';
 import "jspdf-autotable";
 
 const DynamicConfigurations = ({meternum}) => {
@@ -191,132 +189,166 @@ const DynamicConfigurations = ({meternum}) => {
   };
   return (
     <div className="container-fluid col-12">
-      <form className="col-12">
-        <div className="col-sm-4 d-flex flex-wrap mx-auto ">
-          <div className="form-check m-1">
-            <input
-              className="form-check-input"
-              type="radio"
-              name="gridRadios"
-              id="gridRadios1"
-              value="GET"
-              checked={operationMode === "GET"}
-              onChange={(e) => setOperationMode(e.target.value)}
-            />
-            <label className="form-check-label" htmlFor="gridRadios1">
-              Get
-            </label>
-          </div>
-          <div className="form-check m-1">
-            <input
-              className="form-check-input"
-              type="radio"
-              name="gridRadios"
-              id="gridRadios2"
-              value="SET"
-              checked={operationMode === "SET"}
-              onChange={(e) => setOperationMode(e.target.value)}
-            />
-            <label className="form-check-label" htmlFor="gridRadios2">
-              Set
-            </label>
-          </div>
-        </div> <br />
-        <div className="d-flex">
-          <div className="col-xs-10 col-lg-4">
-            <label htmlFor="Configurations">Configurations</label>
-            <select
-              id="Configurations"
-              value={configType}
-              className='form-control border border-left-3 border-left-danger'
-              onChange={(e) => {
-                setConfigType(e.target.value);
-                console.log(e.target.value);
-              }} >
-              <option>-NA-</option>
-              <option value="1">Data</option>
-              <option value="8">Clock</option>
-              <option value="9">Script Table</option>
-              <option value="20">Activity Calendar</option>
-              <option value="22">Single Action Object</option>
-              <option value="40">IP Address</option>
-              <option value="70">Disconnect Control</option>
-              <option value="71">Limiter</option>
-              <option value="115">Token Gateway</option>
-              <option value="112">Credit</option>
-              <option value="113">Charge</option>
-              <option value="111">Account</option>
-              <option value="11">Special Day</option>
-            </select>
-          </div>
-          <div className="col-xs-10 col-lg-4">
-            <label htmlFor="editConfig">Get/Set Configurations</label>
-            <select
-              id="editConfig"
-              value={editConfig}
-              className='form-control border border-left-3 border-left-danger'
-              onChange={(e) => seteditConfig(e.target.value)} >
-              <option>-NA-</option>
-              {(configOptions || []).map((confOpt, index) => (
-                <option key={index} value={confOpt.OBISNAME}>
-                  {confOpt.OBISNAME}
-                </option>
-              ))}
-            </select>
-          </div>
-        </div><br />
-        {operationMode == 'SET' && (
-          <div className='col-xs-10 col-lg-4'>
-            <label htmlFor="valueInput">Value</label>
-            <input type='number' className="form-control" value={valueInput} onChange={(e) => setValueInput(e.target.value)} />
-          </div>
-        )}
-        <div className="col-10 text-center mt-4 mx-auto">
-          <button className="btn btn-primary"
-            onClick={(e) => {
-              e.preventDefault();
-              fetchGridData();
-            }
-            }>Submit Request</button>
+    <form className="col-12">
+      {/* Radio Buttons - Get/Set */}
+      <div className="d-flex justify-content-center mb-4">
+        <div className="form-check mx-3">
+          <input
+            className="form-check-input"
+            type="radio"
+            name="gridRadios"
+            id="gridRadios1"
+            value="GET"
+            checked={operationMode === "GET"}
+            onChange={(e) => setOperationMode(e.target.value)}
+          />
+          <label className="form-check-label" htmlFor="gridRadios1">
+            Get
+          </label>
         </div>
-      </form>
-      {/* AG GRID CONTAINER */}
-      <div className="text-center col-12">
-        {
-          rowData ?
-            (
-              <div>
-        <div className="col-xs-12 mx-auto d-flex flex-wrap mt-4">
-          <div className="d-flex flex-wrap col-xs-10  col-md-6">
-            <button className="btn btn-primary btn-md mr-1" onClick={exportExcel}>Excel</button>
-            <button className='btn btn-primary btn-md mr-1' onClick={exportPDF}>PDF</button>
-            <button className='btn btn-primary btn-md mr-1' onClick={exportCSV}>CSV</button>
-            <button className='btn btn-primary btn-md mr-1' onClick={copyData}>Copy</button>
-          </div>
-          <div className="col-xs-8 col-md-3 align-right">
-            <input type="text" className="form-control" placeholder="search" value={searchKey} onChange={searchData} />
-          </div>
+        <div className="form-check mx-3">
+          <input
+            className="form-check-input"
+            type="radio"
+            name="gridRadios"
+            id="gridRadios2"
+            value="SET"
+            checked={operationMode === "SET"}
+            onChange={(e) => setOperationMode(e.target.value)}
+          />
+          <label className="form-check-label" htmlFor="gridRadios2">
+            Set
+          </label>
         </div>
-        <div className="container-fluid ag-theme-quartz mt-4 col-md-12 m-2 mx-auto" style={{ height: 350, width: "100%" }}>
-          <AgGridReact
-            rowData={rowData}
-            columnDefs={colDefs}
-            pagination={true}
-            paginationPageSize={5}
-            paginationPageSizeSelector={[5, 10, 15, 20]}
+      </div>
+  
+      {/* Configurations and Get/Set Configurations */}
+      <div className="d-flex justify-content-center gap-4 mb-4">
+        <div className="col-lg-4">
+          <label htmlFor="Configurations">Configurations</label>
+          <select
+            id="Configurations"
+            value={configType}
+            className="form-control border border-left-3 border-left-danger"
+            onChange={(e) => {
+              setConfigType(e.target.value);
+              console.log(e.target.value);
+            }}
+          >
+            <option>-NA-</option>
+            <option value="1">Data</option>
+            <option value="8">Clock</option>
+            <option value="9">Script Table</option>
+            <option value="20">Activity Calendar</option>
+            <option value="22">Single Action Object</option>
+            <option value="40">IP Address</option>
+            <option value="70">Disconnect Control</option>
+            <option value="71">Limiter</option>
+            <option value="115">Token Gateway</option>
+            <option value="112">Credit</option>
+            <option value="113">Charge</option>
+            <option value="111">Account</option>
+            <option value="11">Special Day</option>
+          </select>
+        </div>
+        <div className="col-lg-4">
+          <label htmlFor="editConfig">Get/Set Configurations</label>
+          <select
+            id="editConfig"
+            value={editConfig}
+            className="form-control border border-left-3 border-left-danger"
+            onChange={(e) => seteditConfig(e.target.value)}
+          >
+            <option>-NA-</option>
+            {(configOptions || []).map((confOpt, index) => (
+              <option key={index} value={confOpt.OBISNAME}>
+                {confOpt.OBISNAME}
+              </option>
+            ))}
+          </select>
+        </div>
+      </div>
+  
+      {/* Value Field (Only for SET Mode) */}
+      {operationMode === "SET" && (
+        <div className="col-lg-4 mx-auto mb-4">
+          <label htmlFor="valueInput">Value</label>
+          <input
+            type="number"
+            id="valueInput"
+            className="form-control border border-left-3 border-left-danger"
+            value={valueInput}
+            onChange={(e) => setValueInput(e.target.value)}
           />
         </div>
+      )}
+  
+      {/* Submit Button */}
+      <div className="text-center">
+        <button
+          className="btn btn-primary"
+          onClick={(e) => {
+            e.preventDefault();
+            fetchGridData();
+          }}
+        >
+          Submit Request
+        </button>
       </div>
-            ) :
-            (
-              <div className='mt-4 col-md-10 text-center text-danger'>
-                No records found...
-              </div>
-            )
-        }
-      </div>
+    </form>
+  
+    {/* AG Grid Container */}
+    <div className="text-center col-12">
+      {rowData ? (
+        <div>
+          {/* Export Buttons and Search */}
+          <div className="d-flex flex-wrap justify-content-between mt-4">
+            <div className="d-flex flex-wrap gap-3"style={{marginLeft:'1vw'}}>
+              <button className="btn btn-primary btn-md" onClick={exportExcel}>
+                Excel
+              </button>
+              <button className="btn btn-primary btn-md" onClick={exportPDF}>
+                PDF
+              </button>
+              <button className="btn btn-primary btn-md" onClick={exportCSV}>
+                CSV
+              </button>
+              <button className="btn btn-primary btn-md" onClick={copyData}>
+                Copy
+              </button>
+            </div>
+            <div style={{marginRight:'1vw'}}>
+              <input
+                type="text"
+                className="form-control"
+                placeholder="search"
+                value={searchKey}
+                onChange={searchData}
+              />
+            </div>
+          </div>
+  
+          {/* AG Grid */}
+          <div
+            className="container-fluid ag-theme-quartz mt-4 col-md-12 mx-auto"
+            style={{ height: 350, width: "100%" }}
+          >
+            <AgGridReact
+              rowData={rowData}
+              columnDefs={colDefs}
+              pagination={true}
+              paginationPageSize={5}
+            />
+          </div>
+        </div>
+      ) : (
+        <div className="mt-4 col-md-10 text-center text-danger">
+          No records found...
+        </div>
+      )}
     </div>
-  );
+  </div>
+  );  
 }
 
 export default DynamicConfigurations;

@@ -2,12 +2,33 @@ import React, { useState, useEffect, useCallback } from 'react';
 import ReactApexChart from 'react-apexcharts'; // Import for PDF
 import 'jspdf-autotable';
 import GetDataAvailability from './GetDataAvailability';
-import { DropDownTreeComponent } from '@syncfusion/ej2-react-dropdowns';
+import { TreeSelect, Spin } from 'antd'
 import './DataAvailability.css'
 
+const { SHOW_PARENT } = TreeSelect
+
+
+const renameKeys = (data, keyMap) => {
+    return data.map((item) => {
+      // Create a new object with renamed keys
+      const newItem = {
+        [keyMap.title]: item.text,
+        [keyMap.value]: item.id,
+        [keyMap.code]: item.code,
+      };
+  
+      // If children exist, recursively rename keys in children
+      if (item.inc) {
+        newItem[keyMap.children] = renameKeys(item.inc, keyMap);
+      }
+  
+      return newItem;
+    });
+  };
 // Profile Form for selection
 const ProfileForm = ({ onProfileSelect, offices }) => {
   const [officeId] = useState("3459274e-f20f-4df8-a960-b10c5c228d3e");
+  const [oofice,setOofice] = useState("3459274e-f20f-4df8-a960-b10c5c228d3e");
   const [profiles] = useState([
     { value: "Daily Load Profile", label: "Daily Load Profile" },
     { value: "Block Load Profile", label: "Block Load Profile" },
@@ -525,16 +546,26 @@ const ProfileForm = ({ onProfileSelect, offices }) => {
 }
 ]
 
-  let fields = {dataSource: data, value:'id', text: 'text', child:'inc'}
+const keyMap = {
+  title: "title", // Rename `title` to `label`
+  children: "children", // Rename `children` to `nodes`
+  value: "value", // Rename `value` to `id`
+  code: "code", // Rename `code` to `identifier`
+};
+
+// Renaming keys
+const transformedData = renameKeys(data, keyMap);
 
   const handleSubmit = (e) => {
     e.preventDefault();
     onProfileSelect(selectedProfile);
   };
 
-  const handleChange = (event) => {
-    offices(event.value);
-  };
+  const onChange = (newValue) => {
+    console.log('onChange ', newValue)
+    offices(newValue);
+    setOofice(newValue)
+  }
 
   return (
     <form onSubmit={handleSubmit} style={{
@@ -546,11 +577,17 @@ const ProfileForm = ({ onProfileSelect, offices }) => {
       padding: '10px 15px',
       maxWidth: '100%'
     }}>
-      <div className="expanding-field" style={{ marginRight: '10px' }}>
+      <div className="expanding-field" style={{ display: 'flex', alignItems: 'center',marginRight: '10px' }}>
         <label htmlFor="officeId" style={{ fontWeight: 'bold', color: '#333' }}>Office ID:</label>
-        <div className="form-row form-floating mb-3">
-          <DropDownTreeComponent fields={fields} placeholder='select an office' popupHeight={'200px'} popupWidth={'250px'} change={handleChange}>
-          </DropDownTreeComponent>
+        <div style={{width:'22vw', margin:'10px 10px'}}>
+          <TreeSelect
+            style={{ width: '80%' , height:'40px'}}
+            value={oofice}
+            dropdownStyle={{ maxHeight: 400, overflow: 'auto' , width:'380px'}}
+            placeholder="Please select"
+            onChange={onChange}
+            treeData={transformedData}
+            />
         </div>
       </div>
       <div style={{ marginRight: '10px' }}>
@@ -564,7 +601,8 @@ const ProfileForm = ({ onProfileSelect, offices }) => {
             padding: '5px',
             borderRadius: '5px',
             border: '1px solid #ccc',
-            backgroundColor: '#e6f7ff'
+            backgroundColor: '#e6f7ff',
+            height:'40px'
           }}
         >
           <option value="">-NA-</option>
@@ -595,6 +633,7 @@ const StackedBarChart = ({ profile, onDateClick,officeid }) => {
 
   useEffect(() => {
     const fetchData = async () => {
+      console.log(officeid + "hohohoho");
       if (!profile) return;
 
       const endpointMap = {
@@ -619,7 +658,7 @@ const StackedBarChart = ({ profile, onDateClick,officeid }) => {
         });
         const { access_token } = await tokenResponse.json();
 
-        const response = await fetch(`${endpointMap[profile]}?officeid=${officeid[0]}`, {
+        const response = await fetch(`${endpointMap[profile]}?officeid=${officeid}`, {
           headers: { Authorization: `Bearer ${access_token}` },
         });
 
@@ -711,6 +750,7 @@ const DataAvailability = () => {
   };
 
   const handleOfficename = (id) => {
+    console.log(id + "hahahaha");
     setOffice(id);
   }
 

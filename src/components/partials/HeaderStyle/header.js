@@ -9,7 +9,7 @@ import { Navbar, Dropdown, Form } from "react-bootstrap";
 // components
 import CustomToggle from "../../dropdowns";
 import Fullscreen from "../../fullscreen";
-import downloadPDF from "../../../Download/PDF";
+
 
 // img
 import flag1 from "../../../assets/images/small/flag-01.png";
@@ -23,8 +23,6 @@ import user2 from "../../../assets/images/user/02.jpg";
 import user3 from "../../../assets/images/user/03.jpg";
 import user4 from "../../../assets/images/user/04.jpg";
 import user5 from "../../../assets/images/user/05.jpg";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faFileCirclePlus } from "@fortawesome/free-solid-svg-icons";
 
 import { useSelector, useDispatch } from "react-redux";
 import * as SettingSelector from "../../../store/setting/selectors";
@@ -212,14 +210,6 @@ const Header = memo(() => {
                   {/* RTL & LTR Mode end */}
 
                   {/* <li className="nav-item iq-full-screen"> */}
-                  <div>
-                    <FontAwesomeIcon
-                    icon={faFileCirclePlus}
-                    onClick={downloadPDF} // Attach the download function
-                    style={{ cursor: "pointer", fontSize: "18px", marginTop:'29px', marginRight:'22px' }} // Optional styling
-                    />
-                  </div>
-                  
                   <div to="#" className="iq-waves-effect" id="btnFullscreen">
                     <Fullscreen />
                   </div>

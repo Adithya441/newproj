@@ -9,7 +9,7 @@ import ExcelJS from 'exceljs';
 import { saveAs } from 'file-saver';
 import loadingGif from '../../../assets/img2.gif'
 
-const GetLoadSwitch = ({ selectedLabel }) => {
+const GetLoadSwitch = ({ selectedLabel, office }) => {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -49,7 +49,7 @@ const GetLoadSwitch = ({ selectedLabel }) => {
       const tokenData = await tokenResponse.json();
       const accessToken = tokenData.access_token;
 
-      const baseUrl = `/api/server3/UHES-0.0.1/WS/ServerpaginationForLoadSwitchStatus?RelayStatus=${selectedLabel === 'CONNECTED' ? 1 : 0}&applyMaskingFlag=N&draw=1&length=${length}&officeid=3459274e-f20f-4df8-a960-b10c5c228d3e&start=${start}`;
+      const baseUrl = `/api/server3/UHES-0.0.1/WS/ServerpaginationForLoadSwitchStatus?RelayStatus=${selectedLabel === 'CONNECTED' ? 1 : 0}&applyMaskingFlag=N&draw=1&length=${length}&officeid=${office}&start=${start}`;
       const dataResponse = await fetch(baseUrl, {
         headers: { 'Authorization': `Bearer ${accessToken}` },
       });

@@ -2,8 +2,6 @@ import { useState, useEffect } from "react";
 import { AgGridReact } from 'ag-grid-react';
 import "ag-grid-community/styles/ag-grid.css";
 import "ag-grid-community/styles/ag-theme-quartz.css";
-import ExcelJS from 'exceljs';
-import { saveAs } from 'file-saver';
 
 const PowerConnectDisconnect = ({meternum}) => {
   const [reasonType, setReasonType] = useState();
@@ -73,60 +71,89 @@ const PowerConnectDisconnect = ({meternum}) => {
     }
   };
   return (
-    <div className="col-xs-12 d-flex flex-wrap justify-content-between p-1">
-      {/* <form className="form"> */}
-      <div className="col-xs-10 col-md-4">
-        <label htmlFor="reasonInput">Reason</label>
-        <div className="input-group">
-          <div className="border border-left border-left-5 border-danger"></div>
-          <select id="reasonInput" value={reasonType} className='form-control' onChange={(e) => setReasonType(e.target.value)} required>
-            <option value="SURRENDER_OF_PREMISES">Surrender of Premises</option>
-            <option value="NON_PAYMENT">Non-Payment</option>
-            <option value="OTHERS">Others</option>
-            <option value="NEW_CONNECTION">New Connection</option>
-            <option value="CONNECTION_ON_SR_CARD">Connection on SR Card</option>
-            <option value="PAYMENT_DONE">Payment Done</option>
-            <option value="OTHERS">Others</option>
-          </select>
-        </div>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '2vh', padding: '2vw' }}>
+  <div style={{ display: 'flex', justifyContent: 'space-between', gap: '2vh', width: '100%' }}>
+    <div className="col-xs-10 col-md-4">
+      <label htmlFor="reasonInput">Reason</label>
+      <div className="input-group">
+        <div className="border border-left border-left-5 border-danger"></div>
+        <select
+          id="reasonInput"
+          value={reasonType}
+          className="form-control"
+          onChange={(e) => setReasonType(e.target.value)}
+          required
+        >
+          <option value="SURRENDER_OF_PREMISES">Surrender of Premises</option>
+          <option value="NON_PAYMENT">Non-Payment</option>
+          <option value="OTHERS">Others</option>
+          <option value="NEW_CONNECTION">New Connection</option>
+          <option value="CONNECTION_ON_SR_CARD">Connection on SR Card</option>
+          <option value="PAYMENT_DONE">Payment Done</option>
+          <option value="OTHERS">Others</option>
+        </select>
       </div>
-      <div className="col-xs-10 col-md-4">
-        <label for="commentInput">Comment</label>
-        <div className="input-group">
-          <div className="border border-left border-left-5 border-danger"></div>
-          <textarea className="form-control" id="commentInput" rows="5" cols="20" required value={commentValue} onChange={(e) => setCommentValue(e.target.value)}></textarea>
-        </div>
-      </div>
-      <div className="col-xs-10 col-md-4 mt-2">
-        <label for="meterStatusInput">Meter Status</label>
-        <input id="meterStatusInput" value={meterStatus} className="form-control" readOnly />
-      </div>
-      <div className="text-center mx-auto">
-        <button className="btn btn-primary btn-md" 
-        onClick={(e)=>{
-          e.preventDefault();
-          fetchGridData();
-        }}
-        >GetStatus</button>
-      </div>
-      {/* </form> */}
-      {rowData && (
-          <div className="col-12 d-flex flex-column">
-            <div className="col-3 align-right">
-            <input type="text" className="form-control" placeholder="search" value={searchKey} onChange={searchData} />
-            </div>
-            <div className="container-fluid col-12 ag-theme-quartz m-2 mx-auto" style={{ height: 350, width: "100%" }}>
-            <AgGridReact
-              rowData={rowData}
-              columnDefs={colDefs}
-              pagination={true}
-              paginationPageSize={5}
-              paginationPageSizeSelector={[5, 10, 15, 20]}
-            />
-          </div>
-          </div>
-      )}
     </div>
+
+    <div className="col-xs-10 col-md-4">
+      <label htmlFor="commentInput">Comment</label>
+      <div className="input-group">
+        <div className="border border-left border-left-5 border-danger"></div>
+        <textarea
+          className="form-control"
+          id="commentInput"
+          rows="3"
+          required
+          value={commentValue}
+          onChange={(e) => setCommentValue(e.target.value)}
+        ></textarea>
+      </div>
+    </div>
+
+    <div className="col-xs-10 col-md-4">
+      <label htmlFor="meterStatusInput">Meter Status</label>
+      <input id="meterStatusInput" value={meterStatus} className="form-control" readOnly />
+    </div>
+  </div>
+
+  <div className="text-center mt-4">
+    <button
+      className="btn btn-primary btn-md"
+      onClick={(e) => {
+        e.preventDefault();
+        fetchGridData();
+      }}
+    >
+      GetStatus
+    </button>
+  </div>
+
+  {rowData && (
+    <div className="col-12 d-flex flex-column">
+      <div className="col-3 align-right"style={{marginLeft:'1vw'}}>
+        <input
+          type="text"
+          className="form-control"
+          placeholder="search"
+          value={searchKey}
+          onChange={searchData}
+        />
+      </div>
+      <div
+        className="container-fluid col-12 ag-theme-quartz m-2 mx-auto"
+        style={{ height: 350, width: '100%' }}
+      >
+        <AgGridReact
+          rowData={rowData}
+          columnDefs={colDefs}
+          pagination={true}
+          paginationPageSize={5}
+          paginationPageSizeSelector={[5, 10, 15, 20]}
+        />
+      </div>
+    </div>
+  )}
+</div>
   );
 }
 

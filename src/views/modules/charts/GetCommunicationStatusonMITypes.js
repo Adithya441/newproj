@@ -9,7 +9,7 @@ import ExcelJS from 'exceljs';
 import { saveAs } from 'file-saver';
 import loadingGif from '../../../assets/img2.gif'
 
-const GetCommunicationStatusonMITypes = ({ selectedLabel, selectedCategory }) => {
+const GetCommunicationStatusonMITypes = ({ selectedLabel, selectedCategory, office }) => {
   const [data, setData] = useState([]); // Ensure data is an array
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -53,7 +53,7 @@ const GetCommunicationStatusonMITypes = ({ selectedLabel, selectedCategory }) =>
 
       // Use the updated start parameter for pagination
       if(selectedLabel==='Meter Communicated'){
-      const baseUrl = `/api/server3/UHES-0.0.1/WS/ServerpaginationForCommunicationQueryBasedOnMI?Flag=COMMUNICATED&draw=1&length=${length}&mtrInterface=${selectedCategory}&office=3459274e-f20f-4df8-a960-b10c5c228d3e&start=${start}`;
+      const baseUrl = `/api/server3/UHES-0.0.1/WS/ServerpaginationForCommunicationQueryBasedOnMI?Flag=COMMUNICATED&draw=1&length=${length}&mtrInterface=${selectedCategory}&office=${office}&start=${start}`;
         const dataResponse = await fetch(baseUrl, {
           headers: { 'Authorization': `Bearer ${accessToken}` },
         });

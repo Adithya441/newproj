@@ -3,7 +3,7 @@ import ReactApexChart from 'react-apexcharts';
 import { Modal } from 'react-bootstrap';
 import GetOlderonMITypes from './GetOlderonMITypes';
 
-const OlderonMITypes = () => {
+const OlderonMITypes = ({officeid}) => {
   const [chartData, setChartData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
@@ -20,7 +20,7 @@ const OlderonMITypes = () => {
   ];
 
   const tokenUrl = '/api/server3/UHES-0.0.1/oauth/token';
-  const baseUrl = '/api/server3/UHES-0.0.1/WS/gettingOlderBasedOnMI?applyMaskingFlag=N&officeid=3459274e-f20f-4df8-a960-b10c5c228d3e';
+  const baseUrl = `/api/server3/UHES-0.0.1/WS/gettingOlderBasedOnMI?applyMaskingFlag=N&officeid=${officeid}`;
 
   const fetchData = async () => {
     try {
@@ -37,35 +37,45 @@ const OlderonMITypes = () => {
           client_secret: 'secret',
         }),
       });
-
+  
       if (!tokenResponse.ok) throw new Error('Failed to authenticate');
       const { access_token: accessToken } = await tokenResponse.json();
-
+  
       const dataResponse = await fetch(baseUrl, {
         headers: {
           Authorization: `Bearer ${accessToken}`,
         },
       });
-
+  
       if (!dataResponse.ok) throw new Error('Failed to fetch data');
       const responseData = await dataResponse.json();
-
+  
+      // Check for null or invalid data
+      if (
+        !responseData ||
+        !responseData.xData ||
+        !responseData.yData ||
+        responseData.xData.length === 0 ||
+        responseData.yData.length === 0
+      ) {
+        setLoading(false);
+        return <p>No Data available</p>
+      }
+  
       const labels = responseData.xData; // Communication types like BCITSRF, GPRS, etc.
       const ranges = responseData.yData.map(item => item.name); // Ranges like "1D-3D", "3D-1W", etc.
       const rangeData = responseData.yData.map(item => item.data);
-
-      // Calculate percentage data for each range and communication type
+  
       const percentageData = labels.map((_, index) => {
         const total = rangeData.reduce((acc, range) => acc + range[index], 0);
         return rangeData.map(range => (total ? ((range[index] / total) * 100).toFixed(2) : 0));
       });
-
-      // Prepare series data for ApexCharts
+  
       const series = ranges.map((rangeName, i) => ({
         name: rangeName,
         data: percentageData.map(data => parseFloat(data[i])),
       }));
-
+  
       setChartData({
         options: {
           chart: {
@@ -73,23 +83,16 @@ const OlderonMITypes = () => {
             stacked: true,
             stackType: '100%',
             toolbar: {
-              show: true, // Show the toolbar
+              show: true,
               tools: {
-                  download: true,
+                download: true,
               },
               export: {
-                  csv: {
-                      filename: `Getting Older Based on MI Types`,
-                  },
-                  svg: {
-                      filename: `Getting Older Based on MI Types`
-                  },
-                  png: {
-                      filename: `Getting Older Based on MI Types`
-                  }
+                csv: { filename: `Getting Older Based on MI Types` },
+                svg: { filename: `Getting Older Based on MI Types` },
+                png: { filename: `Getting Older Based on MI Types` },
               },
-          },
-  
+            },
             events: {
               dataPointSelection: (event, chartContext, config) => {
                 const { dataPointIndex, seriesIndex } = config;
@@ -100,50 +103,53 @@ const OlderonMITypes = () => {
                 setSelectlabel(label);
                 setSelectedData({ category, value, label });
                 setShowModal(true);
-              }
-            }
+              },
+            },
           },
           plotOptions: {
             bar: {
               horizontal: true,
-            }
+            },
           },
           xaxis: {
             categories: labels,
           },
           yaxis: {
-            max: 100
+            max: 100,
           },
           colors: colorPalette,
           tooltip: {
             y: {
-              formatter: (val) => `${val.toFixed(2)}%`
-            }
+              formatter: (val) => `${val.toFixed(2)}%`,
+            },
           },
           legend: {
-            position: 'top'
-          }
+            position: 'top',
+          },
         },
-        series: series
+        series: series,
       });
       setLoading(false);
     } catch (err) {
       console.error(err.message);
       setLoading(false);
+      setChartData(null);
     }
   };
+  
 
   useEffect(() => {
+    setLoading(true);
     fetchData();
-  }, []);
+  }, [officeid]);
 
   if (loading) return <p>Loading...</p>;
-  if (!chartData) return <h4 style={{marginTop:'160px', marginLeft:'100px'}}>No data available.</h4>;
+  if (!chartData) return <h5 style={{margin:'110px 120px'}}>No data available.</h5>;
 
   const handleClose = () => setShowModal(false);
 
   return (
-    <div>
+    <div style={{ border:'2px solid black', borderRadius:'12px', paddingRight:'10px', height:'50vh'}}>
       <h5 style={{marginLeft:'115px', fontWeight:'bold'}}>Getting Older Based on MI Types</h5>
       <div style={{ width: '35vw', height: '40vh' }}>
         <ReactApexChart
@@ -179,7 +185,7 @@ const OlderonMITypes = () => {
           </div>
 
           <div style={{ maxHeight: '70vh', width: '970px', overflowY: 'auto' }}>
-            <GetOlderonMITypes selectedLabel={selectlabel} selectedCategory={categorys} />
+            <GetOlderonMITypes selectedLabel={selectlabel} selectedCategory={categorys} office={officeid}/>
           </div>
 
           <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '1em' }}>

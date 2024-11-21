@@ -3,7 +3,7 @@ import ReactApexChart from 'react-apexcharts';
 import GetNotCommunicated from './GetNotCommunicated';
 import { Modal, Button } from 'react-bootstrap';
 
-const NonCommunicatedMeters = () => {
+const NonCommunicatedMeters = ({officeid}) => {
   const [showModal, setShowModal] = useState(false);
   const [selectedData, setSelectedData] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -11,7 +11,7 @@ const NonCommunicatedMeters = () => {
   const [selectlabel,setSelectLabel] = useState(null);
 
   const tokenUrl = '/api/server3/UHES-0.0.1/oauth/token';
-  const baseUrl = '/api/server3/UHES-0.0.1/WS/getmeterCommunicationStatus?officeid=3459274e-f20f-4df8-a960-b10c5c228d3e';
+  const baseUrl = `/api/server3/UHES-0.0.1/WS/getmeterCommunicationStatus?officeid=${officeid}`;
 
   const fetchData = async () => {
     try {
@@ -41,6 +41,11 @@ const NonCommunicatedMeters = () => {
       if (!dataResponse.ok) throw new Error('Failed to fetch data');
 
       const responseData = await dataResponse.json();
+      if(!responseData || !responseData.xData || !responseData.yData){
+        setChartData('');
+        setLoading(false)
+        return <p>No Data available</p>
+      }
       
       // Directly set xData and yData for chart rendering
       const labels = responseData.xData;
@@ -55,11 +60,12 @@ const NonCommunicatedMeters = () => {
   };
 
   useEffect(() => {
+    setLoading(true); // Reset loading state when officeid changes
     fetchData();
-  }, []);
+  }, [officeid]);
 
   if (loading) return <p>Loading...</p>;
-  if (!chartData) return <h4 style={{marginTop:'160px', marginLeft:'100px'}}>No data available.</h4>;
+  if (!chartData) return <h5 style={{marginTop:'160px', marginLeft:'100px'}}>No data available.</h5>;
 
   const { labels, series } = chartData;
 
@@ -113,7 +119,7 @@ const NonCommunicatedMeters = () => {
       },
     },
     title: {
-      text: 'Not Communicated Meters',
+      text: 'Non Communicated Meters',
       align: 'center',
     },
     legend: {
@@ -124,8 +130,8 @@ const NonCommunicatedMeters = () => {
   const handleClose = () => setShowModal(false);
 
   return (
-    <div className="container mx-auto p-4">
-      <div className="w-full max-w-md mx-auto mb-8" style={{width:"25vw"}}>
+    <div style={{margin:'10px 10px'}}>
+      <div style={{width:"25vw" ,height:'60vh', border:'2px solid black', borderRadius:'12px'}}>
         <ReactApexChart
           options={options}
           series={series}
@@ -161,7 +167,7 @@ const NonCommunicatedMeters = () => {
 
           {/* Modal Body */}
           <div style={{ maxHeight: '70vh',width:'970px', overflowY: 'auto' }}>
-            <GetNotCommunicated selectedLabel={selectlabel}/>
+            <GetNotCommunicated selectedLabel={selectlabel} office={officeid}/>
           </div>
 
           {/* Modal Footer */}

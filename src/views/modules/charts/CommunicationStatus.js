@@ -3,7 +3,7 @@ import ReactApexChart from 'react-apexcharts';
 import { Modal, Button } from 'react-bootstrap';
 import Apicall from './GetCommunication';
 
-export default function CommunicationStatus({ officeid = '' }) {
+export default function CommunicationStatus({ officeid }) {
   console.log('CommunicationStatus rendered with officeid:', officeid);
   const [showModal, setShowModal] = useState(false);
   const [selectedData, setSelectedData] = useState(null);
@@ -49,9 +49,14 @@ export default function CommunicationStatus({ officeid = '' }) {
       }
 
       const responseData = await dataResponse.json();
+      if(!responseData){
+        setLoading(false);
+        return <p>No Data available</p>
+      }
       const total = responseData.ydata1.slice(0, 3).reduce((acc, curr) => acc + curr, 0);
       const series = responseData.ydata1.slice(0, 3);
       const labels = responseData.xData.slice(0, 3);
+      
 
       console.log('Fetched data:', responseData);
       setChartData({ total, series, labels });
@@ -76,7 +81,7 @@ export default function CommunicationStatus({ officeid = '' }) {
   }
 
   if (!chartData || !chartData.series || !chartData.labels) {
-    return <h4 style={{ marginTop: '160px', marginLeft: '100px' }}>No data available.</h4>;
+    return <h5 style={{ marginTop: '160px', marginLeft: '100px' }}>No data available.</h5>;
   }
 
   const { total, series, labels } = chartData;
@@ -162,8 +167,8 @@ export default function CommunicationStatus({ officeid = '' }) {
   const handleClose = () => setShowModal(false);
 
   return (
-    <div className="container mx-auto p-4">
-      <div className="w-full max-w-md mx-auto mb-8" style={{ width: "25vw" }}>
+    <div style={{margin:'10px 10px'}}>
+      <div style={{ width: "25vw" ,height:'60vh', border:'2px solid black', borderRadius:'12px'}}>
         <ReactApexChart
           key={officeid + '-' + JSON.stringify(chartData)}
           options={options}

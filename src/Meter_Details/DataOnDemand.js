@@ -4,8 +4,6 @@ import "ag-grid-community/styles/ag-theme-quartz.css";
 import { useState, useEffect } from 'react';
 import * as XLSX from "xlsx";
 import jsPDF from "jspdf";
-import ExcelJS from 'exceljs';
-import { saveAs } from 'file-saver';
 import "jspdf-autotable";
 import './styles.css';
 
@@ -128,86 +126,59 @@ const DataOnDemand = ({meternum}) => {
     }
   };
   
-  const exportToCSV = () => {
-    const csvData = rowData.map(row => ({
-      METERNO: row.METERNO,
-      MeterLastCommunicated: row.MeterLastCommunicated,
-      // Add other fields as needed
-    }));
+  const exportExcel = () => {
+    const worksheet = XLSX.utils.json_to_sheet(rowData);
+    const workbook = XLSX.utils.book_new();
 
-    const csvContent = [
-      Object.keys(csvData[0]).join(','), // Header
-      ...csvData.map(row => Object.values(row).join(','))
-    ].join('\n');
+    const maxLengths = rowData.reduce((acc, row) => {
+      Object.keys(row).forEach((key, i) => {
+        const value = row[key].toString().length;
+        acc[i] = acc[i] ? Math.max(acc[i], value) : value;
+      });
+      return acc;
+    }, []);
 
-    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-    const link = document.createElement('a');
-    link.href = URL.createObjectURL(blob);
-    link.setAttribute('download', 'DataOnDemand.csv');
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-  };
+    worksheet['!cols'] = maxLengths.map(length => ({ wch: length + 5 }));
 
-  // Export function for Excel with adjusted column widths
-  const exportToExcel = async () => {
-    const workbook = new ExcelJS.Workbook();
-    const worksheet = workbook.addWorksheet('Data');
-    const headers = Object.keys(rowData[0] || {});
-    const title = worksheet.addRow([`Data on Demand`]); // Replace with your title text
-    title.font = { bold: true, size: 16, color: { argb: 'FFFF00' } }; // Set font color and size
-    title.alignment = { horizontal: 'center' };
-    worksheet.mergeCells('A1', `${String.fromCharCode(64 + headers.length)}1`);
-
-    const headerRow = worksheet.addRow(headers);
-
-    headerRow.eachCell((cell) => {
-      cell.font = { bold: true, color: { argb: 'FFFFFF' } }; // White font color
-      cell.fill = {
-          type: 'pattern',
-          pattern: 'solid',
-          fgColor: { argb: 'FFADD8E6' }, // Black background color
+    const header = Object.keys(rowData[0]);
+    header.forEach((key, index) => {
+      const cellAddress = XLSX.utils.encode_cell({ c: index, r: 0 });
+      worksheet[cellAddress].s = {
+        fill: {
+          fgColor: { rgb: "FFFF00" }
+        }
       };
-  });
-
-    // Add data rows
-    rowData.forEach(row => {
-        worksheet.addRow(Object.values(row));
     });
 
-    worksheet.autoFilter = {
-      from: 'A2', // Starting cell of the filter (top-left corner)
-      to: `${String.fromCharCode(64 + headers.length)}2` // Ending cell (top-right corner based on header count)
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1");
+    XLSX.writeFile(workbook, "FirmwareUpgrade.xlsx");
   };
 
-    // Adjust column widths based on the max length of the column data
-    headers.forEach((header, index) => {
-        const maxLength = Math.max(
-            header.length, // Length of the header
-            ...rowData.map(row => row[header] ? row[header].toString().length : 0) // Length of the content
-        );
-        worksheet.getColumn(index + 1).width = maxLength + 2; // Adding padding
-    });
 
-    // Generate Excel file and trigger download
-    const buffer = await workbook.xlsx.writeBuffer();
-    const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
-    saveAs(blob, `DataOnDemand.xlsx`);
-};
+  const exportCSV = () => {
+    const worksheet = XLSX.utils.json_to_sheet(rowData);
+    const csv = XLSX.utils.sheet_to_csv(worksheet);
+    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(blob);
+    link.download = "FirmwareUpgrade.csv";
+    link.click();
+  };
 
-  // Export function for PDF
-  const exportToPDF = () => {
+  const exportPDF = () => {
     const doc = new jsPDF();
-    const tableColumn = ["METERNO", "MeterLastCommunicated"]; // Add more columns based on your data structure
-    const tableRows = [];
-
-    rowData.forEach(row => {
-      tableRows.push([row.METERNO, row.MeterLastCommunicated]);
-      // Add other fields as needed
+    doc.text("Firmware Upgrade Data", 20, 10);
+    doc.autoTable({
+      head: [["Transaction ID", "Firmware Version", "Request Time", "Response Time", "Request Code"]],
+      body: rowData.map((row) => [
+        row.Transaction_ID,
+        row.Firmware_Version,
+        row.Request_Time,
+        row.Response_Time,
+        row.Request_Code,
+      ]),
     });
-
-    doc.autoTable(tableColumn, tableRows);
-    doc.save('DataOnDemand.pdf');
+    doc.save("FirmwareData.pdf");
   };
 
   return (
@@ -286,13 +257,13 @@ const DataOnDemand = ({meternum}) => {
       </form>
       {dataStatus && (
         <div>
-        <div className="col-xs-12 mx-auto d-flex flex-wrap mt-4">
-          <div className="d-flex flex-wrap col-xs-10  col-md-6">
-            <button className="btn btn-primary btn-md mr-1" onClick={exportToExcel}>Excel</button>
-            <button className='btn btn-primary btn-md mr-1' onClick={exportToPDF}>PDF</button>
-            <button className='btn btn-primary btn-md mr-1' onClick={exportToCSV}>CSV</button>
+        <div className="d-flex flex-wrap mt-4">
+          <div className="d-flex flex-wrap"style={{ marginLeft:'1vw',gap: '1vw'}}>
+            <button className="btn btn-primary btn-md mr-1" onClick={exportExcel}>Excel</button>
+            <button className="btn btn-primary btn-md mr-1" onClick={exportPDF}>PDF</button>
+            <button className="btn btn-primary btn-md mr-1" onClick={exportCSV}>CSV</button>
           </div>
-          <div className="col-xs-8 col-md-3 align-right">
+          <div className="align-right" style={{ marginLeft: '2vw' }}>
             <input type="text" className="form-control" placeholder="search" value={searchKey} onChange={searchData} />
           </div>
         </div>

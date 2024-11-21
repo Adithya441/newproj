@@ -9,10 +9,28 @@ import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
 import 'jspdf-autotable';
 import ExcelJS from 'exceljs';
-import { DropDownTreeComponent } from '@syncfusion/ej2-react-dropdowns';
+import { TreeSelect, Spin } from 'antd'
 import { Link } from 'react-router-dom';
 import CryptoJS from 'crypto-js';
 import MeterLinkRenderer from './MeterLinkRenderer';
+
+const renameKeys = (data, keyMap) => {
+  return data.map((item) => {
+    // Create a new object with renamed keys
+    const newItem = {
+      [keyMap.title]: item.text,
+      [keyMap.value]: item.id,
+      [keyMap.code]: item.code,
+    };
+
+    // If children exist, recursively rename keys in children
+    if (item.inc) {
+      newItem[keyMap.children] = renameKeys(item.inc, keyMap);
+    }
+
+    return newItem;
+  });
+};
 
 function MeterDetails() {
   const tokenUrl = '/api/server3/UHES-0.0.1/oauth/token';
@@ -34,7 +52,7 @@ function MeterDetails() {
   const [selectedPaymentMode, setSelectedPaymentMode] = useState('');
   const [selectedRelayStatus, setSelectedRelayStatus] = useState('');
   const [meterNumber, setMeterNumber] = useState('');
-  const [office, setOffice] = useState('');
+  const [office, setOffice] = useState('3459274e-f20f-4df8-a960-b10c5c228d3e');
   const length = 10;
  
   const columnDefs = [
@@ -556,8 +574,19 @@ function MeterDetails() {
     ]
 }
 ]
-const getBaseUrl = () => `/api/server3/UHES-0.0.1/WS/callForServerpaginationForMeterDetails?draw=2&length=${length}&metermake=${selectedManufacture}&metertype=${selectedType}&mtrInterface=${selectedInterface?.ID || ''}&mtrNumber=${meterNumber}&office=${selectedValue}&paymenttype=${selectedPaymentMode}&relaystatus=${selectedRelayStatus}&start=${start}`;
-const totalurl='api/server3/UHES-0.0.1//WS/callForServerpaginationForMeterDetails?draw=2&length=272&office=3459274e-f20f-4df8-a960-b10c5c228d3e&start=0';
+
+const keyMap = {
+  title: "title", // Rename `title` to `label`
+  children: "children", // Rename `children` to `nodes`
+  value: "value", // Rename `value` to `id`
+  code: "code", // Rename `code` to `identifier`
+};
+
+// Renaming keys
+const transformedData = renameKeys(data, keyMap);
+
+const getBaseUrl = () => `/api/server3/UHES-0.0.1/WS/callForServerpaginationForMeterDetails?draw=2&length=${length}&metermake=${selectedManufacture}&metertype=${selectedType}&mtrInterface=${selectedInterface?.ID || ''}&mtrNumber=${meterNumber}&office=${office}&paymenttype=${selectedPaymentMode}&relaystatus=${selectedRelayStatus}&start=${start}`;
+const totalurl=`api/server3/UHES-0.0.1//WS/callForServerpaginationForMeterDetails?draw=2&length=272&office=${office}&start=0`;
 let fields = {dataSource: data, value:'id', text: 'text', child:'inc'}
 const fetchAccessToken = useCallback(async () => {
   const tokenResponse = await fetch(tokenUrl, {
@@ -580,10 +609,11 @@ const fetchAccessToken = useCallback(async () => {
 const fetchData = useCallback(async () => {
   try {
     const accessToken = await fetchAccessToken();
+    console.log('onChange ', office)
     const urls = [
-      `/api/server3/UHES-0.0.1/WS/getmetermake?officeid=${selectedValue}`,
-      `/api/server3/UHES-0.0.1/WS/getMeterType?officeid=${selectedValue}`,
-      `/api/server3/UHES-0.0.1/WS/getMeterInterface?officeid=${selectedValue}`,
+      `/api/server3/UHES-0.0.1/WS/getmetermake?officeid=${office}`,
+      `/api/server3/UHES-0.0.1/WS/getMeterType?officeid=${office}`,
+      `/api/server3/UHES-0.0.1/WS/getMeterInterface?officeid=${office}`,
     ];
  
     const [manufactureData, typeData, interfaceData] = await Promise.all(
@@ -599,7 +629,7 @@ const fetchData = useCallback(async () => {
   } catch (err) {
     console.error(err.message);
   }
-}, [fetchAccessToken, selectedValue]);
+}, [fetchAccessToken, office]);
  
  
   const fetchMeterData = useCallback(async () => {
@@ -651,10 +681,7 @@ const fetchData = useCallback(async () => {
       setLoading(false);
     }
   }, [fetchAccessToken]);
- 
-  const handleChange = (event) => {
-    setSelectedValue(event.value);
-  };
+
  
 const totalPages = Math.ceil(recordsTotal / length);
 const currentPage = Math.floor(start / length) + 1;
@@ -749,14 +776,23 @@ const setPage = (page) => {
     });
     doc.save("MeterDetails.pdf");
   };
- 
+
+  const onChange = (newValue) => {
+    setOffice(newValue)
+}
   return (
     <div className="meter-details-container">
       <h1 className="form-title">Meters List</h1>
       <form className="meter-details-form" onSubmit={handleSubmit}>
         <div className="form-row form-floating mb-3">
-          <DropDownTreeComponent fields={fields} placeholder='select an office' popupHeight={'200px'} popupWidth={'250px'} change={handleChange}>
-          </DropDownTreeComponent>
+        <TreeSelect
+                style={{ width: '100%', height:'40px' }}
+                value={office}
+                dropdownStyle={{ maxHeight: 400, overflow: 'auto' }}
+                placeholder="Please select"
+                onChange={onChange}
+                treeData={transformedData}
+                />
         </div>
  
         <div className="form-row form-floating mb-3">

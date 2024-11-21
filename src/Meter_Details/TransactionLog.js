@@ -5,8 +5,6 @@ import "ag-grid-community/styles/ag-theme-quartz.css";
 import * as XLSX from "xlsx";
 import jsPDF from "jspdf";
 import "jspdf-autotable";
-import ExcelJS from 'exceljs';
-import { saveAs } from 'file-saver';
 
 const TransactionLog=({meternum})=>{
   const [transactionLogType,setTransactionLogType]=useState();
@@ -175,9 +173,9 @@ const TransactionLog=({meternum})=>{
     <div className="col-12">
       <div className="col-10">
         <form className="form d-flex flex-wrap">
-          <div className="col-xs-10 col-md-4">
+          <div className="col-xs-10 col-md-4" style={{ margin: '1vw 0', padding: '0.5vw' }}>
             <label htmlFor="translogtype">Transaction Log</label>
-            <select id="translogtype" value={transactionLogType} className='form-control border border-left-3 border-left-danger' required onChange={(e)=>setTransactionLogType(e.target.value)}>
+            <select id="translogtype" value={transactionLogType} className='form-control border border-left-3 border-left-danger' required onChange={(e) => setTransactionLogType(e.target.value)}>
               <option value selected >-NA-</option>
               <option value="fep.FEP_CSV_CONTROL_EVENTS">Control Events</option>
               <option value="fep.FEP_CSV_CURRENT_EVENTS">Current Events</option>
@@ -198,75 +196,74 @@ const TransactionLog=({meternum})=>{
               <option value="fep.FEP_CSV_VOLTAGE_EVENTS">Voltage Events</option>
             </select>
           </div>
-          <div className="col-xs-10 col-md-4">
+          <div className="col-xs-10 col-md-4" style={{ margin: '1vw 0', padding: '0.5vw' }}>
             <label htmlFor="requesttype">Request Type</label>
-            <select id="requesttype" value={requestType} className='form-control border border-left-3 border-left-danger' required onChange={(e)=>setRequestType(e.target.value)}>
+            <select id="requesttype" value={requestType} className='form-control border border-left-3 border-left-danger' required onChange={(e) => setRequestType(e.target.value)}>
               <option value="">-NA-</option>
               <option value="All">All</option>
               <option value="O">Ondemand</option>
               <option value="S">Scheduler</option>
               <option value="SP">Schedule Push</option>
-            </select> 
-          </div>
-          <div className="col-xs-10 col-md-4">
-            <label htmlFor="fromdate"> * From Date</label>
-            <input type="datetime-local" id="fromdate" value={fromDate} className='form-control border border-left-3 border-left-danger' required onChange={(e)=>setFromDate(e.target.value)} />
-          </div>
-          <div className="col-xs-10 col-md-4">
-            <label htmlFor="status">Status</label>
-            <select id="status" value={status} onChange={(e)=>setStatus(e.tartget.value)} className='form-control border border-left-3 border-left-danger'>
-          <option>-NA-</option>
-          <option value="Success">Success</option>
-          <option value="Failure">Failure</option>
             </select>
           </div>
-          <div className="col-xs-10 col-md-4">
+          <div className="col-xs-10 col-md-4" style={{ margin: '1vw 0', padding: '0.5vw' }}>
+            <label htmlFor="fromdate">* From Date</label>
+            <input type="datetime-local" id="fromdate" value={fromDate} className='form-control border border-left-3 border-left-danger' required onChange={(e) => setFromDate(e.target.value)} />
+          </div>
+          <div className="col-xs-10 col-md-4" style={{ margin: '1vw 0', padding: '0.5vw' }}>
+            <label htmlFor="status">Status</label>
+            <select id="status" value={status} onChange={(e) => setStatus(e.target.value)} className='form-control border border-left-3 border-left-danger'>
+              <option>-NA-</option>
+              <option value="Success">Success</option>
+              <option value="Failure">Failure</option>
+            </select>
+          </div>
+          <div className="col-xs-10 col-md-4" style={{ margin: '1vw 0', padding: '0.5vw' }}>
             <label htmlFor="todate">* To Date</label>
-            <input type="datetime-local" id="todate" value={toDate} className='form-control border border-left-3 border-left-danger' required onChange={(e)=>setToDate(e.target.value)} />
-          </div><br/>
-          <div className="col-10 text-center mt-4 mx-auto">
-            <button className="btn btn-primary btn-md"
-            onClick={(e)=>{
-              e.preventDefault();
-              fetchGridData();
-            }}
+            <input type="datetime-local" id="todate" value={toDate} className='form-control border border-left-3 border-left-danger' required onChange={(e) => setToDate(e.target.value)} />
+          </div>
+  
+          <div className="col-12 text-center mt-4 mb-4">
+            <button className="btn btn-primary "
+              onClick={(e) => {
+                e.preventDefault();
+                fetchGridData();
+              }}
             >Submit</button>
           </div>
         </form>
       </div>
-      {
-        rowData ? (
-          <div className="col-xs-12 col-md-10 mx-auto">
-            <div className="col-12 mx-auto d-flex flex-wrap mt-4">
-              <div className="d-flex flex-wrap col-xs-10 p-2 col-md-6">
-                <button className="btn btn-primary btn-md m-1" onClick={exportExcel}>Excel</button>
-                <button className='btn btn-primary btn-md m-1' onClick={exportPDF}>PDF</button>
-                <button className='btn btn-primary btn-md m-1' onClick={exportCSV}>CSV</button>
-                <button className='btn btn-primary btn-md m-1' onClick={copyData}>Copy</button>
-              </div>
-              <div className="col-xs-10 col-md-4 align-item-right">
-                <input type="text" className="form-control" placeholder="search" value={searchKey} onChange={searchData} />
-              </div>
+  
+      {/* Display No records found if no data */}
+      {rowData ? (
+        <div className="col-xs-12 col-md-10 mx-auto">
+          <div className="col-12 mx-auto d-flex flex-wrap mt-4">
+            <div className="d-flex flex-wrap col-xs-10 p-2 col-md-6">
+              <button className="btn btn-primary btn-md m-1" onClick={exportExcel}>Excel</button>
+              <button className='btn btn-primary btn-md m-1' onClick={exportPDF}>PDF</button>
+              <button className='btn btn-primary btn-md m-1' onClick={exportCSV}>CSV</button>
+              <button className='btn btn-primary btn-md m-1' onClick={copyData}>Copy</button>
             </div>
-            <div className="container-fluid ag-theme-quartz mt-4 col-md-10 m-2 mx-auto" style={{ height: 350, width: "100%" }}>
-              <AgGridReact
-                rowData={rowData}
-                columnDefs={colDefs}
-                pagination={true}
-                paginationPageSize={5}
-                paginationPageSizeSelector={[5, 10, 15, 20]}
-              />
+            <div className="col-xs-10 col-md-4 align-item-right">
+              <input type="text" className="form-control" placeholder="search" value={searchKey} onChange={searchData} />
             </div>
           </div>
-        ) :
-          (
-            <div className="text-danger text-center m-2">
-              No records found...
-            </div>
-          )
-      }
+          <div className="container-fluid ag-theme-quartz mt-4 col-md-10 m-2 mx-auto" style={{ height: 350, width: "100%" }}>
+            <AgGridReact
+              rowData={rowData}
+              columnDefs={colDefs}
+              pagination={true}
+              paginationPageSize={5}
+              paginationPageSizeSelector={[5, 10, 15, 20]}
+            />
+          </div>
+        </div>
+      ) : (
+        <div className="col-10 text-center text-danger">
+          No records found...
+        </div>
+      )}
     </div>
   );
 }
-
-export default TransactionLog;
+export default TransactionLog  

@@ -6,6 +6,9 @@ import CommunicationStatus from "./modules/charts/CommunicationStatus";
 import NonCommunicatedMeters from './modules/charts/NonCommunicatedMeters';
 import NeverCommunicatedMeters from './modules/charts/NeverCommunicatedMeters';
 import CommunicationStatusonMITypes from "./modules/charts/CommunicationStatusonMITypes";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faFilePdf } from "@fortawesome/free-solid-svg-icons";
+import downloadPDF from "../Download/PDF";
 // import '../../src/views/modules/charts/styles.css';
 import { RiBillLine } from 'react-icons/ri'; // Importing the meter icon
 // import myicon from '../assets/images/user/metericon';
@@ -35,10 +38,29 @@ import * as am4charts from "@amcharts/amcharts4/charts";
 import am4themes_animated from "@amcharts/amcharts4/themes/animated";
 import LoadSwitchStatus from "./modules/charts/LoadSwitch";
 import OlderonMITypes from "./modules/charts/OlderonMITypes";
-import { DropDownTreeComponent } from '@syncfusion/ej2-react-dropdowns';
+import { TreeSelect, Spin } from 'antd'
 am4core.useTheme(am4themes_animated);
 
+const { SHOW_PARENT } = TreeSelect
 
+
+const renameKeys = (data, keyMap) => {
+    return data.map((item) => {
+      // Create a new object with renamed keys
+      const newItem = {
+        [keyMap.title]: item.text,
+        [keyMap.value]: item.id,
+        [keyMap.code]: item.code,
+      };
+  
+      // If children exist, recursively rename keys in children
+      if (item.inc) {
+        newItem[keyMap.children] = renameKeys(item.inc, keyMap);
+      }
+  
+      return newItem;
+    });
+  };
 
 const Index = () => {
 
@@ -562,14 +584,66 @@ const data = [{
 }
 ]
 
-let fields = {dataSource: data, value:'id', text: 'text', child:'inc'}
-const handleChange = (event) => {
-  setOffice(event.value);
-  console.log(office);
-};
-useEffect(()=>{
-  console.log(office);
-},[office]);
+const keyMap = {
+    title: "title", // Rename `title` to `label`
+    children: "children", // Rename `children` to `nodes`
+    value: "value", // Rename `value` to `id`
+    code: "code", // Rename `code` to `identifier`
+  };
+
+  // Renaming keys
+const transformedData = renameKeys(data, keyMap);
+useEffect(() => {
+    const getTodos = async () => {
+      try {
+        const response = await axios.get('https://jsonplaceholder.typicode.com/todos');
+        const tds = response.data;
+        setTods(tds);
+      } catch (error) {
+        console.error('Error fetching todos:', error);
+      }
+    };
+    getTodos();
+  },[]);
+  useEffect(()=>{
+    const getProducts= async () =>{
+      try{
+        const response= await axios.get('https://fakestoreapi.com/products');
+        const ps=response.data;
+        const d1=ps.filter(p=>p.category ===`men's clothing`);
+        const d2=ps.filter(p=>p.category ===`women's clothing`);
+        const d3=ps.filter(p=>p.category ==='jewelery');
+        const d4=ps.filter(p=>p.category ==='electronics');
+        setmenclCount(d1.length);
+        setwomenclCount(d2.length);
+        setjewCount(d3.length);
+        setelectCount(d4.length);
+        setProducts(ps);
+      }
+      catch(error){
+        console.log('Error fetching products:',error);
+      }
+    }
+    getProducts();
+  },[]);
+  useEffect(()=>{
+    const getPosts=async () =>{
+      try{
+        const response=await axios.get('https://jsonplaceholder.typicode.com/posts');
+        const pst=response.data;
+        setPosts(pst);
+      }
+      catch(error){
+        console.log('Error fetching posts:',error);
+      }
+    }
+    getPosts();
+  },[])
+
+const onChange = (newValue) => {
+    console.log('onChange ', newValue)
+    setOffice(newValue)
+}
   return (
     <Fragment>
       <div id="pdfdownload">
@@ -578,11 +652,19 @@ useEffect(()=>{
               <Col md="4"></Col>
               <Col md="4">
               <div style={{width:'22vw', margin:'10px 10px'}}>
-                <DropDownTreeComponent fields={fields} placeholder='select an office' popupHeight={'200px'} popupWidth={'250px'} change={handleChange}>
-                </DropDownTreeComponent>
+              <TreeSelect
+                style={{ width: '100%' }}
+                value={office}
+                dropdownStyle={{ maxHeight: 400, overflow: 'auto' , width:'380px'}}
+                placeholder="Please select"
+                onChange={onChange}
+                treeData={transformedData}
+                />
               </div>
               </Col>
-              <Col md="4"></Col>
+              <Col md="4"><div>
+              <FontAwesomeIcon icon={faFilePdf} onClick={downloadPDF} style={{color: "#03ab8f",cursor: "pointer", fontSize: "20px", marginTop:'13px'}} />
+                  </div></Col>
             </Row>
             <Row>
               <Col md="6" lg="3">
@@ -658,30 +740,30 @@ useEffect(()=>{
           <Col lg="12">
               <Row>
                 <Col md='4'>
-                <CommunicationStatus officeid={office}/>
+                <CommunicationStatus key={office} officeid={office}/>
                 </Col>
                 <Col md='4'>
-                  <NonCommunicatedMeters/>
+                  <NonCommunicatedMeters key={office} officeid={office}/>
                 </Col>
                 <Col md='4'>
-                  <NeverCommunicatedMeters/>
+                  <NeverCommunicatedMeters key={office} officeid={office}/>
                 </Col>
               </Row>
           </Col>
           <Col lg="12">
               <Row>
                 <Col md='6'>
-                  <CommunicationStatusonMITypes/>
+                  <CommunicationStatusonMITypes key={office} officeid={office}/>
                 </Col>
                 <Col md='6'>
-                  <OlderonMITypes/>
+                  <OlderonMITypes key={office} officeid={office}/>
                 </Col>
               </Row>
           </Col>
           <Col lg="12">
               <Row>
-                <Col md='4'>
-                  <LoadSwitchStatus/>
+                <Col md='6'>
+                  <LoadSwitchStatus key={office} officeid={office}/>
                 </Col>
               </Row>
           </Col>
