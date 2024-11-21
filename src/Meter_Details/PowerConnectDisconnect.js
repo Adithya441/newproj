@@ -169,8 +169,7 @@ const PowerConnectDisconnect = ({meternum}) => {
       <div className="col-xs-10 col-md-4">
         <label htmlFor="reasonInput">Reason</label>
         <div className="input-group">
-          <div className="border border-left border-left-5 border-danger"></div>
-          <select id="reasonInput" value={reasonType} className='form-control' onChange={(e) => setReasonType(e.target.value)} >
+          <select id="reasonInput" value={reasonType} className='form-control' onChange={(e) => setReasonType(e.target.value)} style={{margin:'5px 5px'}}>
             <option value="" selected></option>
             <option value="NEW_CONNECTION">New Connection</option>
             <option value="CONNECTION_ON_SR_CARD">Connection on SR Card</option>
@@ -182,8 +181,7 @@ const PowerConnectDisconnect = ({meternum}) => {
       <div className="col-xs-10 col-md-4">
         <label htmlFor="commentInput">Comment</label>
         <div className="input-group">
-          <div className="border border-left border-left-5 border-danger"></div>
-          <textarea className="form-control" id="commentInput" rows="5" cols="20" value={commentValue} onChange={(e) => setCommentValue(e.target.value)}></textarea>
+          <textarea className="form-control" id="commentInput" rows="5" cols="20" value={commentValue} onChange={(e) => setCommentValue(e.target.value)} style={{margin:'5px 5px'}}></textarea>
         </div>
       </div>
       <div className="col-xs-10 col-md-4 mt-2">
