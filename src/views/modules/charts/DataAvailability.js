@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import ReactApexChart from 'react-apexcharts'; // Import for PDF
+import { Col, Container, Row, Dropdown, Table } from "react-bootstrap";
 import 'jspdf-autotable';
 import GetDataAvailability from './GetDataAvailability';
 import { TreeSelect, Spin } from 'antd'
@@ -568,61 +569,78 @@ const transformedData = renameKeys(data, keyMap);
   }
 
   return (
-    <form onSubmit={handleSubmit} style={{
-      display: 'flex',
-      justifyContent: 'space-between',
-      alignItems: 'center',
-      backgroundColor: '#f0f8ff',
-      borderRadius: '8px',
-      padding: '10px 15px',
-      maxWidth: '100%'
-    }}>
-      <div className="expanding-field" style={{ display: 'flex', alignItems: 'center',marginRight: '10px' }}>
-        <label htmlFor="officeId" style={{ fontWeight: 'bold', color: '#333' }}>Office ID:</label>
-        <div style={{width:'22vw', margin:'10px 10px'}}>
-          <TreeSelect
-            style={{ width: '80%' , height:'40px'}}
-            value={oofice}
-            dropdownStyle={{ maxHeight: 400, overflow: 'auto' , width:'380px'}}
-            placeholder="Please select"
-            onChange={onChange}
-            treeData={transformedData}
-            />
-        </div>
-      </div>
-      <div style={{ marginRight: '10px' }}>
-        <label htmlFor="profile" style={{ fontWeight: 'bold', color: '#333' }}>Profile:</label>
-        <select 
-          id="profile" 
-          value={selectedProfile} 
-          onChange={(e) => setSelectedProfile(e.target.value)}
-          style={{
-            marginLeft: '10px',
-            padding: '5px',
-            borderRadius: '5px',
-            border: '1px solid #ccc',
-            backgroundColor: '#e6f7ff',
-            height:'40px'
-          }}
-        >
-          <option value="">-NA-</option>
-          {profiles.map((profile) => (
-            <option key={profile.value} value={profile.value}>
-              {profile.label}
-            </option>
-          ))}
-        </select>
-      </div>
-      <button type="submit" style={{
+    <Container 
+      className="p-3" 
+      style={{
+        backgroundColor: '#f0f8ff',
         borderRadius: '8px',
-        padding: '5px 15px',
-        backgroundColor: '#007bff',
-        color: '#fff',
-        fontWeight: 'bold',
-        border: 'none',
-        cursor: 'pointer'
-      }}>Submit</button>
-    </form>
+      }}
+    >
+      <form onSubmit={handleSubmit}>
+        <Row className="align-items-center mb-3">
+          {/* Office ID */}
+          <Col md={4}>
+            <label htmlFor="officeId" className="fw-bold text-dark">
+              Office ID:
+            </label>
+            <TreeSelect
+              style={{ width: '100%', height: '40px' }}
+              value={oofice}
+              dropdownStyle={{ maxHeight: 400, overflow: 'auto', width: '380px' }}
+              placeholder="Please select"
+              onChange={onChange}
+              treeData={transformedData}
+            />
+          </Col>
+
+          {/* Profile */}
+          <Col md={4}>
+            <label htmlFor="profile" className="fw-bold text-dark">
+              Profile:
+            </label>
+            <Dropdown>
+              <Dropdown.Toggle 
+                variant="light" 
+                id="profile-dropdown" 
+                className="w-100 mt-1"
+                style={{
+                  border: '1px solid #ccc',
+                  height: '40px',
+                  textAlign: 'start',
+                }}
+              >
+                {selectedProfile || "-NA-"}
+              </Dropdown.Toggle>
+              <Dropdown.Menu>
+                {profiles.map((profile) => (
+                  <Dropdown.Item
+                    key={profile.value}
+                    onClick={() => setSelectedProfile(profile.value)}
+                  >
+                    {profile.label}
+                  </Dropdown.Item>
+                ))}
+              </Dropdown.Menu>
+            </Dropdown>
+          </Col>
+
+          {/* Submit Button */}
+          <Col md={4} className="text-end">
+            <button
+              type="submit"
+              className="btn btn-primary"
+              style={{
+                borderRadius: '8px',
+                padding: '5px 15px',
+                fontWeight: 'bold',
+              }}
+            >
+              Submit
+            </button>
+          </Col>
+        </Row>
+      </form>
+    </Container>
   );
 };
 
@@ -740,7 +758,7 @@ const DataAvailability = () => {
   const [selectedProfile, setSelectedProfile] = useState("");
   const [selectedDate, setSelectedDate] = useState("");
   const [modal,setModal] = useState(false);
-  const [office, setOffice] = useState('');
+  const [office, setOffice] = useState('3459274e-f20f-4df8-a960-b10c5c228d3e');
   const [name, setName] = useState('');
   
 

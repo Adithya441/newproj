@@ -44,7 +44,7 @@ NOTE: This file contains the styling for responsive Template.
 
 
 	body.sidebar-main .iq-sidebar:hover + div.content-page {margin-left: 260px;}
-	body.sidebar-main .iq-sidebar:hover + div.content-page .iq-top-navbar {width: calc(100% - 320px);}
+	body.sidebar-main .iq-sidebar:hover + div.content-page .iq-top-navbar {width: calc(100% - 260px);}
 	body.sidebar-main .iq-sidebar:hover + div.content-page .iq-top-navbar.fixed-header {width: calc(100% - 260px);}
 }
 @media(max-width:1399px) {
@@ -56,7 +56,6 @@ NOTE: This file contains the styling for responsive Template.
 	.iq-circle-progressbar svg { width: 80px !important; height: 80px !important; }
 	.iq-circle-progressbar { margin: 0 auto; width: 80px !important; height: 80px !important; }
 	.content-page, body.sidebar-main .content-page { margin-left: 0; padding: 120px 0 0;border-radius: 25px; }
-	.iq-top-navbar, body.sidebar-main .iq-top-navbar{width: calc(100% - 35px); margin: 20px 15px;}
 	body.sidebar-main .iq-top-navbar.fixed-header {width: calc(100% - 0px); margin: 0;}
 	.iq-top-navbar.fixed-header{width: 100%; left: 0;}
 	body.sidebar-main .iq-footer { padding: 15px 10px; margin-left: 0; }
@@ -112,8 +111,8 @@ NOTE: This file contains the styling for responsive Template.
 	.display-5 { font-size: 2rem; font-weight: 300; }
 	.display-6 { font-size: 1.5rem; font-weight: 300; }
 	.iq-top-navbar .navbar { position: relative; }
-	.iq-top-navbar .navbar-toggler { right: 85px; top: 18px; position: absolute; color: #089bab; border: none; padding: 7px 10px; border-radius: 10px; font-size: 24px; }
-	.navbar-collapse { position: absolute; top: 75px; left: 0; width: 100%; background: #fff; -webkit-box-shadow: 0px 5px 12px 0px rgba(55, 73, 72, 0.15); -moz-box-shadow: 0px 5px 12px 0px rgba(55, 73, 72, 0.15); box-shadow: 0px 5px 12px 0px rgba(55, 73, 72, 0.15); border-radius: 25px; }
+	.iq-top-navbar .navbar-toggler { right: 85px; top: 18px; position: absolute; color: #089bab; border: none; padding: 7px 10px; font-size: 24px; }
+	.navbar-collapse { position: absolute; top: 75px; left: 0; width: 100%; background: #fff; -webkit-box-shadow: 0px 5px 12px 0px rgba(55, 73, 72, 0.15); -moz-box-shadow: 0px 5px 12px 0px rgba(55, 73, 72, 0.15); box-shadow: 0px 5px 12px 0px rgba(55, 73, 72, 0.15)}
 	.navbar-nav.navbar-list { float: right; display: inline-block; }
 	.iq-top-navbar .iq-navbar-custom .iq-menu-bt { right: 130px; top: 18px; }
 	.animation-card .an-img .bodymovin { margin-bottom: 0; margin-left: 0; width: 100%; }
@@ -146,11 +145,14 @@ NOTE: This file contains the styling for responsive Template.
 	.navbar-list li .caption{display: none;}
 	.navbar-list li img{margin-right: 0 !important;}
 	body.sidebar-main .iq-sidebar-logo a span{opacity: 1; display: block;}
+	.drop-down{width: 80vw;}
 }
 @media(max-width:979px) {
 	.iq-circle-progressbar .percent { font-size: 2.5rem !important; }
 	.iq-circle-progressbar svg { width: 200px !important; height: 200px !important; }
 	.iq-circle-progressbar { margin: 0 auto; width: 200px !important; height: 200px !important; }
+	.iq-top-navbar{width: calc(100% - 0px)}
+	.drop-down{width: 80vw;}
 }
 
 @media (max-width: 991.98px){
@@ -165,6 +167,19 @@ NOTE: This file contains the styling for responsive Template.
 	#top-tab-list li i{
 		margin: 0 0 5px;
 	}
+	.drop-down{width: 80vw;}
+	.blck .charts{width: 47vw;}
+	.blck1 .charts1{width: 47vw;}
+	.blck .chart-name{font-size: 12px;}
+	.blck1 .chart-name{font-size: 12px;}
+	.blck2 .chart-name{font-size: 12px;}
+	.blck2 .charts2{width: 100%;}
+	.blck4 .charts4{width: 100%;}
+	.blck3 .charts3{width: 100%;}
+	.blck5 .charts5{width: 100%;}
+	.blck3 .chart-name{font-size: 12px;}
+	.blck5 .chart-name{font-size: 12px;}
+	.blck4 .chart-name{font-size: 12px;}
 }
 
 @media (max-width: 767.98px){
@@ -172,6 +187,7 @@ NOTE: This file contains the styling for responsive Template.
 		margin: 0 15px 15px;
 		width: 44%;
 	}
+	.drop-down{width: 80vw;}
 }
 
 @media(max-width:767px) {
@@ -205,6 +221,10 @@ NOTE: This file contains the styling for responsive Template.
 	.sign-in-from{position: static;}
 	.iq-top-navbar .iq-search-bar{width: 50%;}
 	.iq-top-navbar .language-title + .iq-sub-dropdown{right: auto;left: 0;}
+	.blck .charts{width: 80vw;}
+	.blck1 .charts1{width: 80vw;}
+	.drop-down{width: 80vw;}
+	
 }
 
 @media (max-width: 575.98px){
@@ -226,6 +246,9 @@ NOTE: This file contains the styling for responsive Template.
 	.countdown li{
 		width: 43%;
 	}
+	.blck .charts{width: 80vw;}
+	.blck1 .charts1{width: 80vw;}
+	.drop-down{width: 80vw;}
 }
 
 @media (max-width: 479.98px){
@@ -234,6 +257,13 @@ NOTE: This file contains the styling for responsive Template.
 		float: none;
 		margin: 0 0 15px;
 	}
+	.blck .charts{width: 80vw;}
+	.blck1 .charts1{width: 80vw;}
+	.drop-down{width: 100vw;}
+	.blck2 .charts2{width: 100%;}
+	.blck4 .charts4{width: 100%;}
+	.blck3 .charts3{width: 100%;}
+	.blck5 .charts5{width: 100%;}
 }
 
 @media(max-width:479px) {
@@ -246,7 +276,7 @@ NOTE: This file contains the styling for responsive Template.
 	.iq-circle-progressbar svg { width: 150px !important; height: 150px !important; }
 	.iq-circle-progressbar { margin: 0 auto; width: 150px !important; height: 150px !important; }
 	.iq-card-body { padding: 15px; }
-	.iq-sidebar-logo a span { display: none; }
+	.iq-sidebar-logo a span { display:block; }
 	body.sidebar-main .iq-top-navbar .iq-sidebar-logo a span { opacity: 0; display: none; }
 	.iq-error h1{font-size: 8rem;}
 	.chat-head header{overflow-x: scroll;}
@@ -266,4 +296,11 @@ NOTE: This file contains the styling for responsive Template.
 	.content-page, body.sidebar-main .content-page{padding: 170px 0 0;}
 	.iq-top-navbar .iq-sub-dropdown{width: 240px;}
 	.navbar-list li>a{padding: 0 8px;}
+	.blck .charts{width: 90vw;}
+	.blck1 .charts1{width: 90vw;}
+	.drop-down{width: 80vw;}
+	.blck2 .charts2{width: 100%;}
+	.blck5 .charts5{width: 100%;}
+	.blck4 .charts4{width: 100%;}
+	.blck3 .charts3{width: 100%;}
 }

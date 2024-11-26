@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import ReactApexChart from 'react-apexcharts';
 import GetNotCommunicated from './GetNotCommunicated';
 import { Modal, Button } from 'react-bootstrap';
+import './NonCommunicatedMeters.css'
 
 const NonCommunicatedMeters = ({officeid}) => {
   const [showModal, setShowModal] = useState(false);
@@ -118,10 +119,16 @@ const NonCommunicatedMeters = ({officeid}) => {
         formatter: (val) => `${val} Meters`,
       },
     },
-    title: {
-      text: 'Non Communicated Meters',
-      align: 'center',
-    },
+    responsive: [
+      {
+        breakpoint: 480,
+        options: {
+          legend: {
+            position: 'bottom',
+          },
+        },
+      },
+    ],
     legend: {
       position: 'bottom',
     },
@@ -130,14 +137,15 @@ const NonCommunicatedMeters = ({officeid}) => {
   const handleClose = () => setShowModal(false);
 
   return (
-    <div style={{margin:'10px 10px'}}>
-      <div style={{width:"25vw" ,height:'60vh', border:'2px solid black', borderRadius:'12px'}}>
+    <div className='blck3'>
+      <h5 className='chart-name'>Non Communicated Meters</h5>
+      <div className='charts3'>
         <ReactApexChart
           options={options}
           series={series}
           type="bar"
           width="100%"
-          height={350}
+          height="100%"
         />
       </div>
 
@@ -150,11 +158,11 @@ const NonCommunicatedMeters = ({officeid}) => {
             transform: 'translate(-50%, -50%)',
             zIndex: 1050,
             backgroundColor: '#fff',
-            width: '1000px',
+            width: '70vw',
             borderRadius: '5px',
             boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.3)',
             padding: '1em',
-            marginLeft: '125px',
+            marginLeft: '10vw',
           }}
         >
           {/* Modal Header */}
@@ -166,7 +174,7 @@ const NonCommunicatedMeters = ({officeid}) => {
           </div>
 
           {/* Modal Body */}
-          <div style={{ maxHeight: '70vh',width:'970px', overflowY: 'auto' }}>
+          <div style={{ maxHeight: '70vh',width:'68vw', overflowY: 'auto' }}>
             <GetNotCommunicated selectedLabel={selectlabel} office={officeid}/>
           </div>
 

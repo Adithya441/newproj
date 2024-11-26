@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import ReactApexChart from 'react-apexcharts';
 import { Modal, Button } from 'react-bootstrap';
 import GetCommunicationStatusonMITypes from './GetCommunicationStatusonMITypes';
+import './CommunicationStatusonMITypes.css'
 
 const CommunicationStatusonMITypes = ({officeid}) => {
   const [chartData, setChartData] = useState(null);
@@ -83,6 +84,7 @@ const CommunicationStatusonMITypes = ({officeid}) => {
                 },
               },
             },
+            
             events: {
               dataPointSelection: (event, chartContext, config) => {
                 const { dataPointIndex, seriesIndex } = config;
@@ -150,9 +152,9 @@ const CommunicationStatusonMITypes = ({officeid}) => {
   const handleClose = () => setShowModal(false);
 
   return (
-    <div style={{ border:'2px solid black', borderRadius:'12px', paddingRight:'10px', height:'50vh'}}>
-      <h5 style={{marginLeft:'45px', fontWeight:'bold'}}>Meter Communication Status Based on MI Types</h5>
-      <div style={{ width: '35vw', height: '40vh' }}>
+    <div className="blck">
+      <h5 className='chart-name'>Meter Communication Status Based on MI Types</h5>
+      <div className="charts">
         <ReactApexChart
           options={chartData.options}
           series={chartData.series}

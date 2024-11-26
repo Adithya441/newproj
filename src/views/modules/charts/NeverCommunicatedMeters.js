@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import ReactApexChart from 'react-apexcharts';
 import { Modal, Button } from 'react-bootstrap';
 import GetNeverCommunicated from './GetNeverCommunicated';
+import './NeverCommunicatedMeters.css'
 
 const NeverCommunicatedMeters = ({ officeid }) => {
   const [showModal, setShowModal] = useState(false);
@@ -38,8 +39,11 @@ const NeverCommunicatedMeters = ({ officeid }) => {
         },
       });
 
-      if (!dataResponse.ok) throw new Error('Failed to fetch data');
-
+      if (!dataResponse.ok) {
+        setLoading(false)
+        setChartData(null); // Set chart data to null if fetching data fails
+        return;
+      }
       const responseData = await dataResponse.json();
       if(!responseData || !responseData.xData || !responseData.yData){
         setChartData('');
@@ -65,7 +69,7 @@ const NeverCommunicatedMeters = ({ officeid }) => {
   }, [officeid]);
 
   if (loading) return <p>Loading...</p>;
-  if (!chartData) return <h5 style={{marginTop:'23px', marginLeft:'20px', width:"23vw" , height:'60vh', border:'2px solid black', borderRadius:'12px', padding:'155px 46px'}}>No data available.</h5>;
+  if (!chartData) return <h5 style={{marginTop:'10px', marginLeft:'20px', width:"23vw" , height:'53vh', border:'2px solid black', borderRadius:'12px', padding:'155px 46px'}}>No data available.</h5>;
 
   const { labels, series } = chartData;
 
@@ -118,10 +122,16 @@ const NeverCommunicatedMeters = ({ officeid }) => {
         formatter: (val) => `${val} Meters`,
       },
     },
-    title: {
-      text: 'Never Communicated Meters',
-      align: 'center',
-    },
+    responsive: [
+      {
+        breakpoint: 480,
+        options: {
+          legend: {
+            position: 'bottom',
+          },
+        },
+      },
+    ],
     legend: {
       position: 'bottom',
     },
@@ -130,14 +140,15 @@ const NeverCommunicatedMeters = ({ officeid }) => {
   const handleClose = () => setShowModal(false);
 
   return (
-    <div style={{margin:'10px 10px'}}>
-      <div style={{width:"23vw" , height:'60vh', border:'2px solid black', borderRadius:'12px'}}>
+    <div className='blck4'>
+      <h5 className='chart-name'>Never Communicated Meters</h5>
+      <div className='charts4'>
         <ReactApexChart
           options={options}
           series={series}
           type="bar"
           width="100%"
-          height={350}
+          height="100%"
         />
       </div>
 

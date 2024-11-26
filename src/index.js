@@ -3,9 +3,6 @@ import ReactDOM from 'react-dom/client';
 import reportWebVitals from './reportWebVitals';
 import '../node_modules/bootstrap/dist/css/bootstrap.css';
 import './style.css'
-import 'primereact/resources/themes/lara-light-indigo/theme.css';  // or any other theme you prefer
-import 'primereact/resources/primereact.min.css';  // core PrimeReact styles
-import 'primeicons/primeicons.css';  // PrimeIcons for icons
 
 
 // react-router

@@ -1,0 +1,12 @@
+.drop-down{
+    width: 19vw;
+    margin: 10px 10px;
+    display: flex;
+    justify-content: flex-start;
+    gap: 15px;
+}
+
+.down-butt{
+    margin: 0;
+   
+}

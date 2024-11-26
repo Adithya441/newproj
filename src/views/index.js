@@ -12,6 +12,7 @@ import downloadPDF from "../Download/PDF";
 // import '../../src/views/modules/charts/styles.css';
 import { RiBillLine } from 'react-icons/ri'; // Importing the meter icon
 // import myicon from '../assets/images/user/metericon';
+import './dashboard.css'
 
 //apexcharts
 import Chart from "react-apexcharts";
@@ -647,24 +648,23 @@ const onChange = (newValue) => {
   return (
     <Fragment>
       <div id="pdfdownload">
-     <Col lg="12">
+        <Col lg="12">
             <Row>
               <Col md="4"></Col>
               <Col md="4">
-              <div style={{width:'22vw', margin:'10px 10px'}}>
+              <div className="drop-down">
               <TreeSelect
                 style={{ width: '100%' }}
                 value={office}
-                dropdownStyle={{ maxHeight: 400, overflow: 'auto' , width:'380px'}}
+                dropdownStyle={{ maxHeight: 400, overflow: 'auto' , width:'300px'}}
                 placeholder="Please select"
                 onChange={onChange}
                 treeData={transformedData}
                 />
+                <FontAwesomeIcon icon={faFilePdf} onClick={downloadPDF} style={{color: "#03ab8f",cursor: "pointer", fontSize: "20px", marginTop:'8px'}} />
               </div>
               </Col>
-              <Col md="4"><div>
-              <FontAwesomeIcon icon={faFilePdf} onClick={downloadPDF} style={{color: "#03ab8f",cursor: "pointer", fontSize: "20px", marginTop:'13px'}} />
-                  </div></Col>
+              <Col md="4"></Col>
             </Row>
             <Row>
               <Col md="6" lg="3">

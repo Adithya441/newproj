@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import ReactApexChart from 'react-apexcharts';
 import { Modal, Button } from 'react-bootstrap';
 import Apicall from './GetCommunication';
+import './CommunicationStatus.css'
 
 export default function CommunicationStatus({ officeid }) {
   console.log('CommunicationStatus rendered with officeid:', officeid);
@@ -145,17 +146,10 @@ export default function CommunicationStatus({ officeid }) {
     legend: {
       position: 'bottom',
     },
-    title: {
-      text: 'Meter Communication Status',
-      align: 'center',
-    },
     responsive: [
       {
         breakpoint: 480,
         options: {
-          chart: {
-            width: 300,
-          },
           legend: {
             position: 'bottom',
           },
@@ -167,15 +161,16 @@ export default function CommunicationStatus({ officeid }) {
   const handleClose = () => setShowModal(false);
 
   return (
-    <div style={{margin:'10px 10px'}}>
-      <div style={{ width: "25vw" ,height:'60vh', border:'2px solid black', borderRadius:'12px'}}>
+    <div className='blck2'>
+      <h5 className='chart-name'>Meter Communication Status</h5>
+      <div className='charts2'>
         <ReactApexChart
           key={officeid + '-' + JSON.stringify(chartData)}
           options={options}
           series={chartData ? chartData.series : []}
           type="donut"
           width="100%"
-          height={350}
+          height="100%"
         />
       </div>
 

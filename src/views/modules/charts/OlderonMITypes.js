@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import ReactApexChart from 'react-apexcharts';
 import { Modal } from 'react-bootstrap';
 import GetOlderonMITypes from './GetOlderonMITypes';
+import './MITypes.css'
 
 const OlderonMITypes = ({officeid}) => {
   const [chartData, setChartData] = useState(null);
@@ -149,9 +150,9 @@ const OlderonMITypes = ({officeid}) => {
   const handleClose = () => setShowModal(false);
 
   return (
-    <div style={{ border:'2px solid black', borderRadius:'12px', paddingRight:'10px', height:'50vh'}}>
-      <h5 style={{marginLeft:'115px', fontWeight:'bold'}}>Getting Older Based on MI Types</h5>
-      <div style={{ width: '35vw', height: '40vh' }}>
+    <div className="blck1">
+      <h5 className='chart-name'>Older Based on MI Types</h5>
+      <div className='charts1'>
         <ReactApexChart
           options={chartData.options}
           series={chartData.series}

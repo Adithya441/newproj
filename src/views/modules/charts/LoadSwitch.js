@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import ReactApexChart from 'react-apexcharts';
 import { Modal, Button } from 'react-bootstrap';
 import GetLoadSwitch from './GetLoadSwitch';
+import './LoadSwitch.css'
 
 const LoadSwitchStatus = ({officeid}) => {
   const [showModal, setShowModal] = useState(false);
@@ -172,17 +173,10 @@ const LoadSwitchStatus = ({officeid}) => {
     legend: {
       position: 'bottom',
     },
-    title: {
-      text: 'Load Switch Status',
-      align: 'center',
-    },
     responsive: [
       {
         breakpoint: 480,
         options: {
-          chart: {
-            width: 300,
-          },
           legend: {
             position: 'bottom',
           },
@@ -194,14 +188,15 @@ const LoadSwitchStatus = ({officeid}) => {
   const handleClose = () => setShowModal(false);
 
   return (
-    <div style={{ border:'2px solid black', borderRadius:'12px', paddingRight:'10px', height:'55vh',margin:'10px 10px'}}>
-      <div style={{width:"25vw"}}>
+    <div className='blck5'>
+      <h5 className='chart-name'>Load Switch Status</h5>
+      <div className='charts5'>
         <ReactApexChart
           options={options}
           series={series}
           type="donut"
           width="100%"
-          height={350}
+          height="100%"
         />
       </div>
 
