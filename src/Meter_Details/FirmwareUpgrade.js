@@ -1,7 +1,8 @@
-import { useState,useEffect } from "react";
+import { useState, useEffect } from "react";
 import { AgGridReact } from 'ag-grid-react';
-import * as XLSX from "xlsx";
+import * as ExcelJS from "exceljs";
 import jsPDF from "jspdf";
+import { saveAs } from "file-saver";
 import "jspdf-autotable";
 import "ag-grid-community/styles/ag-grid.css";
 import "ag-grid-community/styles/ag-theme-quartz.css";
@@ -9,10 +10,10 @@ import "ag-grid-community/styles/ag-theme-quartz.css";
 const FirmwareUpgrade = () => {
   //SERVICE URLS
   const tokenUrl = '/api/server3/UHES-0.0.1/oauth/token';
-  const firwareUrl=`/api/server3/UHES-0.0.1/WS/getFepFirmwareByMtrMakeAndMtrType`;
+  const firwareUrl = `/api/server3/UHES-0.0.1/WS/getFepFirmwareByMtrMakeAndMtrType`;
   const [firmware, setFirmware] = useState();
   const [searchKey, setSearchKey] = useState('');
-  const [firmwareOptions,setFirmwareOptions]=useState([]);
+  const [firmwareOptions, setFirmwareOptions] = useState([]);
   const getData = () => {
 
   }
@@ -46,11 +47,11 @@ const FirmwareUpgrade = () => {
 
     } catch (err) {
       console.error(err.message);
-    } 
+    }
   };
 
   useEffect(() => {
-    fetchFirmwareOptions();  
+    fetchFirmwareOptions();
   }, []);
   const initialData = [
     { Transaction_ID: "NP:1504241817241275491", Firmware_Version: "$382", Request_Time: "15-04-2024 18:17:24", Response_Time: "07-08-2024 16:18:33", Request_Code: "Success" },
@@ -70,68 +71,89 @@ const FirmwareUpgrade = () => {
   const [rowData, setRowData] = useState(initialData);
 
   const [colDefs, setColDefs] = useState([
-    { field: "Transaction_ID", filter: true, flex: 4 },
-    { field: "Firmware_Version", filter: true, flex: 2 },
-    { field: "Request_Time", filter: true, flex: 2 },
-    { field: "Response_Time", filter: true, flex: 2 },
-    { field: "Request_Code", filter: true, flex: 2 }
+    { field: "Transaction_ID", filter: true, flex: 4, headerName: "Transaction ID" },
+    { field: "Firmware_Version", filter: true, flex: 2, headerName: "Firmware Version" },
+    { field: "Request_Time", filter: true, flex: 2, headerName: "Request Time" },
+    { field: "Response_Time", filter: true, flex: 2, headerName: "Response Time" },
+    { field: "Request_Code", filter: true, flex: 2, headerName: "Response Code" }
   ]);
 
-  const exportExcel = () => {
-    const worksheet = XLSX.utils.json_to_sheet(rowData);
-    const workbook = XLSX.utils.book_new();
+  const exportCSV = () => {
+    const csvData = rowData.map(row => ({
+      TransactionID: row.Transaction_ID,
+      FirmwareVersion: row.Firmware_Version,
+      RequestTime: row.Request_Time,
+      ResponseTime: row.Response_Time,
+      ResponseCode: row.Request_Code
+    }));
 
-    // Set auto width for columns
-    const maxLengths = rowData.reduce((acc, row) => {
-      Object.keys(row).forEach((key, i) => {
-        const value = row[key].toString().length;
-        acc[i] = acc[i] ? Math.max(acc[i], value) : value;
-      });
-      return acc;
-    }, []);
+    const csvContent = [
+      Object.keys(csvData[0]).join(','),
+      ...csvData.map(row => Object.values(row).join(','))
+    ].join('\n');
 
-    worksheet['!cols'] = maxLengths.map(length => ({ wch: length + 5 }));
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.setAttribute('download', 'FirmwareUpgrade.csv');
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
 
-    // Add background color for headers
-    const header = Object.keys(rowData[0]);
-    header.forEach((key, index) => {
-      const cellAddress = XLSX.utils.encode_cell({ c: index, r: 0 });
-      worksheet[cellAddress].s = {
-        fill: {
-          fgColor: { rgb: "FFFF00" }
-        }
+  const exportExcel = async () => {
+    const workbook = new ExcelJS.Workbook();
+    const worksheet = workbook.addWorksheet('Firmware Upgrade');
+    const headers = Object.keys(rowData[0] || {});
+    const title = worksheet.addRow([`Firmware Upgrade`]);
+    title.font = { bold: true, size: 16, color: { argb: 'FFFF00' } };
+    title.alignment = { horizontal: 'center' };
+    worksheet.mergeCells('A1', `${String.fromCharCode(64 + headers.length)}1`);
+
+    const headerRow = worksheet.addRow(headers);
+
+    headerRow.eachCell((cell) => {
+      cell.font = { bold: true, color: { argb: 'FFFFFF' } };
+      cell.fill = {
+        type: 'pattern',
+        pattern: 'solid',
+        fgColor: { argb: 'FFADD8E6' },
       };
     });
 
-    XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1");
-    XLSX.writeFile(workbook, "FirmwareUpgrade.xlsx");
-  };
+    rowData.forEach(row => {
+      worksheet.addRow(Object.values(row));
+    });
 
+    worksheet.autoFilter = {
+      from: 'A2',
+      to: `${String.fromCharCode(64 + headers.length)}2`
+    };
 
-  const exportCSV = () => {
-    const worksheet = XLSX.utils.json_to_sheet(rowData);
-    const csv = XLSX.utils.sheet_to_csv(worksheet);
-    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
-    const link = document.createElement("a");
-    link.href = URL.createObjectURL(blob);
-    link.download = "FirmwareUpgrade.csv";
-    link.click();
+    headers.forEach((header, index) => {
+      const maxLength = Math.max(
+        header.length,
+        ...rowData.map(row => row[header] ? row[header].toString().length : 0)
+      );
+      worksheet.getColumn(index + 1).width = maxLength + 2;
+    });
+
+    const buffer = await workbook.xlsx.writeBuffer();
+    const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+    saveAs(blob, `FirmwareUpgrade.xlsx`);
   };
 
   const exportPDF = () => {
     const doc = new jsPDF();
-    doc.text("Firmware Upgrade Data", 20, 10);
-    doc.autoTable({
-      head: [["Transaction ID", "Firmware Version", "Request Time", "Response Time", "Request Code"]],
-      body: rowData.map((row) => [
-        row.Transaction_ID,
-        row.Firmware_Version,
-        row.Request_Time,
-        row.Response_Time,
-        row.Request_Code,
-      ]),
+    const tableColumn = ["Transaction ID", "Firmware Version", "Request Time", "Response Time", "Response Code"];
+    const tableRows = [];
+
+    rowData.forEach(row => {
+      tableRows.push([row.Transaction_ID, row.Firmware_Version, row.Request_Time, row.Response_Time, row.Request_Code]);
     });
-    doc.save("FirmwareData.pdf");
+
+    doc.autoTable(tableColumn, tableRows);
+    doc.save('FirmwareUpgrade.pdf');
   };
 
   const copyData = () => {
@@ -165,7 +187,7 @@ const FirmwareUpgrade = () => {
       <form className="form  mt-4 mx-auto">
         <div className="col-xs-10 col-md-4">
           <label htmlFor="profileName">
-            Upgrade Firmware <span className="text-danger">*</span>
+            <span className="text-danger">*</span>Upgrade Firmware
           </label>
           <div className="input-group">
             <div className="border border-left border-left-5 border-danger" ></div>
@@ -193,12 +215,13 @@ const FirmwareUpgrade = () => {
         </div>
       </form>
       <div className="d-flex flex-wrap mt-4">
-        <div className="d-flex flex-wrap " style={{ gap: '1vw'}}>
+        <div className="d-flex flex-wrap" style={{ gap: '1vw' }}>
           <button className="btn btn-primary btn-md mr-1" onClick={exportExcel}>Excel</button>
           <button className='btn btn-primary btn-md mr-1' onClick={exportPDF}>PDF</button>
           <button className='btn btn-primary btn-md mr-1' onClick={exportCSV}>CSV</button>
+          <button className="btn btn-primary btn-md mr-1" onClick={copyData}>Copy</button>
         </div>
-        <div className="align-right"style={{ marginLeft: '2vw' }}>
+        <div className="align-right" style={{ marginLeft: '2vw' }}>
           <input type="text" className="form-control" placeholder="search" value={searchKey} onChange={searchData} />
         </div>
       </div>

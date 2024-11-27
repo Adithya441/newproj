@@ -1,61 +1,39 @@
-import React, { useState,useEffect } from 'react';
-import './meterreading.css';
+import React, { useState, useEffect } from 'react';
 import { AgGridReact } from 'ag-grid-react';
 import "ag-grid-community/styles/ag-grid.css";
 import "ag-grid-community/styles/ag-theme-quartz.css";
+import { saveAs } from "file-saver";
+import * as ExcelJS from "exceljs";
+import jsPDF from "jspdf";
+import "jspdf-autotable";
 
 const MeterReading = () => {
-
   const [profileName, setProfileName] = useState('');
   const [requestType, setRequestType] = useState('');
-  const [fromDate, setFromDate] = useState('From Date');
-  const [toDate, setToDate] = useState('To Date');
-  const [rowData,setRowData]=useState([]);
-  const [colDefs,setColDefs]=useState([
-    // { field: "RTC", filter: true },
-    // { field: "Current,Ir", filter: true},
-    // { field: "Current,Iy", filter: true },
-    // { field: "Current,Ib", filter: true },
-    // { field: "Voltage,Vrn", filter: true },
-    // { field: "Voltage,Vyn", filter: true },
-    // {field:"Voltage,Vbn",filter:true},
-    // {field:"Block Energy  Wh Import",filter:true},
-    // {field:"Block Energy Wh Export",filter:true},
-    // {field:"Block Energy VArhQ1",filter:true},
-    // {field:"Block Energy VArhQ2",filter:true},
-    // {field:"Block Energy VArhQ3",filter:true},
-    // {field:"Block Energy VArhQ4",filter:true},
-    // {field:"Block Energy  VAh Import",filter:true},
-    // {field:"Block Energy  VAh Export",filter:true},
-    // {field:"Status Byte",filter:true},
-    // {field:"Average Signal Strength",filter:true}
-  ]);
-  const [profileOptions,setProfileOptions]=useState([]);
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    console.log('Form submitted', { profileName, requestType, fromDate, toDate });
-  };
+  const [fromDate, setFromDate] = useState('');
+  const [toDate, setToDate] = useState('');
+  const [rowData, setRowData] = useState([]);
+  const [colDefs, setColDefs] = useState([]);
+  const [searchKey, setSearchKey] = useState();
+  const [profileOptions, setProfileOptions] = useState([]);
 
-  //SERVICE URLS
   const tokenUrl = '/api/server3/UHES-0.0.1/oauth/token';
-  const profileUrl=`/api/server3/UHES-0.0.1/WS/getAllFepCsvHeaderByMeterManfacturerAndMeterType?meterManfacturer=ZEN-TP&meterType=CT`;
+  const profileUrl = `/api/server3/UHES-0.0.1/WS/getAllFepCsvHeaderByMeterManfacturerAndMeterType?meterManfacturer=ZEN-TP&meterType=CT`;
 
   const buildGridUrl = () => {
     const params = new URLSearchParams({
       meterManfacturer: "ZEN-TP",
       meterNumber: "Z20000127",
-      meterType:"CT"
+      meterType: "CT",
     });
     if (profileName) params.append("profileId", profileName);
-    if (requestType) params.append("requestType",requestType);
+    if (requestType) params.append("requestType", requestType);
     if (fromDate) params.append("startdate", fromDate);
     if (toDate) params.append("enddate", toDate);
 
-    // WS/getAllDataByMeterNumberAndProfileIdAndMeterManfacturerAndMeterType?enddate=2024-11-13%2000%3A00&meterManfacturer=ZEN-TP&meterNumber=Z20000127&meterType=CT&profileId=CE&requestType=All&startdate=2024-06-01%2000%3A00
-
     return `/api/server3/UHES-0.0.1/WS/getAllDataByMeterNumberAndProfileIdAndMeterManfacturerAndMeterType?${params.toString()}`;
   };
-  //SERVICE CALLS
+
   const fetchProfileOptions = async () => {
     try {
       const tokenResponse = await fetch(tokenUrl, {
@@ -80,17 +58,11 @@ const MeterReading = () => {
 
       if (!dataResponse.ok) throw new Error('Failed to fetch data');
       const responseData = await dataResponse.json();
-      setProfileOptions((responseData.data));
-      console.log((responseData.data));
-
+      setProfileOptions(responseData.data);
     } catch (err) {
       console.error(err.message);
-    } 
+    }
   };
-
-  useEffect(() => {
-    fetchProfileOptions();  
-  }, []);
 
   const fetchGridData = async () => {
     try {
@@ -116,43 +88,151 @@ const MeterReading = () => {
 
       if (!dataResponse.ok) throw new Error('Failed to fetch data');
       const responseData = await dataResponse.json();
-      setRowData(responseData.data);
+
+      const data = responseData.data;
+      if (data && data.length > 0) {
+        const newColDefs = Object.keys(data[0]).map((key) => ({
+          field: key,
+          filter: true,
+          sortable: true,
+        }));
+        setColDefs(newColDefs);
+      }
+      setRowData(data);
       console.log('service data:',responseData.data);
-      // setDataStatus((responseData.status));
-      setFromDate('');
-      setToDate('');
     } catch (err) {
       console.error(err.message);
     }
   };
-  useEffect(()=>{
-    fetchGridData();
-  },[profileName]);
 
-  useEffect(()=>{
-    const dt=Array(rowData);
-    const keys = Object.keys(dt);
-    console.log('keys:',keys);
-    const newColDefs = keys.map(key => ({
-      field: key,
-      filter: true
-    }));
-    setColDefs(newColDefs);
-    },[rowData]);
+  useEffect(() => {
+    fetchProfileOptions();
+  }, []);
+  
+  const exportCSV = () => {
+    if (!rowData || rowData.length === 0 || !colDefs || colDefs.length === 0) {
+      alert("No data to export.");
+      return;
+    }
+
+    // Generate CSV headers dynamically
+    const headers = colDefs.map(col => col.field).join(',');
+
+    // Generate CSV rows dynamically
+    const csvRows = rowData.map(row =>
+      colDefs.map(col => row[col.field] || "").join(',')
+    );
+
+    const csvContent = [headers, ...csvRows].join('\n');
+
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    saveAs(blob, 'MeterReadingData.csv');
+  };
+
+  const exportExcel = async () => {
+    if (!rowData || rowData.length === 0 || !colDefs || colDefs.length === 0) {
+      alert("No data to export.");
+      return;
+    }
+
+    const workbook = new ExcelJS.Workbook();
+    const worksheet = workbook.addWorksheet('Meter Reading Data');
+
+    // Add headers dynamically
+    const headers = colDefs.map(col => col.field);
+    worksheet.addRow(headers).eachCell(cell => {
+      cell.font = { bold: true };
+      cell.fill = {
+        type: 'pattern',
+        pattern: 'solid',
+        fgColor: { argb: 'FFD700' }
+      };
+    });
+
+    // Add rows dynamically
+    rowData.forEach(row => {
+      const values = colDefs.map(col => row[col.field] || '');
+      worksheet.addRow(values);
+    });
+
+    // Adjust column widths dynamically
+    headers.forEach((header, index) => {
+      const maxLength = Math.max(
+        header.length,
+        ...rowData.map(row => row[header]?.toString()?.length || 0)
+      );
+      worksheet.getColumn(index + 1).width = maxLength + 2;
+    });
+
+    // Save file
+    const buffer = await workbook.xlsx.writeBuffer();
+    const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+    saveAs(blob, 'MeterReadingData.xlsx');
+  };
+
+  const exportPDF = () => {
+    if (!rowData || rowData.length === 0 || !colDefs || colDefs.length === 0) {
+      alert("No data to export.");
+      return;
+    }
+    const doc = new jsPDF();
+    const tableHeaders = colDefs.map(col => col.field);
+    const tableRows = rowData.map(row =>
+      colDefs.map(col => row[col.field] || "")
+    );
+
+    doc.autoTable({
+      head: [tableHeaders],
+      body: tableRows,
+    });
+    doc.save('MeterReadingData.pdf');
+  };
+
+  const copyData = () => {
+    if (!rowData || rowData.length === 0) {
+      alert("No data to copy.");
+      return;
+    }
+    const headers = colDefs.map((col) => col.field);
+    const textData = [
+      headers.join('\t'),
+      ...rowData.map((row) =>
+        headers.map((header) => row[header] || "").join('\t')
+      ),
+    ].join('\n');
+
+    navigator.clipboard.writeText(textData)
+      .then(() => alert("Data copied to clipboard!"))
+      .catch((error) => alert("Failed to copy data: " + error));
+  };
+
+  const searchData = (e) => {
+    const searchValue = e.target.value;
+    setSearchKey(searchValue);
+    if (searchValue === "") {
+      setRowData(rowData);
+    } else {
+      const filteredData = rowData.filter((row) =>
+        Object.values(row).some((val) =>
+          String(val).toLowerCase().includes(searchValue.toLowerCase())
+        )
+      );
+      setRowData(filteredData);
+    }
+  };
   return (
-    <div className='col-10 mx-auto mt-5 '>
-      <form className="form d-flex flex-wrap" onSubmit={handleSubmit}>
-        <div className="col-xs-10 col-md-3" style={{ margin: '2vw 0', padding: '1vw' }}>
+    <div className="container-fluid col-xs-12 p-1">
+      <form className="form d-flex flex-wrap">
+        <div className="col-xs-10 col-md-3">
           <label htmlFor="profileName">*Profile Name</label>
           <select
             id="profileName"
             value={profileName}
             onChange={(e) => setProfileName(e.target.value)}
-            className='form-control border border-left-3 border-danger'
+            className="form-control border border-left-3 border-danger"
           >
             <option value="">-NA-</option>
-            {profileOptions.map((profOption,index)=>
-            (
+            {profileOptions.map((profOption, index) => (
               <option key={index} value={profOption.profileName}>
                 {profOption.profileName}
               </option>
@@ -160,13 +240,13 @@ const MeterReading = () => {
           </select>
         </div>
 
-        <div className="col-xs-10 col-md-3" style={{ margin: '2vw 0', padding: '1vw' }}>
+        <div className="col-xs-10 col-md-3">
           <label htmlFor="requestType">*Request Type</label>
           <select
             id="requestType"
             value={requestType}
             onChange={(e) => setRequestType(e.target.value)}
-            className='form-control border border-left-3 border-danger'
+            className="form-control border border-left-3 border-danger"
           >
             <option value="">-NA-</option>
             <option value="All">All</option>
@@ -176,52 +256,65 @@ const MeterReading = () => {
           </select>
         </div>
 
-        <div className="col-xs-10 col-md-3" style={{ margin: '2vw 0', padding: '1vw' }}>
+        <div className="col-xs-10 col-md-3">
           <label htmlFor="fromDate">From Date</label>
           <input
             type="datetime-local"
             id="fromDate"
             value={fromDate}
             onChange={(e) => setFromDate(e.target.value)}
-            className='form-control border border-left-3 border-danger'
-            placeholder='From Date'
+            className="form-control border border-left-3 border-danger"
           />
         </div>
 
-        <div className="col-xs-10 col-md-3" style={{ margin: '2vw 0', padding: '1vw' }}>
+        <div className="col-xs-10 col-md-3">
           <label htmlFor="toDate">To Date</label>
           <input
             type="datetime-local"
             id="toDate"
             value={toDate}
             onChange={(e) => setToDate(e.target.value)}
-            className='form-control border border-left-3 border-danger'
-            placeholder='To Date'
+            className="form-control border border-left-3 border-danger"
           />
-        </div><br/>
-        <div className='col-10 text-center mt-4 mx-auto'style={{ marginTop: '4vh' }}>
-          <button type="submit" className="btn btn-primary"onClick={fetchGridData}>Submit</button>
+        </div>
+        <div className="col-10 text-center mt-4 mx-auto">
+          <button
+            type="button"
+            className="btn btn-primary"
+            onClick={fetchGridData}
+          >
+            Submit
+          </button>
         </div>
       </form>
-      {
-        rowData.length > 0 ? 
-        (
-          <div className="container-fluid ag-theme-quartz mt-4 col-md-12" style={{ height: 350, width: "100%" }}>
-      <AgGridReact
+      {rowData.length > 0 ? (
+        <div>
+        <div className="col-xs-12 mx-auto d-flex flex-wrap mt-4">
+          <div className="d-flex flex-wrap col-xs-10  col-md-6 gap-1">
+            <button className="btn btn-primary btn-md mr-1" onClick={exportExcel}>Excel</button>
+            <button className='btn btn-primary btn-md mr-1' onClick={exportPDF}>PDF</button>
+            <button className='btn btn-primary btn-md mr-1' onClick={exportCSV}>CSV</button>
+            <button className='btn btn-primary btn-md mr-1' onClick={copyData}>Copy</button>
+          </div>
+          <div className="col-xs-8 col-md-3 align-right">
+            <input type="text" className="form-control" placeholder="search" value={searchKey} onChange={searchData} />
+          </div>
+        </div>
+        <div className="container-fluid ag-theme-quartz mt-3 col-md-12 m-2 mx-auto" style={{ height: 350, width: "100%" }}>
+          <AgGridReact
             rowData={rowData}
             columnDefs={colDefs}
             pagination={true}
             paginationPageSize={5}
             paginationPageSizeSelector={[5, 10, 15, 20]}
           />
+        </div>
       </div>
-        ):
-        (
-          <div className='mt-4 text-center text-danger'>
-            No records found...
-          </div>
-        )
-      }
+      ) : (
+        <div className="mt-4 col-md-10 text-center text-danger">
+          No records found...
+        </div>
+      )}
     </div>
   );
 };
