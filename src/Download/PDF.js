@@ -13,7 +13,7 @@ export default function downloadPDF() {
         const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
 
         // Add image to PDF
-        pdf.addImage(imgData, "PNG", 0, 10, pdfWidth-8, pdfHeight);
+        pdf.addImage(imgData, "PNG", 5, 5, pdfWidth-8, pdfHeight);
         pdf.save("Dashboard.pdf");
     });
 }

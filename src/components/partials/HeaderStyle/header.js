@@ -437,7 +437,7 @@ const Header = memo(() => {
                     {username?(
                     <div className="caption">
                       <h6 className="mb-0 line-height">{username}</h6>
-                      <span className="font-size-12" onClick={userLogout}>Sign-Out</span>
+                      <span style={{fontSize:'10px'}} onClick={userLogout}>Sign-Out</span>
                     </div>) :(<p>Sign-In</p>)}
                   </Dropdown.Toggle>
                   <Dropdown.Menu className="iq-sub-dropdown iq-user-dropdown">

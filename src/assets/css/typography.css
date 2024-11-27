@@ -58,7 +58,7 @@ General
 *::-moz-selection { background: #089bab; color: #ffffff; text-shadow: none; }
 ::-moz-selection { background: #089bab; color: #ffffff; text-shadow: none; }
 ::selection { background: #089bab; color: #ffffff; text-shadow: none; }
-body { font-family: 'Poppins', sans-serif; font-weight: 400; font-style: normal; font-size: 14px; line-height: 1.8; padding: 0; margin: 0; color: #a09e9e; background: #eff7f8; }
+body { font-family: 'Poppins', sans-serif; font-weight: 400; font-style: normal; font-size: 11px; line-height: 1.5; padding: 0; margin: 0; color: #a09e9e; background: #eff7f8; }
 a, .btn { -webkit-transition: all 0.5s ease-out 0s; -moz-transition: all 0.5s ease-out 0s; -ms-transition: all 0.5s ease-out 0s; -o-transition: all 0.5s ease-out 0s; transition: all 0.5s ease-out 0s; }
 a, button, input, btn { outline: medium none !important; }
 a { color: #089bab; }

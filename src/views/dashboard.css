@@ -1,6 +1,6 @@
 .drop-down{
     width: 19vw;
-    margin: 10px 10px;
+    margin-bottom: 10px;
     display: flex;
     justify-content: flex-start;
     gap: 15px;

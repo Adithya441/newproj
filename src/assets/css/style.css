@@ -101,7 +101,7 @@ a:hover {
 }
 
 .dropdown-item {
-  font-size: 14px;
+  font-size: 12px;
 }
 
 .dropdown-menu {
@@ -363,7 +363,7 @@ a:hover {
 }
 
 .countdown li span {
-  font-size: 60px;
+  font-size: 55px;
   display: inline-block;
   width: 100%;
   color: #089bab;
@@ -417,7 +417,7 @@ a:hover {
 .iq-card-header .dropdown-menu {
   margin: 0;
   padding: 0;
-  font-size: 13px;
+  font-size: 11px;
   top: 20px !important;
   border-radius: 10px;
   border-color: #eef0f4;
@@ -432,7 +432,7 @@ a:hover {
 }
 
 .iq-card-header .dropdown-menu .dropdown-item i {
-  font-size: 14px;
+  font-size: 12px;
   vertical-align: middle;
 }
 
@@ -446,7 +446,7 @@ a:hover {
 .iq-card-header select.form-control {
   background: #eef0f4;
   border: none;
-  font-size: 14px;
+  font-size: 12px;
   margin-right: 15px;
 }
 
@@ -520,7 +520,7 @@ a:hover {
   line-height: 60px;
   text-align: center;
   margin-right: 10px;
-  font-size: 22px;
+  font-size: 18px;
   text-decoration: none;
 }
 
@@ -538,7 +538,7 @@ a:hover {
 }
 
 .tasks-card .close {
-  font-size: 16px;
+  font-size: 12px;
 }
 
 .tasks-card:last-child {
@@ -606,7 +606,7 @@ a:hover {
   height: 30px;
   width: 30px;
   text-align: center;
-  font-size: 18px;
+  font-size: 14px;
   line-height: 30px;
   display: inline-block;
   -webkit-border-radius: 7px;
@@ -696,7 +696,7 @@ a:hover {
   position: fixed;
   z-index: 999;
   top: 0;
-  width: 260px;
+  width: 208px;
   height: 100%;
   transition: all 0.3s ease-in-out;
   transition: all 0.3s ease-in-out;
@@ -736,8 +736,9 @@ a:hover {
   color: #ffffff;
   font-size: 15px;
   position: relative;
-  padding: 15px;
-  font-weight: 500;
+  padding-left: 8px;
+  padding-bottom: 15px;
+  font-weight: 800;
   line-height: 18px;
 }
 
@@ -750,7 +751,7 @@ a:hover {
 }
 
 .iq-sidebar-menu .iq-menu {
-  margin: 0 15px;
+  margin: 0 10px;
   padding: 0;
   list-style-type: none;
 }
@@ -762,13 +763,13 @@ a:hover {
 }
 
 .iq-sidebar-menu .iq-menu li a {
-  font-size: 14px;
+  font-size: 12px;
   white-space: nowrap;
   display: block;
   color: #ffffff;
   position: relative;
   padding: 15px;
-  line-height: 17px;
+  line-height: 12px;
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
@@ -776,16 +777,16 @@ a:hover {
   -ms-flex-align: center;
   align-items: center;
   overflow: hidden;
-  border-radius: 15px;
+  border-radius: 10px;
   text-transform: capitalize;
 }
 
 .iq-sidebar-menu .iq-menu li li a {
-  font-size: 14px;
+  font-size: 11px;
 }
 
 .iq-sidebar-menu .iq-menu li a i {
-  font-size: 20px;
+  font-size: 16px;
   margin-right: 10px;
   vertical-align: middle;
   width: 20px;
@@ -794,7 +795,7 @@ a:hover {
 }
 
 .iq-sidebar-menu .iq-menu li li a i {
-  font-size: 16px;
+  font-size: 12px;
 }
 
 .iq-sidebar-menu .iq-menu li a span {
@@ -849,7 +850,7 @@ a:hover {
   position: absolute;
   right: 15px;
   top: 2px;
-  font-size: 16px;
+  font-size: 14px;;
 }
 
 .iq-sidebar-menu .iq-menu li.menu-open>a {
@@ -1000,7 +1001,7 @@ body.sidebar-main .iq-sidebar:hover .iq-menu li.menu-open>a {
 }
 
 .sidebar-main .iq-sidebar:hover .iq-submenu li a {
-  font-size: 14px;
+  font-size: 10px;
 }
 
 /*---------------------------------------------------------------------
@@ -1012,17 +1013,17 @@ body.sidebar-main .iq-sidebar:hover .iq-menu li.menu-open>a {
 
 .iq-top-navbar {
   padding: 0;
-  min-height: 73px;
+  min-height: 0px;
   position: fixed;
   top: 0;
   right: 0;
-  width: calc(100% - 260px);
+  width: calc(100% - 208px);
   display: inline-block;
   z-index: 99;
   background: #ffffff;
-  -webkit-box-shadow: 0px 0px 25px 0px rgba(45, 69, 95, 0.1);
-  -moz-box-shadow: 0px 0px 25px 0px rgba(45, 69, 95, 0.1);
-  box-shadow: 0px 0px 25px 0px rgba(45, 69, 95, 0.1);
+  -webkit-box-shadow: 0px 0px 5px 0px rgba(45, 69, 95, 0.1);
+  -moz-box-shadow: 0px 0px 5px 0px rgba(45, 69, 95, 0.1);
+  box-shadow: 0px 0px 5px 0px rgba(45, 69, 95, 0.1);
   transition: all 0.45s ease 0s;
 }
 
@@ -1077,16 +1078,16 @@ body.sidebar-main .iq-sidebar:hover .iq-menu li.menu-open>a {
 }
 
 .navbar-list li>a.language-title {
-  font-size: 16px;
+  font-size: 16px;;
 }
 
 .navbar-list li>a {
-  font-size: 18px;
+  font-size: 15px;
   padding: 0 15px;
-  line-height: 73px;
+  line-height: 63px;
   color: #089bab;
   display: block;
-  min-height: 75px;
+  min-height: 10px;
 }
 
 .navbar-list li:last-child>a {
@@ -1115,8 +1116,8 @@ body.sidebar-main .iq-sidebar:hover .iq-menu li.menu-open>a {
 }
 
 .navbar-list li>a>img {
-  width: 50px;
-  height: 50px;
+  width: 35px;
+  height: 35px;
 }
 
 .navbar-list li.iq-nav-user {
@@ -1126,7 +1127,7 @@ body.sidebar-main .iq-sidebar:hover .iq-menu li.menu-open>a {
 
 .navbar-list li.iq-nav-user span {
   flex: 1;
-  font-size: 14px;
+  font-size: 12px;
 }
 
 .iq-top-navbar .iq-sidebar-logo .top-logo {
@@ -1199,7 +1200,7 @@ div#lottie-fullscreen svg path {
 }
 
 .navbar-list li .caption {
-  line-height: 16px;
+  line-height: 12px;
 }
 
 .top-nav-bottom {
@@ -1231,7 +1232,7 @@ div#lottie-fullscreen svg path {
 }
 
 .navbar-list li>.dropdown {
-  line-height: 73px;
+  line-height: 0px;
   cursor: pointer;
 }
 
@@ -1256,8 +1257,8 @@ div#lottie-fullscreen svg path {
 .iq-sidebar-logo {
   display: none;
   width: 260px;
-  padding-top: 15px;
-  padding-left: 20px;
+  padding-top: 10px;
+  padding-left: 9px;
   float: left;
   position: relative;
   background: #ffffff;
@@ -1294,7 +1295,7 @@ div#lottie-fullscreen svg path {
 }
 
 .iq-sidebar-logo img {
-  height: 45px;
+  height: 40px;
 }
 
 .iq-top-navbar .iq-navbar-custom .iq-menu-bt-sidebar .iq-menu-bt {
@@ -1307,8 +1308,8 @@ body.sidebar-main .iq-menu-bt-sidebar .iq-menu-bt {
 }
 
 .iq-menu-bt {
-  padding: 12px 7px;
-  margin-right: 15px;
+  padding: 0;
+  margin-right: 0;
   -webkit-transition: all 0.3s ease-out 0s;
   -moz-transition: all 0.3s ease-out 0s;
   -ms-transition: all 0.3s ease-out 0s;
@@ -1537,9 +1538,9 @@ body.sidebar-main .iq-sidebar:hover .iq-sidebar-logo .iq-sidebar-logo1 {
 }
 
 .content-page {
-  margin-left: 260px;
+  margin-left: 208px;
   overflow: hidden;
-  padding: 120px 15px 0;
+  padding: 80px 15px 0;
   min-height: 100vh;
   -webkit-transition: all 0.3s ease-out 0s;
   -moz-transition: all 0.3s ease-out 0s;
@@ -1583,7 +1584,7 @@ body.sidebar-main .iq-sidebar-menu .iq-menu .iq-menu-title span {
 }
 
 body.sidebar-main .iq-sidebar-menu .iq-menu .iq-menu-title i {
-  font-size: 20px;
+  font-size: 18px;
   display: block;
 }
 
@@ -1593,7 +1594,7 @@ body.sidebar-main .iq-menu-bt {
 }
 
 body.sidebar-main .iq-sidebar {
-  width: 80px;
+  width: 75px;
 }
 
 body.sidebar-main .iq-sidebar-menu .iq-menu li a .iq-arrow-right {
@@ -1603,7 +1604,7 @@ body.sidebar-main .iq-sidebar-menu .iq-menu li a .iq-arrow-right {
 
 body.sidebar-main .iq-sidebar:hover,
 body.sidebar-main .iq-sidebar:hover .iq-sidebar-logo {
-  width: 260px;
+  width: 208px;
 }
 
 body.sidebar-main .iq-sidebar:hover .iq-sidebar-menu .iq-menu li a .iq-arrow-right {
@@ -1638,7 +1639,7 @@ body.sidebar-main .iq-sidebar.sidebar-hover .iq-sidebar-menu .iq-menu li ul {
 }
 
 .user-details-block h3 span {
-  font-size: 20px;
+  font-size: 18px;
 }
 
 ul.doctoe-sedual li {
@@ -1713,7 +1714,7 @@ ul.doctors-lists {
 
 .iq-caption p {
   color: #fff;
-  font-size: 20px;
+  font-size: 18px;
   letter-spacing: 4.2px;
 }
 
@@ -1754,7 +1755,7 @@ table.table-box-shadow th {
   list-style-type: none;
   float: left;
   display: inline-block;
-  font-size: 20px;
+  font-size: 18px;
   margin: 0 0 0 8px;
 }
 
@@ -2227,7 +2228,7 @@ table.table-box-shadow th {
 
 .iq-email-list .iq-email-ui li {
   list-style-type: none;
-  font-size: 16px;
+  font-size: 14px;;
   color: #777D74;
   margin-bottom: 3px;
 }
@@ -2288,7 +2289,7 @@ table.table-box-shadow th {
 
 .iq-email-to-list ul li {
   list-style-type: none;
-  font-size: 20px;
+  font-size: 18px;
   color: #777D74;
   margin: 0 5px 0 0;
   float: left;
@@ -2856,7 +2857,7 @@ FAQ
   top: -8px;
   right: 15px;
   color: #1e1e1e;
-  font-size: 16px;
+  font-size: 14px;;
   line-height: 16px;
   font-weight: normal;
   -webkit-transition: all 0.25s ease-in-out 0s;
@@ -2876,7 +2877,7 @@ FAQ
 }
 
 .iq-accordion.career-style .iq-accordion-block .accordion-title span {
-  font-size: 16px;
+  font-size: 14px;;
   font-family: 'Poppins', sans-serif;
   display: table-cell;
   color: #212529;
@@ -3188,7 +3189,7 @@ button.close-popup {
   background: transparent;
   color: #000;
   border: none;
-  font-size: 20px;
+  font-size: 18px;
   line-height: 20px;
 }
 
@@ -3681,7 +3682,7 @@ Calender
 }
 
 .calender-small .flatpickr-current-month .flatpickr-monthDropdown-months {
-  font-size: 16px;
+  font-size: 14px;;
 }
 
 .calender-small .flatpickr-current-month .flatpickr-monthDropdown-months:hover {
@@ -3690,7 +3691,7 @@ Calender
 }
 
 .calender-small .flatpickr-current-month input.cur-year {
-  font-size: 16px;
+  font-size: 14px;;
 }
 
 .calender-small .numInputWrapper:hover {
@@ -3814,7 +3815,7 @@ Calender
 }
 
 .steps {
-  font-size: 20px;
+  font-size: 18px;
   color: #777D74;
   font-weight: normal;
   text-align: right
@@ -3846,7 +3847,7 @@ Calender
   height: 50px;
   width: 50px;
   line-height: 50px;
-  font-size: 20px;
+  font-size: 18px;
   border-radius: 50%;
   margin: 0 15px 0 0;
   color: #ffffff;
@@ -4061,7 +4062,7 @@ fieldset[disabled] .btn {
   height: 50px;
   width: 50px;
   line-height: 50px;
-  font-size: 20px;
+  font-size: 18px;
   border-radius: 50%;
   margin: 0 20px 0 0;
 }
@@ -4143,7 +4144,7 @@ Chat
   top: 8px;
   left: 15px;
   color: #089bab;
-  font-size: 16px;
+  font-size: 14px;;
 }
 
 .chat-sidebar-name {
@@ -4218,7 +4219,7 @@ span.avatar-status {
 .chat-header-icons>span {
   width: 40px;
   height: 40px;
-  font-size: 20px;
+  font-size: 18px;
   margin: 0 5px 0 0;
   color: #089bab;
   display: inline-block;
@@ -4309,7 +4310,7 @@ span.iq-start-icon {
 }
 
 .chat-attagement {
-  font-size: 20px;
+  font-size: 18px;
 }
 
 .chat-attagement a {
@@ -4558,7 +4559,7 @@ ul.media-story li.active img {
   border-radius: 50%;
   text-align: center;
   line-height: 35px;
-  font-size: 16px;
+  font-size: 14px;;
   color: #007bff;
 }
 
@@ -4592,7 +4593,7 @@ form.comment-text {
   position: absolute;
   left: auto;
   right: 0;
-  font-size: 20px;
+  font-size: 18px;
 }
 
 .comment-attagement a {
@@ -4677,7 +4678,7 @@ Profile Edit
   border-radius: 0;
   color: #777D74;
   text-align: center;
-  font-size: 16px;
+  font-size: 14px;;
   border-left: 1px solid #f2edff;
 }
 
@@ -4735,7 +4736,7 @@ Todo Page
 }
 
 .todo-date {
-  font-size: 16px;
+  font-size: 14px;;
 }
 
 .iq-todo-page ul {
@@ -4807,7 +4808,7 @@ Privacy Policy Page
 User List Page
 -----------------------------------------------------------------------*/
 .list-user-action a {
-  font-size: 16px;
+  font-size: 14px;;
   height: 25px;
   width: 25px;
   text-align: center;
@@ -4912,7 +4913,7 @@ textarea.form-control {
 Rtl Switch 
 ===========================*/
 .navbar-list li a.rtl-switch-toogle {
-  font-size: 14px;
+  font-size: 12px;
 }
 
 .rtl-switch-toogle .form-switch {

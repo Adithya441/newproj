@@ -6,6 +6,7 @@ import './MeterDetails.css';
 import * as XLSX from 'xlsx';
 import { saveAs } from 'file-saver';
 import html2canvas from 'html2canvas';
+import { Form, Row, Col, Button } from "react-bootstrap";
 import jsPDF from 'jspdf';
 import 'jspdf-autotable';
 import ExcelJS from 'exceljs';
@@ -716,7 +717,6 @@ const setPage = (page) => {
     sortable: true,
     filter: true,
     resizable: true,
-    flex: 1,
   };
  
  
@@ -783,97 +783,163 @@ const setPage = (page) => {
   return (
     <div className="meter-details-container">
       <h1 className="form-title">Meters List</h1>
-      <form className="meter-details-form" onSubmit={handleSubmit}>
-        <div className="form-row form-floating mb-3">
-        <TreeSelect
-                style={{ width: '100%', height:'40px' }}
-                value={office}
-                dropdownStyle={{ maxHeight: 400, overflow: 'auto' }}
-                placeholder="Please select"
-                onChange={onChange}
-                treeData={transformedData}
-                />
-        </div>
- 
-        <div className="form-row form-floating mb-3">
-          <select className="form-control form-control-sm" id="meterManufacture" name="meterManufacture" value={selectedManufacture}
-            onChange={(e) => setSelectedManufacture(e.target.value)}>
-            <option value="">-NA-</option>
-            {manufactures.map((manufacture, index) => (
-              <option key={index} value={manufacture.id}>
-                {manufacture.make_name}
-              </option>
-            ))}
-          </select>
-          <label htmlFor="meterManufacture" className="form-label">Meter Manufacture</label>
-        </div>
- 
-        <div className="form-row form-floating mb-3">
-          <select className="form-control form-control-sm" id="meterType" name="meterType" value={selectedType}
-            onChange={(e) => setSelectedType(e.target.value)}>
-            <option value="">-NA-</option>
-            {types.map((type, index) => (
-              <option key={index} value={type.id}>
-                {type.type}
-              </option>
-            ))}
-          </select>
-          <label htmlFor="meterType" className="form-label">Meter Type</label>
-        </div>
- 
-        <div className="form-row form-floating mb-3">
-          <select className="form-control form-control-sm" id="meterInterface" name="meterInterface" value={selectedInterface.ID}
-            onChange={(e) => setSelectedInterface(e.target.value)}>
-            <option value="">-NA-</option>
-            {interfaces.map((meterInterface, index) => (
-              <option key={index} value={meterInterface.id}>
-                {meterInterface.PROTOCOL_NAME}
-              </option>
-            ))}
-          </select>
-          <label htmlFor="meterInterface" className="form-label">Meter Interface</label>
-        </div>
- 
-        <div className="form-row form-floating mb-3">
-          <select className="form-control form-control-sm" name="paymentMode" id="paymentMode" value={selectedPaymentMode}
-            onChange={(e) => setSelectedPaymentMode(e.target.value)}>
-            <option value="">-NA-</option>
-            <option value="POSTPAID">Postpaid</option>
-            <option value="PREPAID">Prepaid</option>
-          </select>
-          <label htmlFor="paymentMode" className="form-label">Payment Mode</label>
-        </div>
- 
-        <div className="form-row form-floating mb-3">
-          <select className="form-control form-control-sm" name="relaystatus" id="relaystatus" value={selectedRelayStatus}
-            onChange={(e) => setSelectedRelayStatus(e.target.value)}>
-            <option value="">-NA-</option>
-            <option value="0">Disconnected</option>
-            <option value="1">Connected</option>
-          </select>
-          <label htmlFor="relaystatus" className="form-label">Relay Status</label>
-        </div>
- 
-        <div className="form-row full-width meter-number-field">
-          <input
-            type="text"
-            id="meterNumber"
-            name="meterNumber"
-            placeholder="Meter Number"
-            className="form-control"
-            value={meterNumber}
-            onChange={(e) => setMeterNumber(e.target.value)}
-          />
-        </div>
-        <center>
-          <button className="submitbutt"onClick={handleSubmit}>Submit</button>
-        </center>
-      </form>
-      <div className="export-buttons-container">
-       <button onClick={exportExcel} className="export-button">Excel</button>
-         <button onClick={exportPDF} className="export-button">Pdf</button>
-         <button onClick={exportCSV} className="export-button">Csv</button>
-         </div>
+      <Form
+      onSubmit={handleSubmit}
+      className="p-3"
+      style={{
+        backgroundColor: "#f0f8ff",
+        borderRadius: "8px",
+      }}
+    >
+      {/* Row 1: TreeSelect for Office */}
+      <Row className="mb-3">
+        <Col md={4}>
+          <Form.Group>
+            <Form.Label className="fw-bold">Office ID</Form.Label>
+            <TreeSelect
+              style={{ width: "100%", height: "40px" }}
+              value={office}
+              dropdownStyle={{ maxHeight: 400, overflow: "auto" }}
+              placeholder="Please select"
+              onChange={onChange}
+              treeData={transformedData}
+            />
+          </Form.Group>
+        </Col>
+
+        <Col md={4}>
+          <Form.Group>
+            <Form.Label className="fw-bold">Meter Manufacture</Form.Label>
+            <Form.Select
+              id="meterManufacture"
+              name="meterManufacture"
+              value={selectedManufacture}
+              onChange={(e) => setSelectedManufacture(e.target.value)}
+            >
+              <option value="">-NA-</option>
+              {manufactures.map((manufacture, index) => (
+                <option key={index} value={manufacture.id}>
+                  {manufacture.make_name}
+                </option>
+              ))}
+            </Form.Select>
+          </Form.Group>
+        </Col>
+
+        <Col md={4}>
+          <Form.Group>
+            <Form.Label className="fw-bold">Meter Type</Form.Label>
+            <Form.Select
+              id="meterType"
+              name="meterType"
+              value={selectedType}
+              onChange={(e) => setSelectedType(e.target.value)}
+            >
+              <option value="">-NA-</option>
+              {types.map((type, index) => (
+                <option key={index} value={type.id}>
+                  {type.type}
+                </option>
+              ))}
+            </Form.Select>
+          </Form.Group>
+        </Col>
+      </Row>
+
+      {/* Row 2 */}
+      <Row className="mb-3">
+        <Col md={4}>
+          <Form.Group>
+            <Form.Label className="fw-bold">Meter Interface</Form.Label>
+            <Form.Select
+              id="meterInterface"
+              name="meterInterface"
+              value={selectedInterface?.ID}
+              onChange={(e) => setSelectedInterface(e.target.value)}
+            >
+              <option value="">-NA-</option>
+              {interfaces.map((meterInterface, index) => (
+                <option key={index} value={meterInterface.id}>
+                  {meterInterface.PROTOCOL_NAME}
+                </option>
+              ))}
+            </Form.Select>
+          </Form.Group>
+        </Col>
+
+        <Col md={4}>
+          <Form.Group>
+            <Form.Label className="fw-bold">Payment Mode</Form.Label>
+            <Form.Select
+              id="paymentMode"
+              name="paymentMode"
+              value={selectedPaymentMode}
+              onChange={(e) => setSelectedPaymentMode(e.target.value)}
+            >
+              <option value="">-NA-</option>
+              <option value="POSTPAID">Postpaid</option>
+              <option value="PREPAID">Prepaid</option>
+            </Form.Select>
+          </Form.Group>
+        </Col>
+
+        <Col md={4}>
+          <Form.Group>
+            <Form.Label className="fw-bold">Relay Status</Form.Label>
+            <Form.Select
+              id="relaystatus"
+              name="relaystatus"
+              value={selectedRelayStatus}
+              onChange={(e) => setSelectedRelayStatus(e.target.value)}
+            >
+              <option value="">-NA-</option>
+              <option value="0">Disconnected</option>
+              <option value="1">Connected</option>
+            </Form.Select>
+          </Form.Group>
+        </Col>
+      </Row>
+
+      {/* Row 3 */}
+      <Row className="mb-3">
+        <Col md={4}>
+          <Form.Group>
+            <Form.Label className="fw-bold">Meter Number</Form.Label>
+            <Form.Control
+              type="text"
+              id="meterNumber"
+              name="meterNumber"
+              placeholder="Enter Meter Number"
+              value={meterNumber}
+              onChange={(e) => setMeterNumber(e.target.value)}
+            />
+          </Form.Group>
+        </Col>
+      </Row>
+
+      {/* Submit Button */}
+      <div className="text-center mt-3">
+        <Button
+          type="submit"
+          className="submitbutt"
+          onClick={handleSubmit}
+          variant="primary"
+        >
+          Submit
+        </Button>
+      </div>
+    </Form>
+    <Row className="mb-3 justify-content-start">
+      <Col xs="auto" className="px-1">
+      <button onClick={exportExcel} className="export-button">Excel</button>
+      </Col>
+      <Col xs="auto" className="px-1">
+      <button onClick={exportPDF} className="export-button">Pdf</button>
+      </Col>
+      <Col xs="auto" className="px-1">
+      <button onClick={exportCSV} className="export-button">Csv</button>
+      </Col>
+    </Row>
       {meterData && submitted &&  (
   <div className="meter-data-table ag-theme-quartz" id="myGrid" style={{ height: '400px', width: '100%' }}>
     <AgGridReact

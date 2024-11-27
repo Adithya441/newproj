@@ -158,23 +158,7 @@
     cursor: pointer;
     font-size: 12px;
 }
-.export-buttons-container {
-    display: flex;
-    gap: 10px; 
-    justify-content: center;
-    top: -5px;
-    position: relative;
-    width: 60%;      
-    height: 40px;   
-    
-}
 
-  .export-buttons-container {
-    margin-top: 10px;
-    display: flex;
-    gap: 10px; 
-    justify-content: flex-start;
-  }
   
   
   .export-button {
@@ -189,6 +173,7 @@
     outline: none; 
     box-shadow: none; 
     transition: background-color 0.3s;
+    margin: 10px 10px;
   }
   .meter-number-field {
     margin-bottom: 20px; 

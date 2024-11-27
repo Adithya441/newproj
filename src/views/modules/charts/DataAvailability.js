@@ -625,14 +625,15 @@ const transformedData = renameKeys(data, keyMap);
           </Col>
 
           {/* Submit Button */}
-          <Col md={4} className="text-end">
+          <Col md={4}>
             <button
               type="submit"
               className="btn btn-primary"
               style={{
                 borderRadius: '8px',
-                padding: '5px 15px',
                 fontWeight: 'bold',
+                marginTop:'25px',
+                marginLeft:'70px'
               }}
             >
               Submit
