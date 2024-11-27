@@ -1,11 +1,14 @@
 import { useState, useEffect } from "react";
 import { AgGridReact } from 'ag-grid-react';
-import * as XLSX from "xlsx";
+import * as ExcelJS from "exceljs";
 import jsPDF from "jspdf";
+import { saveAs } from "file-saver";
 import "jspdf-autotable";
 import "ag-grid-community/styles/ag-grid.css";
 import "ag-grid-community/styles/ag-theme-quartz.css";
-const SecuritySetup = ({meternum}) => {
+
+
+const SecuritySetup = ({ meternum }) => {
   const [searchKey, setSearchKey] = useState();
   const [securityKey, setSecurityKey] = useState("");
   const [rowData, setRowData] = useState();
@@ -64,6 +67,97 @@ const SecuritySetup = ({meternum}) => {
   useEffect(() => {
     fetchGridData();
   }, []);
+
+  const exportCSV = () => {
+    const csvData = rowData.map(row => ({
+      TransactionID: row.transactionId,
+      CommandName: row.CommandName,
+      CommandType: row.CommandType,
+      RequestTime: row.requestTime,
+      ResponseTime: row.responseTime,
+      Response: row.Response
+    }));
+
+    const csvContent = [
+      Object.keys(csvData[0]).join(','),
+      ...csvData.map(row => Object.values(row).join(','))
+    ].join('\n');
+
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.setAttribute('download', 'SecuritySetup.csv');
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
+  const exportExcel = async () => {
+    const workbook = new ExcelJS.Workbook();
+    const worksheet = workbook.addWorksheet('Security Setup');
+    const headers = Object.keys(rowData[0] || {});
+    const title = worksheet.addRow(['Security Setup']);
+    title.font = { bold: true, size: 16, color: { argb: 'FFFF00' } };
+    title.alignment = { horizontal: 'center' };
+    worksheet.mergeCells('A1', `${String.fromCharCode(64 + headers.length)}1`);
+
+    const headerRow = worksheet.addRow(headers);
+
+    headerRow.eachCell((cell) => {
+      cell.font = { bold: true, color: { argb: 'FFFFFF' } };
+      cell.fill = {
+        type: 'pattern',
+        pattern: 'solid',
+        fgColor: { argb: 'FFADD8E6' },
+      };
+    });
+
+    rowData.forEach(row => {
+      worksheet.addRow(Object.values(row));
+    });
+
+    worksheet.autoFilter = {
+      from: 'A2',
+      to: `${String.fromCharCode(64 + headers.length)}2`
+    };
+
+    headers.forEach((header, index) => {
+      const maxLength = Math.max(
+        header.length,
+        ...rowData.map(row => row[header] ? row[header].toString().length : 0)
+      );
+      worksheet.getColumn(index + 1).width = maxLength + 2;
+    });
+
+    const buffer = await workbook.xlsx.writeBuffer();
+    const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+    saveAs(blob, `SecuritySetup.xlsx`);
+  };
+
+  const exportPDF = () => {
+    const doc = new jsPDF();
+    const tableColumn = ["Transaction ID", "Command Name", "Command Type", "Request Time", "Response Time", "Response"];
+    const tableRows = [];
+
+    rowData.forEach(row => {
+      tableRows.push([row.transactionId, row.CommandName, row.CommandType, row.requestTime, row.responseTime, row.Response]);
+    });
+
+    doc.autoTable(tableColumn, tableRows);
+    doc.save('SecuritySetup.pdf');
+  };
+
+  const copyData = () => {
+    const textData = rowData
+      .map(row =>
+        `${row.transactionId}\t${row.CommandName}\t${row.CommandType}\t${row.requestTime}\t${row.responseTime}\t${row.Response}`
+      )
+      .join("\n");
+    navigator.clipboard.writeText(textData)
+      .then(() => alert("Data copied to clipboard!"))
+      .catch((error) => alert("Failed to copy data: " + error));
+  };
+
   const searchData = (e) => {
     const searchValue = e.target.value;
     setSearchKey(searchValue);
@@ -77,75 +171,8 @@ const SecuritySetup = ({meternum}) => {
       );
       setRowData(filteredData);
     }
-  }
-
-  const exportExcel = () => {
-    const worksheet = XLSX.utils.json_to_sheet(rowData);
-    const workbook = XLSX.utils.book_new();
-
-    // Set auto width for columns
-    const maxLengths = rowData.reduce((acc, row) => {
-      Object.keys(row).forEach((key, i) => {
-        const value = row[key].toString().length;
-        acc[i] = acc[i] ? Math.max(acc[i], value) : value;
-      });
-      return acc;
-    }, []);
-
-    worksheet['!cols'] = maxLengths.map(length => ({ wch: length + 5 }));
-
-    // Add background color for headers
-    const header = Object.keys(rowData[0]);
-    header.forEach((key, index) => {
-      const cellAddress = XLSX.utils.encode_cell({ c: index, r: 0 });
-      worksheet[cellAddress].s = {
-        fill: {
-          fgColor: { rgb: "FFFF00" }
-        }
-      };
-    });
-
-    XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1");
-    XLSX.writeFile(workbook, "FirmwareUpgrade.xlsx");
   };
 
-
-  const exportCSV = () => {
-    const worksheet = XLSX.utils.json_to_sheet(rowData);
-    const csv = XLSX.utils.sheet_to_csv(worksheet);
-    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
-    const link = document.createElement("a");
-    link.href = URL.createObjectURL(blob);
-    link.download = "FirmwareUpgrade.csv";
-    link.click();
-  };
-
-  const exportPDF = () => {
-    const doc = new jsPDF();
-    doc.text("Firmware Upgrade Data", 20, 10);
-    doc.autoTable({
-      head: [["Transaction ID", "Firmware Version", "Request Time", "Response Time", "Request Code"]],
-      body: rowData.map((row) => [
-        row.Transaction_ID,
-        row.Firmware_Version,
-        row.Request_Time,
-        row.Response_Time,
-        row.Request_Code,
-      ]),
-    });
-    doc.save("FirmwareData.pdf");
-  };
-
-  const copyData = () => {
-    const textData = rowData
-      .map(row =>
-        `${row.Transaction_ID}\t${row.Firmware_Version}\t${row.Request_Time}\t${row.Response_Time}\t${row.Request_Code}`
-      )
-      .join("\n");
-    navigator.clipboard.writeText(textData)
-      .then(() => alert("Data copied to clipboard!"))
-      .catch((error) => alert("Failed to copy data: " + error));
-  };
   return (
     <div className="col-12">
       <form className='form-inline mt-4 mx-auto mb-5'>
@@ -180,28 +207,28 @@ const SecuritySetup = ({meternum}) => {
         </div>
       </form>
       {rowData ? (
-        <div>
-        <div className="d-flex flex-wrap mt-4">
-          <div className="d-flex flex-wrap" style={{ marginLeft:'1vw',gap: '1vw'}}>
-            <button className="btn btn-primary btn-md mr-1" onClick={exportExcel}>Excel</button>
-            <button className='btn btn-primary btn-md mr-1' onClick={exportPDF}>PDF</button>
-            <button className='btn btn-primary btn-md mr-1' onClick={exportCSV}>CSV</button>
-            <button className='btn btn-primary btn-md mr-1' onClick={copyData}>Copy</button>
+        <div className="container-fluid col-12">
+          <div className="d-flex flex-wrap mt-4">
+            <div className="d-flex flex-wrap" style={{ marginLeft: '1vw', gap: '1vw' }}>
+              <button className="btn btn-primary btn-md mr-1" onClick={exportExcel}>Excel</button>
+              <button className='btn btn-primary btn-md mr-1' onClick={exportPDF}>PDF</button>
+              <button className='btn btn-primary btn-md mr-1' onClick={exportCSV}>CSV</button>
+              <button className='btn btn-primary btn-md mr-1' onClick={copyData}>Copy</button>
+            </div>
+            <div className="align-right" style={{ marginLeft: '2vw' }}>
+              <input type="text" className="form-control" placeholder="search" value={searchKey} onChange={searchData} />
+            </div>
           </div>
-          <div className="align-right"style={{ marginLeft: '2vw' }}>
-            <input type="text" className="form-control" placeholder="search" value={searchKey} onChange={searchData} />
+          <div className="container-fluid ag-theme-quartz mt-3 mx-auto" style={{ height: 350, width: "100%" }}>
+            <AgGridReact
+              rowData={rowData}
+              columnDefs={colDefs}
+              pagination={true}
+              paginationPageSize={5}
+              paginationPageSizeSelector={[5, 10, 15, 20]}
+            />
           </div>
         </div>
-        <div className="container-fluid ag-theme-quartz mt-3 col-md-12 m-2 mx-auto" style={{ height: 350, width: "100%" }}>
-          <AgGridReact
-            rowData={rowData}
-            columnDefs={colDefs}
-            pagination={true}
-            paginationPageSize={5}
-            paginationPageSizeSelector={[5, 10, 15, 20]}
-          />
-        </div>
-      </div>
       ) :
         (
           <div className="text-center text-danger mx-auto">

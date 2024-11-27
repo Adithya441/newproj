@@ -7,7 +7,7 @@ import { saveAs } from "file-saver";
 import jsPDF from "jspdf";
 import "jspdf-autotable";
 
-const PowerConnectDisconnect = ({meternum}) => {
+const PowerConnectDisconnect = ({ meternum }) => {
   const [reasonType, setReasonType] = useState();
   const [commentValue, setCommentValue] = useState();
   const [meterStatus, setMeterStatus] = useState('Disconnected');
@@ -65,15 +65,15 @@ const PowerConnectDisconnect = ({meternum}) => {
     const csvData = rowData.map(row => ({
       TransactionId: row.transactionId,
       Comments: row.comments,
-      Reason:row.reason,
-      RequestFrom:row.responseFrom,
-      RequestTime:row.requestTime,
-      ResponseTime:row.responseTime,
-      ResponseCode:row.responseCode
+      Reason: row.reason,
+      RequestFrom: row.responseFrom,
+      RequestTime: row.requestTime,
+      ResponseTime: row.responseTime,
+      ResponseCode: row.responseCode
     }));
 
     const csvContent = [
-      Object.keys(csvData[0]).join(','), 
+      Object.keys(csvData[0]).join(','),
       ...csvData.map(row => Object.values(row).join(','))
     ].join('\n');
 
@@ -90,7 +90,7 @@ const PowerConnectDisconnect = ({meternum}) => {
     const workbook = new ExcelJS.Workbook();
     const worksheet = workbook.addWorksheet('Data');
     const headers = Object.keys(rowData[0] || {});
-    const title = worksheet.addRow([`Meter Connect Disconnect Data`]); 
+    const title = worksheet.addRow([`Meter Connect Disconnect Data`]);
     title.font = { bold: true, size: 16, color: { argb: 'FFFF00' } };
     title.alignment = { horizontal: 'center' };
     worksheet.mergeCells('A1', `${String.fromCharCode(64 + headers.length)}1`);
@@ -98,11 +98,11 @@ const PowerConnectDisconnect = ({meternum}) => {
     const headerRow = worksheet.addRow(headers);
 
     headerRow.eachCell((cell) => {
-      cell.font = { bold: true, color: { argb: 'FFFFFF' } }; 
+      cell.font = { bold: true, color: { argb: 'FFFFFF' } };
       cell.fill = {
         type: 'pattern',
         pattern: 'solid',
-        fgColor: { argb: 'FFADD8E6' }, 
+        fgColor: { argb: 'FFADD8E6' },
       };
     });
 
@@ -111,34 +111,34 @@ const PowerConnectDisconnect = ({meternum}) => {
     });
 
     worksheet.autoFilter = {
-      from: 'A2', 
-      to: `${String.fromCharCode(64 + headers.length)}2` 
+      from: 'A2',
+      to: `${String.fromCharCode(64 + headers.length)}2`
     };
 
     headers.forEach((header, index) => {
       const maxLength = Math.max(
-        header.length, 
-        ...rowData.map(row => row[header] ? row[header].toString().length : 0) 
+        header.length,
+        ...rowData.map(row => row[header] ? row[header].toString().length : 0)
       );
-      worksheet.getColumn(index + 1).width = maxLength + 2; 
+      worksheet.getColumn(index + 1).width = maxLength + 2;
     });
 
     const buffer = await workbook.xlsx.writeBuffer();
     const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
-    saveAs(blob, `Configurations.xlsx`);
+    saveAs(blob, 'PowerConnectDisconnect.xlsx');
   };
 
   const exportPDF = () => {
     const doc = new jsPDF();
-    const tableColumn = ["Transaction Id", "Comments","Reason","Request From","Request Time","Response Time","Response Code"]; 
+    const tableColumn = ["Transaction Id", "Comments", "Reason", "Request From", "Request Time", "Response Time", "Response Code"];
     const tableRows = [];
 
     rowData.forEach(row => {
-      tableRows.push([row.transactionId, row.comments,row.reason,row.responseFrom,row.requestTime,row.responseTime,row.responseCode]);
+      tableRows.push([row.transactionId, row.comments, row.reason, row.responseFrom, row.requestTime, row.responseTime, row.responseCode]);
     });
 
     doc.autoTable(tableColumn, tableRows);
-    doc.save('Configurations.pdf');
+    doc.save('PowerConnectDisconnect.pdf');
   };
   const searchData = (e) => {
     const searchValue = e.target.value;
@@ -165,11 +165,13 @@ const PowerConnectDisconnect = ({meternum}) => {
       .catch((error) => alert("Failed to copy data: " + error));
   };
   return (
+    <div className='container-fluid col-xs-12'>
     <div className="col-xs-12 d-flex flex-wrap justify-content-between p-1">
       <div className="col-xs-10 col-md-4">
         <label htmlFor="reasonInput">Reason</label>
         <div className="input-group">
-          <select id="reasonInput" value={reasonType} className='form-control' onChange={(e) => setReasonType(e.target.value)} style={{margin:'5px 5px'}}>
+          <div className="border border-left-danger border-left-5" ></div>
+          <select id="reasonInput" value={reasonType} className='form-control' onChange={(e) => setReasonType(e.target.value)} style={{ margin: '5px 5px' }}>
             <option value="" selected></option>
             <option value="NEW_CONNECTION">New Connection</option>
             <option value="CONNECTION_ON_SR_CARD">Connection on SR Card</option>
@@ -181,12 +183,17 @@ const PowerConnectDisconnect = ({meternum}) => {
       <div className="col-xs-10 col-md-4">
         <label htmlFor="commentInput">Comment</label>
         <div className="input-group">
-          <textarea className="form-control" id="commentInput" rows="5" cols="20" value={commentValue} onChange={(e) => setCommentValue(e.target.value)} style={{margin:'5px 5px'}}></textarea>
+          <div className="border border-left-danger border-left-5" ></div>
+          <textarea className="form-control" id="commentInput" rows="5" cols="20" value={commentValue} onChange={(e) => setCommentValue(e.target.value)} style={{ margin: '5px 5px' }}></textarea>
         </div>
       </div>
       <div className="col-xs-10 col-md-4 mt-2">
         <label htmlFor="meterStatusInput">Meter Status</label>
-        <input id="meterStatusInput" value={meterStatus} className="form-control" readOnly />
+        <div className="input-group">
+          <div className="border border-left-danger border-left-5" ></div>
+          <input id="meterStatusInput" value={meterStatus} className="form-control" readOnly />
+        </div>
+      </div>
       </div>
       {/* <div className="text-center mx-auto">
         <button className="btn btn-primary btn-md" 
@@ -198,24 +205,24 @@ const PowerConnectDisconnect = ({meternum}) => {
       </div> */}
       {rowData ? (
         <div className='col-12'>
-          <div className="col-xs-12 mx-auto d-flex flex-wrap mt-4">
-            <div className="d-flex flex-wrap col-xs-10  col-md-6">
+          <div className="d-flex flex-wrap mt-4">
+            <div className="d-flex flex-wrap" style={{ marginLeft: '1vw', gap: '1vw' }}>
               <button className="btn btn-primary btn-md mr-1" onClick={exportExcel}>Excel</button>
-              <button className='btn btn-primary btn-md mr-1' onClick={exportPDF}>PDF</button>
-              <button className='btn btn-primary btn-md mr-1' onClick={exportCSV}>CSV</button>
+              <button className="btn btn-primary btn-md mr-1" onClick={exportPDF}>PDF</button>
+              <button className="btn btn-primary btn-md mr-1" onClick={exportCSV}>CSV</button>
               <button className="btn btn-primary btn-md mr-1" onClick={copyData}>Copy</button>
             </div>
-            <div className="col-xs-8 col-md-3 align-right">
+            <div className="align-right" style={{ marginLeft: '2vw' }}>
               <input type="text" className="form-control" placeholder="search" value={searchKey} onChange={searchData} />
             </div>
           </div>
-          <div className="container-fluid ag-theme-quartz mt-3 col-xs-12  mx-auto" style={{ height: 350, width: "100%" }}>
+          <div className="container-fluid ag-theme-quartz mt-3 mx-auto" style={{ height: 350, width: "100%" }}>
             <AgGridReact
               rowData={rowData}
               columnDefs={colDefs}
               pagination={true}
-              paginationPageSize={3}
-              paginationPageSizeSelector={[3, 5, 10, 15, 20]}
+              paginationPageSize={5}
+              paginationPageSizeSelector={[5, 10, 15, 20]}
             />
           </div>
         </div>
