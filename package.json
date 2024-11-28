@@ -68,7 +68,7 @@
     "react-apexcharts": "^1.4.1",
     "react-beautiful-dnd": "^13.1.1",
     "react-bootstrap": "^2.10.4",
-    "react-chartjs-2": "^3.3.0",
+    "react-chartjs-2": "^5.2.0",
     "react-dom": "^18.2.0",
     "react-dropdown-tree-select": "^2.8.0",
     "react-flatpickr": "^3.10.13",
