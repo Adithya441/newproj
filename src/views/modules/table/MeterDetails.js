@@ -11,9 +11,6 @@ import jsPDF from 'jspdf';
 import 'jspdf-autotable';
 import ExcelJS from 'exceljs';
 import { TreeSelect, Spin } from 'antd'
-import { Link } from 'react-router-dom';
-import CryptoJS from 'crypto-js';
-import MeterLinkRenderer from './MeterLinkRenderer';
 
 const renameKeys = (data, keyMap) => {
   return data.map((item) => {
@@ -33,7 +30,7 @@ const renameKeys = (data, keyMap) => {
   });
 };
 
-function MeterDetails() {
+function MeterDetails({onMeterClick, officeidChange }) {
   const tokenUrl = '/api/server3/UHES-0.0.1/oauth/token';
  
   const [loading, setLoading] = useState(false);
@@ -57,13 +54,16 @@ function MeterDetails() {
   const length = 10;
  
   const columnDefs = [
-    { headerName: "Meter No", field: "meterno", cellRenderer: MeterLinkRenderer },
+    { headerName: "Meter No", field: "meterno", onCellClicked: (params) => {
+      onMeterClick(params.data);
+    }},
     { headerName: "Meter Type", field: "metertype" },
     { headerName: "Meter Manufacture", field: "metermake" },
     { headerName: "Meter Interface", field: "meterInterface" },
     { headerName: "Payment Type", field: "paymenttype" },
     { headerName: "Relay Status", field: "relaystatus" },
   ];
+
  
   
  
@@ -779,10 +779,10 @@ const setPage = (page) => {
 
   const onChange = (newValue) => {
     setOffice(newValue)
+    officeidChange(newValue);
 }
   return (
     <div className="meter-details-container">
-      <h1 className="form-title">Meters List</h1>
       <Form
       onSubmit={handleSubmit}
       className="p-3"
@@ -797,7 +797,7 @@ const setPage = (page) => {
           <Form.Group>
             <Form.Label className="fw-bold">Office ID</Form.Label>
             <TreeSelect
-              style={{ width: "100%", height: "40px" }}
+              style={{ width: "100%", height: "30px" }}
               value={office}
               dropdownStyle={{ maxHeight: 400, overflow: "auto" }}
               placeholder="Please select"

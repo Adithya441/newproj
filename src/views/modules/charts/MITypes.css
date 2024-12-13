@@ -6,6 +6,16 @@
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.08);
     overflow: hidden;
 }
+.NDA{
+    width: 35vw;
+    height: 50vh;
+    padding-top: 130px;
+    padding-left: 190px;
+    font-weight: 700;
+    color: black;
+    font-size: 13px;
+}
+
 .charts1{
     width: 35vw;
     height: 50vh;

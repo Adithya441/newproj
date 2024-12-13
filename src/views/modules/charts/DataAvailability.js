@@ -28,7 +28,6 @@ const renameKeys = (data, keyMap) => {
   };
 // Profile Form for selection
 const ProfileForm = ({ onProfileSelect, offices }) => {
-  const [officeId] = useState("3459274e-f20f-4df8-a960-b10c5c228d3e");
   const [oofice,setOofice] = useState("3459274e-f20f-4df8-a960-b10c5c228d3e");
   const [profiles] = useState([
     { value: "Daily Load Profile", label: "Daily Load Profile" },
@@ -729,9 +728,19 @@ const StackedBarChart = ({ profile, onDateClick,officeid }) => {
             },
           ],
           xaxis: { categories: xData || [] },
-          colors: ['#10B981', '#8B5CF6'],
+          colors: ['#10B981', '#8B5CF6','#4B5FF6'],
           legend: { position: 'top' },
-          title: { text: profile, align: 'center' }
+          title: { text: profile, align: 'center' },
+          dataLabels: {
+            enabled: true,
+            formatter: (val, { dataPointIndex, seriesIndex, w }) => {
+              return `${val.toFixed(2)}%`; // Format with two decimal places
+            },
+            style: {
+              colors: ['#fff'], // Optional: Set color for better visibility
+              fontSize:'6px'
+            },
+          },
         });
       } catch (error) {
         console.error("Error fetching chart data:", error);

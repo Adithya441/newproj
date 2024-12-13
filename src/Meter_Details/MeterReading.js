@@ -230,6 +230,7 @@ const MeterReading = () => {
             value={profileName}
             onChange={(e) => setProfileName(e.target.value)}
             className="form-control border border-left-3 border-danger"
+            style={{marginRight:'5px',width:'15vw'}}
           >
             <option value="">-NA-</option>
             {profileOptions.map((profOption, index) => (
@@ -247,6 +248,7 @@ const MeterReading = () => {
             value={requestType}
             onChange={(e) => setRequestType(e.target.value)}
             className="form-control border border-left-3 border-danger"
+            style={{marginRight:'5px',width:'15vw'}}
           >
             <option value="">-NA-</option>
             <option value="All">All</option>
@@ -264,6 +266,7 @@ const MeterReading = () => {
             value={fromDate}
             onChange={(e) => setFromDate(e.target.value)}
             className="form-control border border-left-3 border-danger"
+            style={{marginRight:'5px',width:'15vw'}}
           />
         </div>
 
@@ -275,6 +278,7 @@ const MeterReading = () => {
             value={toDate}
             onChange={(e) => setToDate(e.target.value)}
             className="form-control border border-left-3 border-danger"
+            style={{marginRight:'5px',width:'15vw'}}
           />
         </div>
         <div className="col-10 text-center mt-4 mx-auto">

@@ -7,7 +7,7 @@ import { saveAs } from "file-saver";
 import jsPDF from "jspdf";
 import "jspdf-autotable";
 
-const DynamicConfigurations = ({ meternum }) => {
+const DynamicConfigurations = ({ meternum, meterty, meterman }) => {
   const [configType, setConfigType] = useState();
   const [configOptions, setConfigOptions] = useState([]);
   const [editConfig, seteditConfig] = useState();
@@ -28,7 +28,7 @@ const DynamicConfigurations = ({ meternum }) => {
 
   //SERVICE URLS
   const tokenUrl = '/api/server3/UHES-0.0.1/oauth/token';
-  const configsUrl = `/api/server3/UHES-0.0.1/WS/getConfigurationsBasedOnClassId?ClassId=${configType}&Flag=${operationMode}&MeterMake=ZEN-TP&MeterType=CT`;
+  const configsUrl = `/api/server3/UHES-0.0.1/WS/getConfigurationsBasedOnClassId?ClassId=${configType}&Flag=${operationMode}&MeterMake=${meterman}&MeterType=${meterty}`;
   //GENERATING GRID SERVICE URL DYNAMICALLY
   const buildGridUrl = () => {
     const params = new URLSearchParams({

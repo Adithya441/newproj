@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react';
 
-const MeterInformation = ({meternum}) => {
+const MeterInformation = ({meternum, meterInter}) => {
   //SERVICE URLS 
   const tokenUrl = '/api/server3/UHES-0.0.1/oauth/token';
-  const baseUrl = `/api/server3/UHES-0.0.1/WS/getdevicedetailsWithNodeStatus?meterNumber=${meternum}&meterinterface=GPRS`;
+  const baseUrl = `/api/server3/UHES-0.0.1/WS/getdevicedetailsWithNodeStatus?meterNumber=${meternum}&meterinterface=${meterInter}`;
 
   // const [meterNo,setMeterNo]=useState('');
   // const [meterType,setMeterType]=useState('CT');

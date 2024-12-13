@@ -18,41 +18,41 @@ const FirmwareUpgrade = () => {
 
   }
   //SERVICE CALLS
-  const fetchFirmwareOptions = async () => {
-    try {
-      const tokenResponse = await fetch(tokenUrl, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body: new URLSearchParams({
-          grant_type: 'password',
-          username: 'Admin',
-          password: 'Admin@123',
-          client_id: 'fooClientId',
-          client_secret: 'secret',
-        }),
-      });
+  // const fetchFirmwareOptions = async () => {
+  //   try {
+  //     const tokenResponse = await fetch(tokenUrl, {
+  //       method: 'POST',
+  //       headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+  //       body: new URLSearchParams({
+  //         grant_type: 'password',
+  //         username: 'Admin',
+  //         password: 'Admin@123',
+  //         client_id: 'fooClientId',
+  //         client_secret: 'secret',
+  //       }),
+  //     });
 
-      if (!tokenResponse.ok) throw new Error('Failed to authenticate');
-      const tokenData = await tokenResponse.json();
-      const accessToken = tokenData.access_token;
+  //     if (!tokenResponse.ok) throw new Error('Failed to authenticate');
+  //     const tokenData = await tokenResponse.json();
+  //     const accessToken = tokenData.access_token;
 
-      const dataResponse = await fetch(firwareUrl, {
-        headers: { 'Authorization': `Bearer ${accessToken}` },
-      });
+  //     const dataResponse = await fetch(firwareUrl, {
+  //       headers: { 'Authorization': `Bearer ${accessToken}` },
+  //     });
 
-      if (!dataResponse.ok) throw new Error('Failed to fetch data');
-      const responseData = await dataResponse.json();
-      setFirmwareOptions((responseData.data));
-      console.log((responseData.data));
+  //     if (!dataResponse.ok) throw new Error('Failed to fetch data');
+  //     const responseData = await dataResponse.json();
+  //     setFirmwareOptions((responseData.data));
+  //     console.log((responseData.data));
 
-    } catch (err) {
-      console.error(err.message);
-    }
-  };
+  //   } catch (err) {
+  //     console.error(err.message);
+  //   }
+  // };
 
-  useEffect(() => {
-    fetchFirmwareOptions();
-  }, []);
+  // useEffect(() => {
+  //   fetchFirmwareOptions();
+  // }, []);
   const initialData = [
     { Transaction_ID: "NP:1504241817241275491", Firmware_Version: "$382", Request_Time: "15-04-2024 18:17:24", Response_Time: "07-08-2024 16:18:33", Request_Code: "Success" },
     { Transaction_ID: "NP:1504241817241275492", Firmware_Version: "$572", Request_Time: "16-04-2024 18:17:24", Response_Time: "08-08-2024 16:18:33", Request_Code: "-" },

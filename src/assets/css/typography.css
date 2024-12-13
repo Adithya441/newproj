@@ -77,10 +77,10 @@ h6 { font-size: 1.0em; }
 Input
 ------------------------------------------------*/
 label { color: #3f414d; }
-.form-control { height: 45px; background: transparent; border: 1px solid #d7dbda; font-size: 14px; color: #a09e9e; border-radius: 10px; }
+.form-control { height: 30px; background: transparent; border: 1px solid #d7dbda; font-size: 14px; color: #a09e9e; border-radius: 10px; }
 .form-control:focus { color: #3f414d; border-color: #089bab; box-shadow: none; }
 input.form-control[type="file"]{line-height: 35px;}
-.form-select{height: 45px;}
+.form-select{height: 30px;}
 .form-select[multiple]{height: auto;}
 
 /* Definition Lists */

@@ -44,7 +44,7 @@ const CommunicationStatusonMITypes = ({officeid}) => {
       const responseData = await dataResponse.json();
   
       // Check if data exists and is valid
-      if (!responseData.xData) {
+      if (!responseData.yData) {
           setLoading(false)
           return <p>No Data available</p>
       }
@@ -147,7 +147,7 @@ const CommunicationStatusonMITypes = ({officeid}) => {
   }, [officeid]);
 
   if (loading) return <p>Loading...</p>;
-  if (!chartData) return <h5 style={{margin:'110px 120px'}}>No data available.</h5>;
+  if (!chartData) return <h5 style={{ marginTop: '160px', marginLeft: '100px' }}>No data available.</h5>;
 
   const handleClose = () => setShowModal(false);
 
@@ -159,7 +159,7 @@ const CommunicationStatusonMITypes = ({officeid}) => {
           options={chartData.options}
           series={chartData.series}
           type="bar"
-          width="100%"
+          width="100%"  
           height="100%"
         />
       </div>

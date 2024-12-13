@@ -71,6 +71,7 @@ const Header = memo(() => {
     document.body.classList.toggle('sidebar-main');
   };
   const userLogout=()=>{
+    localStorage.removeItem("username");
     localStorage.removeItem("userToken");
     localStorage.removeItem("userData");
     navigator("/"); 

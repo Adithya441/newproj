@@ -36,13 +36,10 @@ const GetOlderonMITypes = ({ selectedLabel, selectedCategory, office }) => {
           client_secret: 'secret',
         }),
       });
-      console.log(',,,,,,,,,,,,,,,,,,');
 
       if (!tokenResponse.ok) throw new Error('Failed to authenticate');
       const tokenData = await tokenResponse.json();
-      console.log('hello')
       const accessToken = tokenData.access_token;
-      console.log('hello world')
       const baseUrl = `/api/server3/UHES-0.0.1/WS/ServerpaginationForGettingOlderReportBasedOnMI?Flag=${selectedLabel}&applyMaskingFlag=document.getElementsByName('N').value&draw=1&length=${length}&mtrInterface=${selectedCategory}&office=${office}&start=${start}`;
         const dataResponse = await fetch(baseUrl, {
           headers: { 'Authorization': `Bearer ${accessToken}` },

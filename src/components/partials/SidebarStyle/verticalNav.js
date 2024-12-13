@@ -85,8 +85,8 @@ const VerticalNav = memo(() => {
                   isTag="false"
                   staticIcon="true"
                   iconClass="ri-user-3-fill"
-                  pathname="/getnotcommunicated"
-                  title="Not Communicated Status"
+                  pathname="/34567"
+                  title="Communication Status"
                 ></SidebarMenu>
                 <SidebarMenu
                   isTag="false"
@@ -94,6 +94,20 @@ const VerticalNav = memo(() => {
                   iconClass="ri-user-add-fill"
                   pathname="/getdataavailability"
                   title="Data Availability 30days"
+                ></SidebarMenu>
+                <SidebarMenu
+                  isTag="false"
+                  staticIcon="true"
+                  iconClass="ri-user-add-fill"
+                  pathname="/2794"
+                  title="Alarm & Unidentified Meters Dashboards"
+                ></SidebarMenu>
+                <SidebarMenu
+                  isTag="false"
+                  staticIcon="true"
+                  iconClass="ri-user-add-fill"
+                  pathname="/2788765"
+                  title="Signal Strength & Billing Dashboard"
                 ></SidebarMenu>
                 
               </ul>

@@ -782,7 +782,7 @@ a:hover {
 }
 
 .iq-sidebar-menu .iq-menu li li a {
-  font-size: 11px;
+  font-size: 10px;
 }
 
 .iq-sidebar-menu .iq-menu li a i {
@@ -799,16 +799,14 @@ a:hover {
 }
 
 .iq-sidebar-menu .iq-menu li a span {
-  white-space: nowrap;
-  padding: 0;
-  display: inline-block;
-  float: left;
-  -webkit-transition: all 0.3s ease-out 0s;
-  -moz-transition: all 0.3s ease-out 0s;
-  -ms-transition: all 0.3s ease-out 0s;
-  -o-transition: all 0.3s ease-out 0s;
-  transition: all 0.3s ease-out 0s;
-  transition: none;
+  display: -webkit-box; /* Enables the flexible layout for truncation */
+  -webkit-box-orient: vertical; /* Defines the orientation of the container */
+  overflow: hidden; /* Hides extra content */
+  text-overflow: ellipsis; /* Adds "..." at the end of the truncated text */
+  white-space: normal; /* Allows text to wrap */
+  -webkit-line-clamp: 2; /* Limits text to 2 lines */
+  line-height: 1.2; /* Adjusts spacing between lines */
+  max-height: 3em; /* Ensures it doesn’t exceed 2 lines of height */
 }
 
 .iq-sidebar-menu .iq-menu li a .iq-arrow-right {

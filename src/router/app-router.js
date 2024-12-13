@@ -1,10 +1,8 @@
 import Index from "../views";
 import LargeData from "../views/modules/table/AgGrid";
-import Apicall from "../views/modules/charts/GetCommunication";
 import GetNotCommunicated from "../views/modules/charts/GetNotCommunicated";
 import DataAvailabilty from "../views/modules/charts/DataAvailability";
-import MeterDetails from "../views/modules/table/MeterDetails";
-import Detailpage from "../views/modules/table/Detailpage";
+import Metertabs from "../views/modules/table/Metertabs";
 export const AppRouter =[
     {
       path:'/index',
@@ -24,10 +22,6 @@ export const AppRouter =[
     },
     {
       path: '/meterdetails',
-      element:<MeterDetails/>
-    },
-    {
-      path:'/detail/:encryptedno',
-      element:<Detailpage/>
+      element:<Metertabs/>
     },
   ]

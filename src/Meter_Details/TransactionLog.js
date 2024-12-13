@@ -7,7 +7,7 @@ import jsPDF from "jspdf";
 import "jspdf-autotable";
 import { saveAs } from "file-saver";
 
-const TransactionLog = ({ meternum }) => {
+const TransactionLog = ({ meternum , officeid }) => {
   const [transactionLogType, setTransactionLogType] = useState();
   const [requestType, setRequestType] = useState();
   const [fromDate, setFromDate] = useState();
@@ -46,15 +46,14 @@ const TransactionLog = ({ meternum }) => {
       draw: "2",
       length: "10",
       meterNumber: meternum,
-      office: "3459274e-f20f-4df8-a960-b10c5c228d3e",
-      searchby: "1731643917529"
+      office: officeid,
+      start:0
     });
     if (status) params.append("Status", status);
     if (toDate) params.append("Todate", toDate);
     if (transactionLogType) params.append("command", transactionLogType);
     if (requestType) params.append("requesttype", requestType);
-    if (fromDate) params.append("start", fromDate);
-
+    if(fromDate) params.append("fromdate",fromDate);
     return `/api/server3/UHES-0.0.1/WS/callForServerpaginationForTransactionLog?${params.toString()}`;
   };
   //SERVICE CALLS
@@ -253,7 +252,7 @@ const TransactionLog = ({ meternum }) => {
             <label htmlFor="fromdate">* From Date</label>
             <div className="input-group">
               <div className="border border-left-danger border-left-5" ></div>
-              <input type="datetime-local" id="fromdate" value={fromDate} className='form-control border border-left-3 border-left-danger' required onChange={(e) => setFromDate(e.target.value)} />
+              <input type="datetime-local" id="fromdate" value={fromDate} className='form-control border border-left-3 border-left-danger' required onChange={(e) =>setFromDate((e.target.value).replace('T',' '))} />
             </div>
           </div>
           <div className="col-xs-10 col-md-4" style={{ margin: '1vw 0', padding: '0.5vw' }}>
@@ -271,7 +270,7 @@ const TransactionLog = ({ meternum }) => {
             <label htmlFor="todate">* To Date</label>
             <div className="input-group">
               <div className="border border-left-danger border-left-5" ></div>
-              <input type="datetime-local" id="todate" value={toDate} className='form-control border border-left-3 border-left-danger' required onChange={(e) => setToDate(e.target.value)} />
+              <input type="datetime-local" id="todate" value={toDate} className='form-control border border-left-3 border-left-danger' required onChange={(e) =>setToDate((e.target.value).replace('T',' '))} />
             </div>
           </div>
 

@@ -15,10 +15,10 @@ export const IndexRouters = [
     element: <PrivateRoute />, // Wrap DefaultLayout with PrivateRoute to protect child routes
     children: [
       {
-        path: '', // This will act as the default page for authenticated users
-        element: <DefaultLayout />, // Layout that will contain other routes
+        path: '',
+        element: <DefaultLayout />,
         children: [
-          ...AppRouter,  // This includes your other routes (protected routes)
+          ...AppRouter,
         ],
       },
     ],

@@ -47,7 +47,7 @@
 .form-title {
     background-color: #0081c2;
     color: white;                
-    padding: 0px 10px;              
+    padding: 0px 8px;              
     border-radius: 4px 4px 0 0;  
     text-align: left;           
     font-size: 18px;
@@ -164,7 +164,7 @@
   .export-button {
     background-color: #69acf3;; 
     border: none;
-    color: white;
+    color: white; 
     padding: 5px 50px;
     font-size: 14px;
     cursor: pointer;
@@ -173,11 +173,10 @@
     outline: none; 
     box-shadow: none; 
     transition: background-color 0.3s;
-    margin: 10px 10px;
+    margin-top: 5px;
+    margin-left: 5px;
   }
-  .meter-number-field {
-    margin-bottom: 20px; 
-}
+=
 
 
   .export-button:hover {

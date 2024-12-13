@@ -7,7 +7,8 @@ import { saveAs } from "file-saver";
 import jsPDF from "jspdf";
 import "jspdf-autotable";
 
-const Alarms = ({ meternum }) => {
+const Alarms = ({ meternum , officeid }) => {
+  console.log(officeid + "hello");
   const [fromDate, setFromDate] = useState();
   const [toDate, setToDate] = useState();
   const [searchKey, setSearchKey] = useState();
@@ -21,7 +22,7 @@ const Alarms = ({ meternum }) => {
 
   //SERVICE URLS
   const tokenUrl = '/api/server3/UHES-0.0.1/oauth/token';
-  const gridUrl = `/api/server3/UHES-0.0.1/WS/getAlarms?fromdate=${fromDate}&meterno=${meternum}&office=3459274e-f20f-4df8-a960-b10c5c228d3e&todate=${toDate}`;
+  const gridUrl = `/api/server3/UHES-0.0.1/WS/getAlarms?fromdate=${fromDate}&meterno=${meternum}&office=${officeid}&todate=${toDate}`;
 
   //SERVICE CALLS
   const fetchGridData = async () => {

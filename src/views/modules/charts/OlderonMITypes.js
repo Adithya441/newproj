@@ -7,6 +7,7 @@ import './MITypes.css'
 const OlderonMITypes = ({officeid}) => {
   const [chartData, setChartData] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [dataavailable, setDataAvailable] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const [selectedData, setSelectedData] = useState(null);
   const [categorys, setCategory] = useState(null);
@@ -52,15 +53,13 @@ const OlderonMITypes = ({officeid}) => {
       const responseData = await dataResponse.json();
   
       // Check for null or invalid data
+      
       if (
-        !responseData ||
-        !responseData.xData ||
-        !responseData.yData ||
-        responseData.xData.length === 0 ||
-        responseData.yData.length === 0
+        !responseData.yData
       ) {
         setLoading(false);
-        return <p>No Data available</p>
+        setDataAvailable("No Data Available");
+        return;
       }
   
       const labels = responseData.xData; // Communication types like BCITSRF, GPRS, etc.
@@ -143,24 +142,29 @@ const OlderonMITypes = ({officeid}) => {
     setLoading(true);
     fetchData();
   }, [officeid]);
+  
 
   if (loading) return <p>Loading...</p>;
-  if (!chartData) return <h5 style={{margin:'110px 120px'}}>No data available.</h5>;
+  
 
   const handleClose = () => setShowModal(false);
 
   return (
     <div className="blck1">
       <h5 className='chart-name'>Older Based on MI Types</h5>
-      <div className='charts1'>
-        <ReactApexChart
-          options={chartData.options}
-          series={chartData.series}
-          type="bar"
-          width="100%"
-          height="100%"
-        />
-      </div>
+      {dataavailable === null ? (
+        <div className="charts1">
+          <ReactApexChart
+            options={chartData.options}
+            series={chartData.series}
+            type="bar"
+            width="100%"
+            height="100%"
+          />
+        </div>
+      ) : (
+        <div className='NDA'>{dataavailable}</div>
+      )}
 
       {showModal && (
         <div

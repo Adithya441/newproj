@@ -8,7 +8,7 @@ import "ag-grid-community/styles/ag-theme-quartz.css";
 import { useState, useEffect } from 'react';
 import './styles.css';
 
-const DynamicOnDemand = ({ meternum }) => {
+const DynamicOnDemand = ({ meternum, meterty, meterman }) => {
   const [searchKey, setSearchKey] = useState();
   const [profileOptions, setProfileOptions] = useState([]);
   const [rowData, setRowData] = useState([]);
@@ -26,7 +26,7 @@ const DynamicOnDemand = ({ meternum }) => {
   ]);
   //SERVICE URLS
   const tokenUrl = '/api/server3/UHES-0.0.1/oauth/token';
-  const profileUrl = `/api/server3/UHES-0.0.1/WS/getProfileNamesWithClassId?ClassId=7&Class_type=Reading&MeterMake=ZEN-TP&MeterType=CT`;
+  const profileUrl = `/api/server3/UHES-0.0.1/WS/getProfileNamesWithClassId?ClassId=7&Class_type=Reading&MeterMake=${meterman}&MeterType=${meterty}`;
 
   const buildGridUrl = () => {
     const params = new URLSearchParams({
